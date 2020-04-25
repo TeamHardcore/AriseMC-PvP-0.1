@@ -1,0 +1,50 @@
+name: AriseMC-PvP
+version: 1.0.0
+author: TeamHardcore
+main: de.teamhardcore.pvp.Main
+
+commands:
+  fix:
+  stack:
+  tpa:
+    aliases:
+      - tpahere
+      - tpaall
+      - tpaccept
+      - tpdeny
+  tpall:
+  tphere:
+  tptop:
+  warp:
+    aliases:
+      - warps
+  spawn:
+    aliases:
+      - setspawn
+  support:
+  back:
+  workbench:
+    aliases:
+      - wb
+      - werkbank
+  playertime:
+    aliases:
+      - ptime
+  feed:
+    aliases:
+      - eat
+      - essen
+  heal:
+  near:
+  enderchest:
+    aliases:
+      - ec
+      - e
+  hat:
+  vanish:
+  bodysee:
+  report:
+  money:
+    aliases:
+      - geld
+      - pay
