@@ -33,4 +33,9 @@ public class CommandGlobalmute implements CommandExecutor {
 
         return true;
     }
+
+    private void sendHelp(Player player) {
+
+    }
+
 }

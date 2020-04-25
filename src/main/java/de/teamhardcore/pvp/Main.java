@@ -40,6 +40,8 @@ public class Main extends JavaPlugin {
     private ScoreboardManager scoreboardManager;
     private RankingManager rankingManager;
     private ReportManager reportManager;
+    private LeagueManager leagueManager;
+    private ChatManager chatManager;
 
     private UserManager userManager;
 
@@ -79,6 +81,8 @@ public class Main extends JavaPlugin {
         this.scoreboardManager = new ScoreboardManager(this);
         this.rankingManager = new RankingManager(this);
         this.reportManager = new ReportManager(this);
+        this.chatManager = new ChatManager(this);
+        this.leagueManager = new LeagueManager(this);
         this.userManager = new UserManager(this);
 
         PluginManager pm = getServer().getPluginManager();
@@ -146,6 +150,14 @@ public class Main extends JavaPlugin {
 
     public UserManager getUserManager() {
         return userManager;
+    }
+
+    public LeagueManager getLeagueManager() {
+        return leagueManager;
+    }
+
+    public ChatManager getChatManager() {
+        return chatManager;
     }
 
     public static Main getInstance() {
