@@ -7,6 +7,7 @@
 
 package de.teamhardcore.pvp;
 
+import de.teamhardcore.pvp.commands.chat.CommandGlobalmute;
 import de.teamhardcore.pvp.commands.help.CommandReport;
 import de.teamhardcore.pvp.commands.help.CommandSupport;
 import de.teamhardcore.pvp.commands.inventory.CommandBodysee;
@@ -86,7 +87,7 @@ public class Main extends JavaPlugin {
         this.userManager = new UserManager(this);
 
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new AsyncPlayerChat(), this);
+        pm.registerEvents(new AsyncPlayerChat(this), this);
         pm.registerEvents(new PlayerJoin(this), this);
         pm.registerEvents(new PlayerQuit(this), this);
         pm.registerEvents(new InventoryClick(this), this);
@@ -113,6 +114,7 @@ public class Main extends JavaPlugin {
         getCommand("bodysee").setExecutor(new CommandBodysee());
         getCommand("report").setExecutor(new CommandReport());
         getCommand("money").setExecutor(new CommandMoney());
+        getCommand("globalmute").setExecutor(new CommandGlobalmute());
 
     }
 
