@@ -2,8 +2,8 @@ package de.teamhardcore.pvp.utils;
 
 public class StringDefaults {
 
-    public final static String PREFIX = "§8§l> §r";
-    public final static String GLOBAL_PREFIX = "§9§lAriseMC";
+    public final static String PREFIX = "§8§l» §r";
+    public final static String GLOBAL_PREFIX = "§9§lAriseMC " + PREFIX;
     public final static String NO_PERM = PREFIX + "§cDazu hast du keine Berechtigung!";
     public final static String NOT_ONLINE = PREFIX + "§cDieser Spieler ist nicht online.";
 
