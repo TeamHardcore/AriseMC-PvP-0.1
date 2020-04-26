@@ -39,7 +39,7 @@ public class ReportManager {
 
         Report report = getReport(target);
 
-        if (report.getReporter().containsKey(player)) return true;
+        if (report.getReporter().containsKey(player.getUniqueId())) return true;
 
         return false;
     }

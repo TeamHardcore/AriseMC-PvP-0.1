@@ -49,3 +49,4 @@ commands:
       - geld
       - pay
   globalmute:
+  fill:
