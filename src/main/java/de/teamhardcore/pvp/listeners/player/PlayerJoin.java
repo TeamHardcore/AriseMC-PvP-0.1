@@ -31,6 +31,7 @@ public class PlayerJoin implements Listener {
         this.plugin.getUserManager().addToCache(player.getUniqueId());
 
         this.plugin.getScoreboardManager().setScoreboard(player, PlayerScoreboard.ScoreboardType.DEFAULT);
+        this.plugin.getScoreboardManager().updateAllScoreboards(true, true);
     }
 
 }

@@ -31,6 +31,32 @@ public class ScoreboardManager {
 
         Scoreboard scoreboard = this.plugin.getServer().getScoreboardManager().getNewScoreboard();
 
+        Team teamMember = scoreboard.registerNewTeam("LTeamMember");
+        Team teamPro = scoreboard.registerNewTeam("KTeamUltra");
+        Team teamElite = scoreboard.registerNewTeam("JTeamElite");
+        Team teamHero = scoreboard.registerNewTeam("ITeamHero");
+        Team teamYT = scoreboard.registerNewTeam("HTeamYT");
+        Team teamAsk = scoreboard.registerNewTeam("GTeamAsk");
+        Team teamFreund = scoreboard.registerNewTeam("FTeamFreund");
+        Team teamSup = scoreboard.registerNewTeam("ETeamSup");
+        Team teamMod = scoreboard.registerNewTeam("DTeamMod");
+        Team teamDev = scoreboard.registerNewTeam("CTeamDev");
+        Team teamAdmin = scoreboard.registerNewTeam("BTeamAdmin");
+        Team teamOwner = scoreboard.registerNewTeam("ATeamOwner");
+
+        teamMember.setPrefix("§7");
+        teamPro.setPrefix("§b");
+        teamElite.setPrefix("§e");
+        teamHero.setPrefix("§6");
+        teamYT.setPrefix("§d");
+        teamAsk.setPrefix("§2");
+        teamFreund.setPrefix("§b");
+        teamSup.setPrefix("§a");
+        teamMod.setPrefix("§5");
+        teamDev.setPrefix("§3");
+        teamAdmin.setPrefix("§c");
+        teamOwner.setPrefix("§4");
+
         Objective sidebar = scoreboard.registerNewObjective("Default", "Default");
         sidebar.setDisplayName("    " + StringDefaults.GLOBAL_PREFIX + "   ");
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -57,15 +83,79 @@ public class ScoreboardManager {
                 sidebar.getScore("§e§lLiga: §7").setScore(3);
                 sidebar.getScore("§7§7").setScore(2);
                 sidebar.getScore("    ").setScore(1);
-                player.setScoreboard(scoreboard);
-                this.scoreboards.put(player, new PlayerScoreboard(scoreboard, type));
-                updateSidebar(player);
-                break;
             case EVENT:
                 break;
             case COMBAT:
                 break;
         }
+        player.setScoreboard(scoreboard);
+        this.scoreboards.put(player, new PlayerScoreboard(scoreboard, type));
+        updateSidebar(player);
+    }
+
+    public void updateTeamListAllPlayers(Player forWhom) {
+        for (Player all : scoreboards.keySet()) {
+            updateTeamList(forWhom, all, all.isOnline());
+        }
+    }
+
+    public void updateTeamList(Player forWhom, Player who, boolean online) {
+        if (!scoreboards.containsKey(forWhom)) {
+            setScoreboard(forWhom, PlayerScoreboard.ScoreboardType.DEFAULT);
+        }
+        Scoreboard board = scoreboards.get(forWhom).getScoreboard();
+        Team playerTeam = getTeamForPlayer(board, who);
+        if (online) {
+            playerTeam.addEntry(who.getName());
+        } else {
+            playerTeam.removeEntry(who.getName());
+        }
+    }
+
+    public void updateAllScoreboards(boolean teamList, boolean sidebar) {
+        for (Player all : scoreboards.keySet()) {
+            if (teamList)
+                updateTeamListAllPlayers(all);
+            if (!sidebar) continue;
+            updateSidebar(all);
+        }
+    }
+
+    private Team getTeamForPlayer(Scoreboard board, Player forWhom) {
+        if (forWhom.hasPermission("tab.color.owner")) {
+            return board.getTeam("ATeamOwner");
+        }
+        if (forWhom.hasPermission("tab.color.admin")) {
+            return board.getTeam("BTeamAdmin");
+        }
+        if (forWhom.hasPermission("tab.color.dev")) {
+            return board.getTeam("CTeamDev");
+        }
+        if (forWhom.hasPermission("tab.color.mod")) {
+            return board.getTeam("DTeamMod");
+        }
+        if (forWhom.hasPermission("tab.color.sup")) {
+            return board.getTeam("ETeamSup");
+        }
+        if (forWhom.hasPermission("tab.color.freund")) {
+            return board.getTeam("FTeamFreund");
+        }
+        if (forWhom.hasPermission("tab.color.ask")) {
+            return board.getTeam("GTeamAsk");
+        }
+        if (forWhom.hasPermission("tab.color.yt")) {
+            return board.getTeam("HTeamYT");
+        }
+        if (forWhom.hasPermission("tab.color.hero")) {
+            return board.getTeam("ITeamHero");
+        }
+        if (forWhom.hasPermission("tab.color.elite")) {
+            return board.getTeam("JTeamElite");
+        }
+        if (forWhom.hasPermission("tab.color.pro")) {
+            return board.getTeam("KTeamUltra");
+        }
+        return board.getTeam("LTeamMember");
     }
 
     public void updateSidebar(Player player) {
