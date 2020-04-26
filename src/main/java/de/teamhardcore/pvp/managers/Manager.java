@@ -3,6 +3,8 @@ package de.teamhardcore.pvp.managers;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.teleport.TPDelay;
 import de.teamhardcore.pvp.model.teleport.TPRequest;
+import de.teamhardcore.pvp.utils.StringDefaults;
+import de.teamhardcore.pvp.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -25,6 +27,19 @@ public class Manager {
 
     public Manager(Main plugin) {
         this.plugin = plugin;
+
+        startTablistTask();
+    }
+
+    private void startTablistTask() {
+        this.plugin.getServer().getScheduler().runTaskTimer(this.plugin, () -> {
+
+            Bukkit.getOnlinePlayers().forEach(players -> {
+                Util.sendHeaderFooter(players, "\n " + StringDefaults.SERVER_NAME + "\n", "\n§9§lPing§8: §7" + players.spigot().getPing() + "\n");
+            });
+
+
+        }, 20L, 20L);
     }
 
     public HashMap<Player, Long> getTeleportCooldowns() {

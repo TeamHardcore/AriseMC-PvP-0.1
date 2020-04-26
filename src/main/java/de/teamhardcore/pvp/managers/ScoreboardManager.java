@@ -61,8 +61,8 @@ public class ScoreboardManager {
         teamSup.setPrefix("§a");
         teamMod.setPrefix("§5");
         teamDev.setPrefix("§3");
-        teamAdmin.setPrefix("§c");
-        teamOwner.setPrefix("§4");
+        teamAdmin.setPrefix("§c§lADMIN §7");
+        teamOwner.setPrefix("§4§LOWNER §7");
 
         Objective sidebar = scoreboard.registerNewObjective("Default", "Default");
         sidebar.setDisplayName("    " + StringDefaults.GLOBAL_PREFIX + "   ");

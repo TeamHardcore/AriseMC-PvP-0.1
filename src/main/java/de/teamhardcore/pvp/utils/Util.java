@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -43,6 +44,10 @@ public class Util {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void sendHeaderFooter(Player player, String header, String footer) {
+        player.setPlayerListHeaderFooter(new ComponentBuilder(header).create(), new ComponentBuilder(footer).create());
     }
 
     public static <K, V extends Comparable<V>> Map<K, V> sortMapByValues(Map<K, V> map) {
