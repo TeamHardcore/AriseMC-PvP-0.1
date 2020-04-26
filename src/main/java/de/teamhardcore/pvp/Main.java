@@ -115,6 +115,7 @@ public class Main extends JavaPlugin {
         getCommand("report").setExecutor(new CommandReport());
         getCommand("money").setExecutor(new CommandMoney());
         getCommand("globalmute").setExecutor(new CommandGlobalmute());
+        getCommand("fill").setExecutor(new CommandFill());
 
     }
 
