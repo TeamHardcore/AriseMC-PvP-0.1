@@ -7,6 +7,7 @@
 
 package de.teamhardcore.pvp;
 
+import de.teamhardcore.pvp.commands.chat.CommandBroadcast;
 import de.teamhardcore.pvp.commands.chat.CommandGlobalmute;
 import de.teamhardcore.pvp.commands.help.CommandReport;
 import de.teamhardcore.pvp.commands.help.CommandSupport;
@@ -120,7 +121,7 @@ public class Main extends JavaPlugin {
         getCommand("money").setExecutor(new CommandMoney());
         getCommand("globalmute").setExecutor(new CommandGlobalmute());
         getCommand("fill").setExecutor(new CommandFill());
-
+        getCommand("broadcast").setExecutor(new CommandBroadcast());
     }
 
     public FileManager getFileManager() {

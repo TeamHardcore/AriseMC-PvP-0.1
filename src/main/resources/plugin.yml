@@ -50,3 +50,6 @@ commands:
       - pay
   globalmute:
   fill:
+  broadcast:
+    aliases:
+      - bc
