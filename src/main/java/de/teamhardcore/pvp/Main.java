@@ -47,7 +47,7 @@ public class Main extends JavaPlugin {
     private LeagueManager leagueManager;
     private ChatManager chatManager;
     private CrateManager crateManager;
-
+    private CombatManager combatManager;
     private UserManager userManager;
 
     private DatabaseManager databaseManager;
@@ -90,6 +90,7 @@ public class Main extends JavaPlugin {
         this.leagueManager = new LeagueManager(this);
         this.userManager = new UserManager(this);
         this.crateManager = new CrateManager(this);
+        this.combatManager = new CombatManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -172,6 +173,10 @@ public class Main extends JavaPlugin {
 
     public CrateManager getCrateManager() {
         return crateManager;
+    }
+
+    public CombatManager getCombatManager() {
+        return combatManager;
     }
 
     public static Main getInstance() {
