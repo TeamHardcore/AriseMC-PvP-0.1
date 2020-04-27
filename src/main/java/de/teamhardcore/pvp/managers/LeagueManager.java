@@ -1,8 +1,7 @@
 /*
+ *   @author TeamHardcore
  *
- * @author TeamHardcore
- *
- * Copyright (c) 2020 by TeamHardcore to present. All rights reserved
+ *   Copyright (c) 2020 by TeamHardcore to present. All rights reserved
  */
 
 package de.teamhardcore.pvp.managers;
@@ -43,4 +42,7 @@ public class LeagueManager {
         return chosen;
     }
 
+    public Main getPlugin() {
+        return plugin;
+    }
 }

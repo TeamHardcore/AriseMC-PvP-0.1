@@ -9,6 +9,8 @@ package de.teamhardcore.pvp.listeners.player;
 
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.PlayerScoreboard;
+import de.teamhardcore.pvp.utils.ItemBuilder;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,6 +34,8 @@ public class PlayerJoin implements Listener {
 
         this.plugin.getScoreboardManager().setScoreboard(player, PlayerScoreboard.ScoreboardType.DEFAULT);
         this.plugin.getScoreboardManager().updateAllScoreboards(true, true);
+
+        player.getInventory().addItem(new ItemBuilder(Material.CHEST).setDisplayName("§a§lTest Crate").setAmount(64).build());
     }
 
 }
