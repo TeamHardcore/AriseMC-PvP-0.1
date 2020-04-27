@@ -14,6 +14,7 @@ import de.teamhardcore.pvp.commands.help.CommandReport;
 import de.teamhardcore.pvp.commands.help.CommandSupport;
 import de.teamhardcore.pvp.commands.inventory.CommandBodysee;
 import de.teamhardcore.pvp.commands.inventory.CommandEnderchest;
+import de.teamhardcore.pvp.commands.inventory.CommandTrash;
 import de.teamhardcore.pvp.commands.inventory.CommandWorkbench;
 import de.teamhardcore.pvp.commands.player.*;
 import de.teamhardcore.pvp.commands.pvp.CommandFix;
@@ -125,6 +126,7 @@ public class Main extends JavaPlugin {
         getCommand("fill").setExecutor(new CommandFill());
         getCommand("broadcast").setExecutor(new CommandBroadcast());
         getCommand("msg").setExecutor(new CommandMsg());
+        getCommand("trash").setExecutor(new CommandTrash());
     }
 
     public FileManager getFileManager() {
