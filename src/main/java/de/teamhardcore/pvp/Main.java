@@ -24,6 +24,7 @@ import de.teamhardcore.pvp.database.DatabaseManager;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClick;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClose;
 import de.teamhardcore.pvp.listeners.player.AsyncPlayerChat;
+import de.teamhardcore.pvp.listeners.player.PlayerInteract;
 import de.teamhardcore.pvp.listeners.player.PlayerJoin;
 import de.teamhardcore.pvp.listeners.player.PlayerQuit;
 import de.teamhardcore.pvp.managers.*;
@@ -43,6 +44,7 @@ public class Main extends JavaPlugin {
     private ReportManager reportManager;
     private LeagueManager leagueManager;
     private ChatManager chatManager;
+    private CrateManager crateManager;
 
     private UserManager userManager;
 
@@ -85,11 +87,13 @@ public class Main extends JavaPlugin {
         this.chatManager = new ChatManager(this);
         this.leagueManager = new LeagueManager(this);
         this.userManager = new UserManager(this);
+        this.crateManager = new CrateManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
         pm.registerEvents(new PlayerJoin(this), this);
         pm.registerEvents(new PlayerQuit(this), this);
+        pm.registerEvents(new PlayerInteract(this), this);
         pm.registerEvents(new InventoryClick(this), this);
         pm.registerEvents(new InventoryClose(this), this);
 
@@ -161,6 +165,10 @@ public class Main extends JavaPlugin {
 
     public ChatManager getChatManager() {
         return chatManager;
+    }
+
+    public CrateManager getCrateManager() {
+        return crateManager;
     }
 
     public static Main getInstance() {
