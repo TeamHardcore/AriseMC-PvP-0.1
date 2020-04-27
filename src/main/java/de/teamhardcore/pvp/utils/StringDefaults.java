@@ -9,6 +9,7 @@ public class StringDefaults {
     public final static String NOT_ONLINE = PREFIX + "§cDieser Spieler ist nicht online.";
 
     public final static String REPORT_PREFIX = "§c§LREPORT §8§l> §r";
+    public final static String MSG_PREFIX = "§c§lMSG §8§l> §r";
 
 
     public static String getHeader(String color, String header) {

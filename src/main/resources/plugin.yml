@@ -53,3 +53,14 @@ commands:
   broadcast:
     aliases:
       - bc
+  msg:
+    aliases:
+      - tell
+      - whisper
+      - t
+      - m
+      - pn
+      - r
+      - reply
+      - antworten
+      - w

@@ -7,13 +7,23 @@
 
 package de.teamhardcore.pvp.user;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import java.util.UUID;
 
 public class User {
 
+    private final UUID uuid;
+    private final Player player;
+
     private UserMoney userMoney;
+    private UserData userData;
 
     public User(UUID uuid) {
+        this.uuid = uuid;
+        this.player = Bukkit.getPlayer(this.uuid);
+        this.userData = new UserData(this);
         this.userMoney = new UserMoney(this);
     }
 
@@ -51,5 +61,17 @@ public class User {
      */
     public UserMoney getUserMoney() {
         return userMoney;
+    }
+
+    public UserData getUserData() {
+        return userData;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }
