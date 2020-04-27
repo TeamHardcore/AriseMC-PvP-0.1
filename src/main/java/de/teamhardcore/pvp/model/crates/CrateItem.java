@@ -6,20 +6,23 @@
 
 package de.teamhardcore.pvp.model.crates;
 
-import org.bukkit.Material;
+import de.teamhardcore.pvp.model.crates.actions.CrateItemAction;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class CrateItem {
 
     private ItemStack itemStack;
     private double weight;
 
-    private CrateItemAction action;
+    private List<CrateItemAction> actions;
 
-    public CrateItem(ItemStack itemStack, double weight, CrateItemAction action) {
+    public CrateItem(ItemStack itemStack, double weight, CrateItemAction... actions) {
         this.itemStack = itemStack;
         this.weight = weight;
-        this.action = action;
+        this.actions = Arrays.asList(actions);
     }
 
     public ItemStack getItemStack() {
@@ -30,7 +33,7 @@ public class CrateItem {
         return weight;
     }
 
-    public CrateItemAction getAction() {
-        return action;
+    public List<CrateItemAction> getActions() {
+        return actions;
     }
 }

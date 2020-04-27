@@ -7,6 +7,7 @@
 package de.teamhardcore.pvp.model.crates;
 
 import de.teamhardcore.pvp.Main;
+import de.teamhardcore.pvp.model.crates.actions.CrateItemAction;
 import de.teamhardcore.pvp.model.crates.animation.AbstractAnimation;
 import org.bukkit.entity.Player;
 
@@ -35,16 +36,19 @@ public class CrateOpening {
 
     public void startOpening(AbstractAnimation animation) {
         this.animation = animation;
-
+        Main.getInstance().getCrateManager().getActiveOpenings().put(getPlayer(), this);
         animation.startAnimation();
     }
 
     public void stopOpening() {
         if (this.animation != null) this.animation.stopAnimation();
+
+        Main.getInstance().getCrateManager().getActiveOpenings().remove(getPlayer());
     }
 
     public void giveReward(CrateItem item) {
-        item.getAction().doAction(getPlayer());
+        for (CrateItemAction action : item.getActions())
+            action.doAction(getPlayer());
     }
 
     public ArrayList<CrateItem> getCrateItems() {

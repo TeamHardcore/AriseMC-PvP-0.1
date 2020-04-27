@@ -21,6 +21,7 @@ public class SkipAnimation extends AbstractAnimation {
     public void startAnimation() {
         CrateItem item = getOpening().getCrateItems().get(new Random().nextInt(getOpening().getCrateItems().size()));
         getOpening().giveReward(item);
+        getOpening().stopOpening();
     }
 
     @Override

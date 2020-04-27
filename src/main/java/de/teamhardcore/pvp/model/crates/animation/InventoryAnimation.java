@@ -49,7 +49,6 @@ public class InventoryAnimation extends AbstractAnimation {
 
     @Override
     public void startAnimation() {
-        Main.getInstance().getCrateManager().getActiveOpenings().put(getOpening().getPlayer(), getOpening());
         getOpening().getPlayer().openInventory(inventory);
 
         if (this.runnable != null) {
@@ -100,7 +99,6 @@ public class InventoryAnimation extends AbstractAnimation {
         }
 
         if (this.inventory.getItem(13) == null) {
-            //     Main.getInstance().getCrateManager().getActiveOpenings().remove(player);
             getOpening().getPlayer().closeInventory();
             return;
         }
