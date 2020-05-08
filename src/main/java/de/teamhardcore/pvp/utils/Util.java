@@ -10,11 +10,15 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.NumberFormat;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class Util {
+
+    private static NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.GERMAN);
 
     public static String locationToString(Location location) {
         if (location == null)
@@ -33,6 +37,10 @@ public class Util {
         if (parts.length == 6)
             return new Location(Bukkit.getWorld(parts[0]), Double.parseDouble(parts[1]), Double.parseDouble(parts[2]), Double.parseDouble(parts[3]), Float.parseFloat(parts[4]), Float.parseFloat(parts[5]));
         return null;
+    }
+
+    public static String formatNumber(double number) {
+        return numberFormat.format(number);
     }
 
     public static void sendActionbar(Player player, String message) {
