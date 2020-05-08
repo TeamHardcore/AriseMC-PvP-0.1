@@ -10,6 +10,13 @@ public class StringDefaults {
 
     public final static String REPORT_PREFIX = "§c§LREPORT §8§l> §r";
     public final static String MSG_PREFIX = "§c§lMSG §8§l> §r";
+    public final static String CLAN_PREFIX = "§c§lCLAN " + PREFIX;
+
+
+    public final static String SLOT_UPGRADE = "slot";
+    public final static String WARP_UPGRADE = "warp";
+    public final static String CHEST_UPGRADE = "chest";
+    public final static String LEVEL_UPGRADE = "level";
 
 
     public static String getHeader(String color, String header) {

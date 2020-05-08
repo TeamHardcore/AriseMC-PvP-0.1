@@ -19,12 +19,14 @@ public class User {
 
     private UserMoney userMoney;
     private UserData userData;
+    private UserStats userStats;
 
     public User(UUID uuid) {
         this.uuid = uuid;
         this.player = Bukkit.getPlayer(this.uuid);
         this.userData = new UserData(this);
         this.userMoney = new UserMoney(this);
+        this.userStats = new UserStats(this);
     }
 
     /**
@@ -65,6 +67,10 @@ public class User {
 
     public UserData getUserData() {
         return userData;
+    }
+
+    public UserStats getUserStats() {
+        return userStats;
     }
 
     public UUID getUuid() {

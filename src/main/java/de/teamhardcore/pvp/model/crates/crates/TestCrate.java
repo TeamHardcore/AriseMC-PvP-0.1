@@ -21,7 +21,7 @@ public class TestCrate extends AbstractCrate {
 
     private final ArrayList<CrateItem> crateItems = new ArrayList<CrateItem>() {{
         add(new CrateItem(new ItemBuilder(Material.BEDROCK).setDisplayName("§e§l12x Bedrock").setAmount(12).build(),
-                100, new CustomItemStackAction(new ItemStack(Material.BEDROCK)), new CustomMessageAction("§eDu hast das §712x Bedrock §eerhalten.")));
+                100, new CustomItemStackAction(new ItemStack(Material.BEDROCK, 12)), new CustomMessageAction("§eDu hast §712x Bedrock §eerhalten.")));
     }};
 
     public TestCrate() {

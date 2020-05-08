@@ -14,8 +14,10 @@ import de.teamhardcore.pvp.commands.help.CommandReport;
 import de.teamhardcore.pvp.commands.help.CommandSupport;
 import de.teamhardcore.pvp.commands.inventory.CommandBodysee;
 import de.teamhardcore.pvp.commands.inventory.CommandEnderchest;
+import de.teamhardcore.pvp.commands.inventory.CommandTrash;
 import de.teamhardcore.pvp.commands.inventory.CommandWorkbench;
 import de.teamhardcore.pvp.commands.player.*;
+import de.teamhardcore.pvp.commands.pvp.CommandClan;
 import de.teamhardcore.pvp.commands.pvp.CommandFix;
 import de.teamhardcore.pvp.commands.pvp.CommandStack;
 import de.teamhardcore.pvp.commands.teleport.*;
@@ -25,11 +27,9 @@ import de.teamhardcore.pvp.commands.world.CommandNear;
 import de.teamhardcore.pvp.database.DatabaseManager;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClick;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClose;
-import de.teamhardcore.pvp.listeners.player.AsyncPlayerChat;
-import de.teamhardcore.pvp.listeners.player.PlayerInteract;
-import de.teamhardcore.pvp.listeners.player.PlayerJoin;
-import de.teamhardcore.pvp.listeners.player.PlayerQuit;
+import de.teamhardcore.pvp.listeners.player.*;
 import de.teamhardcore.pvp.managers.*;
+import de.teamhardcore.pvp.model.clan.shop.upgrades.EnumUpgrade;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -49,6 +49,7 @@ public class Main extends JavaPlugin {
     private CrateManager crateManager;
     private CombatManager combatManager;
     private UserManager userManager;
+    private ClanManager clanManager;
 
     private DatabaseManager databaseManager;
 
@@ -91,11 +92,13 @@ public class Main extends JavaPlugin {
         this.userManager = new UserManager(this);
         this.crateManager = new CrateManager(this);
         this.combatManager = new CombatManager(this);
+        this.clanManager = new ClanManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
         pm.registerEvents(new PlayerJoin(this), this);
         pm.registerEvents(new PlayerQuit(this), this);
+        pm.registerEvents(new PlayerDeath(this), this);
         pm.registerEvents(new PlayerInteract(this), this);
         pm.registerEvents(new InventoryClick(this), this);
         pm.registerEvents(new InventoryClose(this), this);
@@ -125,6 +128,8 @@ public class Main extends JavaPlugin {
         getCommand("fill").setExecutor(new CommandFill());
         getCommand("broadcast").setExecutor(new CommandBroadcast());
         getCommand("msg").setExecutor(new CommandMsg());
+        getCommand("trash").setExecutor(new CommandTrash());
+        getCommand("clan").setExecutor(new CommandClan());
     }
 
     public FileManager getFileManager() {
@@ -179,8 +184,12 @@ public class Main extends JavaPlugin {
         return combatManager;
     }
 
+    public ClanManager getClanManager() {
+        return clanManager;
+    }
+
     public static Main getInstance() {
         return instance;
     }
-
 }
+
