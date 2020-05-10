@@ -24,10 +24,14 @@ import de.teamhardcore.pvp.commands.teleport.*;
 import de.teamhardcore.pvp.commands.warp.CommandSpawn;
 import de.teamhardcore.pvp.commands.warp.CommandWarp;
 import de.teamhardcore.pvp.commands.world.CommandNear;
+import de.teamhardcore.pvp.commands.world.CommandSpawner;
 import de.teamhardcore.pvp.database.DatabaseManager;
+import de.teamhardcore.pvp.listeners.block.BlockBreak;
+import de.teamhardcore.pvp.listeners.block.BlockPlace;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClick;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClose;
 import de.teamhardcore.pvp.listeners.player.*;
+import de.teamhardcore.pvp.listeners.world.SignChange;
 import de.teamhardcore.pvp.managers.*;
 import de.teamhardcore.pvp.model.clan.shop.upgrades.EnumUpgrade;
 import org.bukkit.plugin.PluginManager;
@@ -50,6 +54,7 @@ public class Main extends JavaPlugin {
     private CombatManager combatManager;
     private UserManager userManager;
     private ClanManager clanManager;
+    private SpawnerManager spawnerManager;
 
     private DatabaseManager databaseManager;
 
@@ -93,6 +98,7 @@ public class Main extends JavaPlugin {
         this.crateManager = new CrateManager(this);
         this.combatManager = new CombatManager(this);
         this.clanManager = new ClanManager(this);
+        this.spawnerManager = new SpawnerManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -100,8 +106,12 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new PlayerQuit(this), this);
         pm.registerEvents(new PlayerDeath(this), this);
         pm.registerEvents(new PlayerInteract(this), this);
+        pm.registerEvents(new PlayerCommandPreprocess(this), this);
         pm.registerEvents(new InventoryClick(this), this);
         pm.registerEvents(new InventoryClose(this), this);
+        pm.registerEvents(new SignChange(this), this);
+        pm.registerEvents(new BlockPlace(this), this);
+        pm.registerEvents(new BlockBreak(this), this);
 
         getCommand("fix").setExecutor(new CommandFix());
         getCommand("stack").setExecutor(new CommandStack());
@@ -130,6 +140,8 @@ public class Main extends JavaPlugin {
         getCommand("msg").setExecutor(new CommandMsg());
         getCommand("trash").setExecutor(new CommandTrash());
         getCommand("clan").setExecutor(new CommandClan());
+        getCommand("fly").setExecutor(new CommandFly());
+        getCommand("spawner").setExecutor(new CommandSpawner());
     }
 
     public FileManager getFileManager() {
@@ -186,6 +198,10 @@ public class Main extends JavaPlugin {
 
     public ClanManager getClanManager() {
         return clanManager;
+    }
+
+    public SpawnerManager getSpawnerManager() {
+        return spawnerManager;
     }
 
     public static Main getInstance() {

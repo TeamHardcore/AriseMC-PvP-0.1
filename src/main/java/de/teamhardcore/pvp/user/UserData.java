@@ -7,6 +7,8 @@
 package de.teamhardcore.pvp.user;
 
 
+import de.teamhardcore.pvp.model.customspawner.AbstractSpawnerType;
+import org.bukkit.entity.EntityType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -19,6 +21,7 @@ public class UserData {
     private final User user;
 
     private Set<UUID> friends;
+    private Set<EntityType> spawnerTypes;
 
     public UserData(User user) {
         this(user, true);
@@ -28,6 +31,7 @@ public class UserData {
         this.user = user;
 
         this.friends = new HashSet<>();
+        this.spawnerTypes = new HashSet<>();
         saveDefaults(async);
         loadData(async);
     }
@@ -63,6 +67,39 @@ public class UserData {
 
     public Set<UUID> getFriends() {
         return friends;
+    }
+
+    private void loadSpawnerTypes(String json) {
+        JSONArray array = new JSONArray(json);
+        for (Object type : array) {
+            EntityType entityType = EntityType.valueOf((String) type);
+            this.spawnerTypes.add(entityType);
+        }
+    }
+
+    private JSONArray saveSpawnerTypes() {
+        JSONArray array = new JSONArray();
+        for (EntityType type : this.spawnerTypes) {
+            array.put(type.name());
+        }
+        return array;
+    }
+
+    public void addSpawnerType(AbstractSpawnerType type) {
+        if (this.spawnerTypes.contains(type.getType())) return;
+
+        this.spawnerTypes.add(type.getType());
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public void removeSpawnerType(AbstractSpawnerType type) {
+        if (!this.spawnerTypes.contains(type.getType())) return;
+        this.spawnerTypes.remove(type.getType());
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public Set<EntityType> getSpawnerTypes() {
+        return spawnerTypes;
     }
 
     private void saveDefaults(boolean async) {

@@ -30,5 +30,10 @@ public class InventoryClose implements Listener {
         if (inventory.getTitle().startsWith("§9§lReporte ")) {
             Main.getInstance().getReportManager().getReportConfirmation().remove(player);
         }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lWähle einen Typ")) {
+            Main.getInstance().getSpawnerManager().getPlayersInSpawnerChoosing().remove(player);
+        }
+
     }
 }

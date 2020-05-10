@@ -9,21 +9,21 @@ package de.teamhardcore.pvp.listeners.inventory;
 
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.inventories.ClanShopInventory;
+import de.teamhardcore.pvp.inventories.SpawnerInventory;
 import de.teamhardcore.pvp.model.Report;
 import de.teamhardcore.pvp.model.clan.Clan;
 import de.teamhardcore.pvp.model.clan.ClanMember;
 import de.teamhardcore.pvp.model.clan.ClanRank;
-import de.teamhardcore.pvp.model.clan.shop.upgrades.AbstractUpgrade;
 import de.teamhardcore.pvp.model.clan.shop.upgrades.EnumUpgrade;
 import de.teamhardcore.pvp.model.clan.shop.upgrades.requirements.AbstractRequirement;
 import de.teamhardcore.pvp.model.clan.shop.upgrades.requirements.RequirementType;
+import de.teamhardcore.pvp.model.customspawner.AbstractSpawnerType;
+import de.teamhardcore.pvp.model.customspawner.CustomSpawner;
 import de.teamhardcore.pvp.user.User;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.Util;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Sound;
+import org.bukkit.*;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -191,6 +191,69 @@ public class InventoryClick implements Listener {
                 offlinePlayer.getPlayer().sendMessage(StringDefaults.CLAN_PREFIX + "§7" + player.getName() + " §ehat erfolgreich ein Upgrade aufgewertet.");
             }
 
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lWähle einen Typ")) {
+            event.setCancelled(true);
+
+            if (itemStack.getType() == Material.STAINED_GLASS_PANE) return;
+
+            Location location = this.plugin.getSpawnerManager().getPlayersInSpawnerChoosing().get(player);
+
+            if (location == null) {
+                player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte versuche es erneut.");
+                player.closeInventory();
+                return;
+            }
+
+            if (location.getBlock() == null || location.getBlock().getType() != Material.MOB_SPAWNER) {
+                player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte versuche es erneut.");
+                player.closeInventory();
+                return;
+            }
+
+            CustomSpawner customSpawner = this.plugin.getSpawnerManager().getCustomSpawner(location);
+
+            if (customSpawner == null || customSpawner.getOwner() != player.getUniqueId() && !player.hasPermission("arisemc.spawner.admin")) {
+                player.sendMessage(StringDefaults.PREFIX + "§cDu kannst nur deine eigenen Spawner ändern.");
+                return;
+            }
+
+            CreatureSpawner spawner = (CreatureSpawner) location.getBlock().getState();
+            AbstractSpawnerType type = this.plugin.getSpawnerManager().getSpawnerType(itemStack.getDurability());
+
+            if (type == null) {
+                player.sendMessage(StringDefaults.PREFIX + "§cDieser Typ existiert nicht.");
+                return;
+            }
+
+            if (type.isPremium()) {
+                boolean hasUnlocked = type.hasUnlocked(this.plugin.getUserManager().getUser(player.getUniqueId()));
+
+                if (!hasUnlocked) {
+                    User user = this.plugin.getUserManager().getUser(player.getUniqueId());
+
+                    if (user.getMoney() < type.getPrice()) {
+                        player.sendMessage(StringDefaults.PREFIX + "§cDu besitzt zu wenig Münzen, um diesen Typ freizuschalten.");
+                        return;
+                    }
+
+                    //todo: unlock type
+                    user.removeMoney(type.getPrice());
+                    player.sendMessage(StringDefaults.PREFIX + "§eDu hast den Typen §7" + type.getType().name() + " §efreigeschaltet.");
+                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
+                    SpawnerInventory.openInventory(player, customSpawner);
+                    return;
+                }
+            }
+
+            customSpawner.setType(type);
+            customSpawner.saveData();
+
+            spawner.setSpawnedType(type.getType());
+            spawner.update();
+            player.sendMessage(StringDefaults.PREFIX + "§eDu hast den Typ erfolgreich zu §7" + type.getType().name() + " §egewechselt.");
+            player.closeInventory();
         }
     }
 }
