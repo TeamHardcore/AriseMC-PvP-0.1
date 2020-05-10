@@ -54,7 +54,6 @@ public class PlayerDeath implements Listener {
             }
         } else {
             player.sendMessage(StringDefaults.PREFIX + "§eDu bist gestorben.");
-
             user.getUserStats().addDeaths(1);
 
             if (this.plugin.getClanManager().hasClan(player.getUniqueId())) {
