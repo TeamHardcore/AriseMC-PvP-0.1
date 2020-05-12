@@ -9,6 +9,7 @@ package de.teamhardcore.pvp.managers;
 
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.Report;
+import de.teamhardcore.pvp.user.User;
 import de.teamhardcore.pvp.utils.ItemBuilder;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import org.apache.commons.lang.Validate;
@@ -82,7 +83,9 @@ public class ReportManager {
                 player.sendMessage(StringDefaults.REPORT_PREFIX + "§eDer Spieler §7" + target.getName() + " §ewurde bestraft.");
                 player.sendMessage(StringDefaults.REPORT_PREFIX + "§eDanke für deine Unterstützung.");
                 player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
-                //todo: add Money
+
+                User user = Main.getInstance().getUserManager().getUser(player.getUniqueId());
+                user.addMoney(5000);
             }
         }
         this.reports.remove(target);

@@ -11,6 +11,7 @@ import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.PlayerScoreboard;
 import de.teamhardcore.pvp.user.User;
 import de.teamhardcore.pvp.utils.StringDefaults;
+import de.teamhardcore.pvp.utils.Util;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -179,7 +180,7 @@ public class ScoreboardManager {
 
                 Team teamMoney = scoreboard.getTeam("Money");
                 Team teamLeague = scoreboard.getTeam("League");
-                teamMoney.setSuffix("§7" + user.getMoney() + "$");
+                teamMoney.setSuffix("§7" + Util.formatNumber(user.getMoney()) + "$");
                 teamLeague.setPrefix("§cUnplatziert §7");
                 teamLeague.setSuffix("[§60§7] ");
                 break;

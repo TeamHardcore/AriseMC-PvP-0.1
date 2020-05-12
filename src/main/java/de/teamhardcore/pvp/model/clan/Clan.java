@@ -79,6 +79,20 @@ public class Clan extends TimedDatabaseUpdate {
         return name;
     }
 
+    public String getNameColor() {
+        if (this.name.equals("Team"))
+            return "§4§l";
+
+        int level = getLevel();
+        if (level >= 4)
+            return "§c";
+        if (level >= 2)
+            return "§8";
+        if (level >= 1)
+            return "§d";
+        return "§b";
+    }
+
     public Location getBase() {
         return base;
     }

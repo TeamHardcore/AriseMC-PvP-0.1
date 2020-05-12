@@ -7,7 +7,12 @@
 package de.teamhardcore.pvp.user;
 
 
+import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.customspawner.AbstractSpawnerType;
+import de.teamhardcore.pvp.model.extras.EnumChatColor;
+import de.teamhardcore.pvp.model.extras.EnumCommand;
+import de.teamhardcore.pvp.model.extras.EnumPerk;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.EntityType;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,6 +27,12 @@ public class UserData {
 
     private Set<UUID> friends;
     private Set<EntityType> spawnerTypes;
+    private Set<EnumPerk> unlockedPerks;
+    private Set<EnumPerk> activatedPerks;
+    private Set<EnumCommand> unlockedCommands;
+    private Set<EnumChatColor> unlockedChatColors;
+
+    private EnumChatColor activeColor;
 
     public UserData(User user) {
         this(user, true);
@@ -32,6 +43,12 @@ public class UserData {
 
         this.friends = new HashSet<>();
         this.spawnerTypes = new HashSet<>();
+        this.unlockedPerks = new HashSet<>();
+        this.activatedPerks = new HashSet<>();
+        this.unlockedCommands = new HashSet<>();
+        this.unlockedChatColors = new HashSet<>();
+        this.activeColor = null;
+
         saveDefaults(async);
         loadData(async);
     }
@@ -50,7 +67,7 @@ public class UserData {
         saveData(this.user.getPlayer() != null);
     }
 
-    private void loadFriends(String json) {
+    private void loadFriendData(String json) {
         JSONArray mainArray = new JSONArray(json);
         for (Object friend : mainArray) {
             UUID uuid = UUID.fromString((String) friend);
@@ -58,7 +75,7 @@ public class UserData {
         }
     }
 
-    private JSONArray saveFriends() {
+    private JSONArray saveFriendData() {
         JSONArray array = new JSONArray();
         for (UUID friend : this.friends)
             array.put(friend.toString());
@@ -100,6 +117,199 @@ public class UserData {
 
     public Set<EntityType> getSpawnerTypes() {
         return spawnerTypes;
+    }
+
+    public void addActivatedPerk(EnumPerk perk) {
+        if (this.activatedPerks.contains(perk)) return;
+
+        this.activatedPerks.add(perk);
+
+        if (this.user.getPlayer() != null) {
+            if (perk == EnumPerk.NO_HUNGER)
+                this.user.getPlayer().setFoodLevel(30);
+
+            if (perk.getType() != null)
+                Main.getInstance().getManager().addPerkEffect(this.user.getPlayer(), perk);
+        }
+
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public void removeActivatedPerk(EnumPerk perk) {
+        if (!this.activatedPerks.contains(perk)) return;
+        this.activatedPerks.remove(perk);
+
+        if (this.user.getPlayer() != null) {
+            if (perk.getType() != null) {
+                if (this.user.getPlayer().hasPotionEffect(perk.getType()))
+                    this.user.getPlayer().removePotionEffect(perk.getType());
+                Main.getInstance().getManager().removePerkEffect(this.user.getPlayer(), perk);
+            }
+        }
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public Set<EnumPerk> getActivatedPerks() {
+        return activatedPerks;
+    }
+
+    public void addPerk(EnumPerk perk) {
+        if (this.unlockedPerks.contains(perk)) return;
+        this.unlockedPerks.add(perk);
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public void removePerk(EnumPerk perk) {
+        if (!this.unlockedPerks.contains(perk)) return;
+        this.unlockedPerks.remove(perk);
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public Set<EnumPerk> getUnlockedPerks() {
+        return unlockedPerks;
+    }
+
+    private JSONObject savePerkData() {
+        JSONObject object = new JSONObject();
+
+        if (!this.unlockedPerks.isEmpty()) {
+            JSONArray unlockedArray = new JSONArray();
+            for (EnumPerk unlocked : this.unlockedPerks)
+                unlockedArray.put(unlocked.name());
+            object.put("unlocked", unlockedArray);
+        }
+
+        if (!this.activatedPerks.isEmpty()) {
+            JSONArray activatedArray = new JSONArray();
+            for (EnumPerk unlocked : this.activatedPerks)
+                activatedArray.put(unlocked.name());
+            object.put("activated", activatedArray);
+        }
+
+        return object;
+    }
+
+    private void loadPerkData(String json) {
+        JSONObject object = new JSONObject(json);
+
+        if (object.has("unlocked")) {
+            JSONArray array = object.getJSONArray("unlocked");
+            for (Object unlockedObj : array) {
+                EnumPerk perk = EnumPerk.getPerkByName((String) unlockedObj);
+                if (perk == null) continue;
+                this.unlockedPerks.add(perk);
+            }
+        }
+
+        if (object.has("activated")) {
+            JSONArray array = object.getJSONArray("activated");
+            for (Object activatedObj : array) {
+                EnumPerk perk = EnumPerk.getPerkByName((String) activatedObj);
+                if (perk == null) continue;
+                this.activatedPerks.add(perk);
+            }
+        }
+    }
+
+    public void addExtraCommand(EnumCommand command) {
+        if (this.unlockedCommands.contains(command)) return;
+        this.unlockedCommands.add(command);
+        saveData(this.user.getPlayer() != null);
+    }
+
+    private void loadCommandData(String json) {
+        JSONObject object = new JSONObject(json);
+
+        if (object.has("commands")) {
+            JSONArray array = object.getJSONArray("commands");
+
+            for (Object commandObj : array) {
+                EnumCommand command = EnumCommand.getCommandByName((String) commandObj);
+
+                if (command == null) continue;
+                this.unlockedCommands.add(command);
+            }
+        }
+    }
+
+    private JSONObject saveCommandData() {
+        JSONObject object = new JSONObject();
+
+        if (!this.unlockedCommands.isEmpty()) {
+            JSONArray array = new JSONArray();
+            for (EnumCommand command : this.unlockedCommands) {
+                array.put(command.name());
+            }
+            object.put("commands", array);
+        }
+        return object;
+    }
+
+    public Set<EnumCommand> getUnlockedCommands() {
+        return unlockedCommands;
+    }
+
+    public void addChatColor(EnumChatColor chatColor) {
+        if (this.unlockedChatColors.contains(chatColor)) return;
+        this.unlockedChatColors.add(chatColor);
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public void removeChatColor(EnumChatColor chatColor) {
+        if (!this.unlockedChatColors.contains(chatColor)) return;
+
+        this.unlockedChatColors.remove(chatColor);
+        if (this.activeColor.equals(chatColor))
+            this.activeColor = null;
+
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public void setActiveColor(EnumChatColor chatColor) {
+        if (chatColor != null && !this.unlockedChatColors.contains(chatColor)) return;
+        if (this.activeColor == chatColor) return;
+        this.activeColor = chatColor;
+        saveData(this.user.getPlayer() != null);
+    }
+
+    private JSONObject saveChatColorData() {
+        JSONObject object = new JSONObject();
+
+        if (!this.unlockedChatColors.isEmpty()) {
+            JSONArray array = new JSONArray();
+            for (EnumChatColor color : this.unlockedChatColors)
+                array.put(color.name());
+            object.put("owned", array);
+
+            if (this.activeColor != null) {
+                object.put("active", this.activeColor.name());
+            }
+        }
+        return object;
+    }
+
+    private void loadChatColorData(String json) {
+        JSONObject object = new JSONObject(json);
+
+        if (object.has("owned")) {
+            JSONArray array = object.getJSONArray("owned");
+            for (Object color : array) {
+                EnumChatColor chatColor = EnumChatColor.getColorByName((String) color);
+                this.unlockedChatColors.add(chatColor);
+            }
+        }
+
+        if (object.has("active")) {
+            this.activeColor = EnumChatColor.getColorByName(object.getString("active"));
+        }
+    }
+
+    public Set<EnumChatColor> getUnlockedChatColors() {
+        return unlockedChatColors;
+    }
+
+    public EnumChatColor getActiveColor() {
+        return activeColor;
     }
 
     private void saveDefaults(boolean async) {

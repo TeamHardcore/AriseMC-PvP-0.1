@@ -9,8 +9,10 @@ package de.teamhardcore.pvp.listeners.inventory;
 
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.inventories.ClanShopInventory;
+import de.teamhardcore.pvp.inventories.ExtrasInventory;
 import de.teamhardcore.pvp.inventories.SpawnerInventory;
 import de.teamhardcore.pvp.model.Report;
+import de.teamhardcore.pvp.model.Transaction;
 import de.teamhardcore.pvp.model.clan.Clan;
 import de.teamhardcore.pvp.model.clan.ClanMember;
 import de.teamhardcore.pvp.model.clan.ClanRank;
@@ -19,9 +21,14 @@ import de.teamhardcore.pvp.model.clan.shop.upgrades.requirements.AbstractRequire
 import de.teamhardcore.pvp.model.clan.shop.upgrades.requirements.RequirementType;
 import de.teamhardcore.pvp.model.customspawner.AbstractSpawnerType;
 import de.teamhardcore.pvp.model.customspawner.CustomSpawner;
+import de.teamhardcore.pvp.model.extras.EnumChatColor;
+import de.teamhardcore.pvp.model.extras.EnumCommand;
+import de.teamhardcore.pvp.model.extras.EnumPerk;
 import de.teamhardcore.pvp.user.User;
+import de.teamhardcore.pvp.user.UserData;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.Util;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.Player;
@@ -35,6 +42,11 @@ public class InventoryClick implements Listener {
 
     private final Main plugin;
 
+    private Integer[] perkSlots = {11, 12, 13, 14, 15, 21, 22, 23};
+    private Integer[] commandSlots = {11, 12, 13, 14, 15, 21, 22, 23};
+    private Integer[] chatColorSlots = {11, 12, 13, 14, 15, 21, 22, 23};
+
+
     public InventoryClick(Main plugin) {
         this.plugin = plugin;
     }
@@ -45,7 +57,11 @@ public class InventoryClick implements Listener {
         Inventory inventory = event.getInventory();
         int slot = event.getRawSlot();
         ItemStack itemStack = event.getCurrentItem();
+
         if (inventory == null || itemStack == null || itemStack.getType() == Material.AIR) return;
+
+        User user = this.plugin.getUserManager().getUser(player.getUniqueId());
+        UserData data = user.getUserData();
 
         if (inventory.getTitle().startsWith("§9§lReporte ")) {
             event.setCancelled(true);
@@ -93,7 +109,6 @@ public class InventoryClick implements Listener {
         if (inventory.getTitle().equalsIgnoreCase("§c§lClan-Shop")) {
             event.setCancelled(true);
 
-            User user = this.plugin.getUserManager().getUser(player.getUniqueId());
             Clan clan = this.plugin.getClanManager().getClan(player.getUniqueId());
 
             if (clan == null) {
@@ -231,7 +246,6 @@ public class InventoryClick implements Listener {
                 boolean hasUnlocked = type.hasUnlocked(this.plugin.getUserManager().getUser(player.getUniqueId()));
 
                 if (!hasUnlocked) {
-                    User user = this.plugin.getUserManager().getUser(player.getUniqueId());
 
                     if (user.getMoney() < type.getPrice()) {
                         player.sendMessage(StringDefaults.PREFIX + "§cDu besitzt zu wenig Münzen, um diesen Typ freizuschalten.");
@@ -254,6 +268,167 @@ public class InventoryClick implements Listener {
             spawner.update();
             player.sendMessage(StringDefaults.PREFIX + "§eDu hast den Typ erfolgreich zu §7" + type.getType().name() + " §egewechselt.");
             player.closeInventory();
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lExtras")) {
+            event.setCancelled(true);
+
+            if (slot == 11) {
+                ExtrasInventory.openInventory(player, 2);
+                player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+            }
+
+            if (slot == 13) {
+                ExtrasInventory.openInventory(player, 4);
+                player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+            }
+
+            if (slot == 15) {
+                ExtrasInventory.openInventory(player, 3);
+                player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+            }
+
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lExtras - Befehle")) {
+            event.setCancelled(true);
+
+            if (slot == 27) {
+                ExtrasInventory.openInventory(player, 1);
+                player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
+                return;
+            }
+
+            for (int i = 0; i < this.commandSlots.length; i++) {
+                if (slot == this.commandSlots[i]) {
+                    EnumCommand command = EnumCommand.values()[i];
+                    if (command == null) continue;
+
+                    if (data.getUnlockedCommands().contains(command))
+                        return;
+
+                    Transaction transaction = new Transaction(player, "Extra Befehl - " + ChatColor.stripColor(command.getDisplayName()), command.getPrice()) {
+                        @Override
+                        public boolean onBuy() {
+                            data.addExtraCommand(command);
+                            player.closeInventory();
+                            ExtrasInventory.openInventory(player, 3);
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onCancel() {
+                            player.closeInventory();
+                            Bukkit.getScheduler().runTaskLater(plugin, () -> ExtrasInventory.openInventory(player, 3), 1L);
+                            return true;
+                        }
+                    };
+                    this.plugin.getTransactionManager().createTransaction(player, transaction);
+                }
+            }
+
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lExtras - Chat Farben")) {
+            event.setCancelled(true);
+
+            if (slot == 27) {
+                ExtrasInventory.openInventory(player, 1);
+                player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
+                return;
+            }
+
+            if (slot == 35 && itemStack.getType().equals(Material.BOWL)) {
+                if (data.getActiveColor() != null) {
+                    data.setActiveColor(null);
+                    ExtrasInventory.openInventory(player, 4);
+                    player.playSound(player.getLocation(), Sound.SPLASH, 1.0F, 1.0F);
+                }
+            }
+
+            for (int i = 0; i < this.chatColorSlots.length; i++) {
+                if (slot == this.chatColorSlots[i]) {
+                    EnumChatColor chatColor = EnumChatColor.values()[i];
+                    if (chatColor == null) continue;
+
+                    if (data.getUnlockedChatColors().contains(chatColor)) {
+                        if (data.getActiveColor() != chatColor) {
+                            data.setActiveColor(chatColor);
+                            ExtrasInventory.openInventory(player, 4);
+                            player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+                        }
+                        return;
+                    }
+
+                    Transaction transaction = new Transaction(player, "ChatColor - " + ChatColor.stripColor(chatColor.getName()), chatColor.getPrice()) {
+                        @Override
+                        public boolean onBuy() {
+                            data.addChatColor(chatColor);
+                            data.setActiveColor(chatColor);
+                            player.closeInventory();
+                            ExtrasInventory.openInventory(player, 4);
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onCancel() {
+                            player.closeInventory();
+                            Bukkit.getScheduler().runTaskLater(plugin, () -> ExtrasInventory.openInventory(player, 4), 1L);
+                            return true;
+                        }
+                    };
+                    this.plugin.getTransactionManager().createTransaction(player, transaction);
+                }
+            }
+
+        }
+        if (inventory.getTitle().equalsIgnoreCase("§c§lExtras - Perks")) {
+            event.setCancelled(true);
+
+            if (slot == 27) {
+                ExtrasInventory.openInventory(player, 1);
+                player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
+                return;
+            }
+
+            for (int i = 0; i < this.perkSlots.length; i++) {
+                if (slot == this.perkSlots[i]) {
+                    EnumPerk perk = EnumPerk.values()[i];
+                    if (perk == null) continue;
+
+                    if (data.getUnlockedPerks().contains(perk)) {
+                        if (data.getActivatedPerks().contains(perk))
+                            data.removeActivatedPerk(perk);
+                        else data.addActivatedPerk(perk);
+
+                        ExtrasInventory.openInventory(player, 2);
+                        player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+                        return;
+                    }
+
+
+                    Transaction transaction = new Transaction(player, "Perk - " + ChatColor.stripColor(perk.getName()), perk.getPrize()) {
+                        @Override
+                        public boolean onBuy() {
+                            data.addPerk(perk);
+                            data.addActivatedPerk(perk);
+
+                            player.closeInventory();
+                            ExtrasInventory.openInventory(player, 2);
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onCancel() {
+                            player.closeInventory();
+                            Bukkit.getScheduler().runTaskLater(plugin, () -> ExtrasInventory.openInventory(player, 2), 1L);
+                            return true;
+                        }
+                    };
+                    this.plugin.getTransactionManager().createTransaction(player, transaction);
+                }
+            }
+
         }
     }
 }

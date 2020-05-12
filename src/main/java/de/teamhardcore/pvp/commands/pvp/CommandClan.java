@@ -28,10 +28,6 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.*;
 
-/**
- *
- */
-
 public class CommandClan implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {

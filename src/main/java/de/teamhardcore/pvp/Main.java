@@ -55,6 +55,8 @@ public class Main extends JavaPlugin {
     private UserManager userManager;
     private ClanManager clanManager;
     private SpawnerManager spawnerManager;
+    private TransactionManager transactionManager;
+
 
     private DatabaseManager databaseManager;
 
@@ -99,6 +101,7 @@ public class Main extends JavaPlugin {
         this.combatManager = new CombatManager(this);
         this.clanManager = new ClanManager(this);
         this.spawnerManager = new SpawnerManager(this);
+        this.transactionManager = new TransactionManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -142,6 +145,7 @@ public class Main extends JavaPlugin {
         getCommand("clan").setExecutor(new CommandClan());
         getCommand("fly").setExecutor(new CommandFly());
         getCommand("spawner").setExecutor(new CommandSpawner());
+        getCommand("extras").setExecutor(new CommandExtras());
     }
 
     public FileManager getFileManager() {
@@ -202,6 +206,10 @@ public class Main extends JavaPlugin {
 
     public SpawnerManager getSpawnerManager() {
         return spawnerManager;
+    }
+
+    public TransactionManager getTransactionManager() {
+        return transactionManager;
     }
 
     public static Main getInstance() {
