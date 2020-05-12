@@ -30,11 +30,12 @@ public class League {
         }
 
         for (Map.Entry<String, Integer> entry : this.getInformation().getLevels().entrySet()) {
-            if (trophies < entry.getValue())
+            if (trophies >= entry.getValue()) {
                 level = entry.getKey();
+            }
         }
 
-        return name + level;
+        return name + " " + level;
     }
 
 }

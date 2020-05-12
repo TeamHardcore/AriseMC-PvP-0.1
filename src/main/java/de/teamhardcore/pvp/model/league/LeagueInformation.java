@@ -9,7 +9,7 @@ package de.teamhardcore.pvp.model.league;
 
 import java.util.Map;
 
-public abstract class LeagueInformation {
+public class LeagueInformation {
 
     private Map<String, Integer> levels;
     private String name;
@@ -21,16 +21,13 @@ public abstract class LeagueInformation {
         this.levels = levels;
     }
 
-
     public String getDisplayName() {
         return this.name;
     }
 
-
     public int getMinTrophies() {
         return this.minTrophies;
     }
-
 
     public Map<String, Integer> getLevels() {
         return levels;

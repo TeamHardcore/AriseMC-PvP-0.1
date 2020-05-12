@@ -6,6 +6,8 @@
 
 package de.teamhardcore.pvp.model.crates.actions;
 
+import de.teamhardcore.pvp.Main;
+import de.teamhardcore.pvp.user.User;
 import org.bukkit.entity.Player;
 
 public class CustomMoneyAction implements CrateItemAction {
@@ -18,6 +20,7 @@ public class CustomMoneyAction implements CrateItemAction {
 
     @Override
     public void doAction(Player player) {
-        //todo: ADD MONEY TO USER
+        User user = Main.getInstance().getUserManager().getUser(player.getUniqueId());
+        user.addMoney(this.amount);
     }
 }

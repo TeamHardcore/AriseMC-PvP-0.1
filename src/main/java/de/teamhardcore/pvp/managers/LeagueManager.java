@@ -8,8 +8,7 @@ package de.teamhardcore.pvp.managers;
 
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.league.League;
-import de.teamhardcore.pvp.model.league.informations.BronzeLeagueInformation;
-import de.teamhardcore.pvp.model.league.informations.UnrankedLeagueInformation;
+import de.teamhardcore.pvp.model.league.LeagueInformation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,11 +18,11 @@ public class LeagueManager {
     private final Main plugin;
 
     private final ArrayList<League> leagues = new ArrayList<League>() {{
-        add(new League(new UnrankedLeagueInformation("Unranked ", 0, new HashMap<>())));
-        add(new League(new BronzeLeagueInformation("Bronze ", 500, new HashMap<String, Integer>() {{
-            put("1", 550);
-            put("2", 600);
-            put("3", 650);
+        add(new League(new LeagueInformation("Unranked ", 0, new HashMap<>())));
+        add(new League(new LeagueInformation("Bronze ", 500, new HashMap<String, Integer>() {{
+            put("III", 550);
+            put("II", 600);
+            put("I", 650);
         }})));
     }};
 
@@ -31,7 +30,7 @@ public class LeagueManager {
         this.plugin = plugin;
     }
 
-    public League getLeagueByTrophies(int trophies) {
+    public League getLeague(int trophies) {
         League chosen = null;
 
         for (League league : this.leagues) {

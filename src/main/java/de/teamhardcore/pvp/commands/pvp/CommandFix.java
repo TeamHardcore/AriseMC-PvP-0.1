@@ -24,8 +24,6 @@ public class CommandFix implements CommandExecutor {
 
         Player player = (Player) cs;
 
-        //todo: nur wenn gevotet wurde
-
         int repaired = 0;
 
         for (ItemStack contents : player.getInventory().getContents()) {

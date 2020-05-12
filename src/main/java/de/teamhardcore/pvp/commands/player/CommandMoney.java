@@ -11,6 +11,7 @@ import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.user.User;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.UUIDFetcher;
+import de.teamhardcore.pvp.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -37,9 +38,8 @@ public class CommandMoney implements CommandExecutor {
             }
 
             if (args.length == 0) {
-                //TODO: GET ACTUALLY COINS
-
-                player.sendMessage(StringDefaults.PREFIX + "§eDeine Münzen§8: §7" + new Random().nextInt(10000) + "$");
+                User user = Main.getInstance().getUserManager().getUser(player.getUniqueId());
+                player.sendMessage(StringDefaults.PREFIX + "§eDeine Münzen§8: §7" + Util.formatNumber(user.getMoney()) + "$");
                 return true;
             }
 

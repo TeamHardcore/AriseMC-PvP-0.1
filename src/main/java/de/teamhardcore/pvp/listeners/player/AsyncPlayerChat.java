@@ -10,6 +10,9 @@ package de.teamhardcore.pvp.listeners.player;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.GlobalmuteTier;
 import de.teamhardcore.pvp.model.Support;
+import de.teamhardcore.pvp.model.clan.Clan;
+import de.teamhardcore.pvp.model.clan.ClanMember;
+import de.teamhardcore.pvp.user.UserData;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -74,6 +77,32 @@ public class AsyncPlayerChat implements Listener {
         }
 
 
+        ClanMember member = this.plugin.getClanManager().getMember(player.getUniqueId());
+        String prefix = "§4§lOWNER"; // get Prefix by permissions system
+
+        if (member == null) {
+            event.setFormat(" " + prefix + " §7§l• §r%1$s§8: " + getChatColor(player) + "%2$s");
+        } else {
+            event.setFormat(" " + prefix + " §7§l• " + member.getClan().getNameColor() + member.getClan().getName() + "§7×§r%1$s§8: " + getChatColor(player) + "%2$s");
+        }
     }
+
+    private String getChatColor(Player player) {
+        if (player.hasPermission("arisemc.admin"))
+            return "§c§o";
+        if (player.hasPermission("arisemc.dev"))
+            return "§b§o";
+        if (player.hasPermission("arisemc.mod"))
+            return "§5§o";
+        if (player.hasPermission("arisemc.architekt"))
+            return "§8§o";
+        if (player.hasPermission("arisemc.sup"))
+            return "§a§o";
+        if (player.hasPermission("arisemc.staff"))
+            return "§2§o";
+        UserData userData = this.plugin.getUserManager().getUser(player.getUniqueId()).getUserData();
+        return (userData.getActiveColor() == null) ? "§7" : userData.getActiveColor().getChatColor().toString();
+    }
+
 
 }
