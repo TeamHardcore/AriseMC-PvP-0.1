@@ -7,6 +7,9 @@
 
 package de.teamhardcore.pvp;
 
+import de.teamhardcore.pvp.commands.abuse.CommandAbuse;
+import de.teamhardcore.pvp.commands.abuse.CommandBan;
+import de.teamhardcore.pvp.commands.abuse.CommandMute;
 import de.teamhardcore.pvp.commands.chat.CommandBroadcast;
 import de.teamhardcore.pvp.commands.chat.CommandGlobalmute;
 import de.teamhardcore.pvp.commands.chat.CommandMsg;
@@ -56,6 +59,7 @@ public class Main extends JavaPlugin {
     private ClanManager clanManager;
     private SpawnerManager spawnerManager;
     private TransactionManager transactionManager;
+    private AbuseManager abuseManager;
 
 
     private DatabaseManager databaseManager;
@@ -87,6 +91,7 @@ public class Main extends JavaPlugin {
             Bukkit.getServer().shutdown();
             return;
         }*/
+        this.abuseManager = new AbuseManager(this);
 
         this.warpManager = new WarpManager(this);
         this.manager = new Manager(this);
@@ -105,6 +110,7 @@ public class Main extends JavaPlugin {
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
+        pm.registerEvents(new AsyncPlayerPreLogin(), this);
         pm.registerEvents(new PlayerJoin(this), this);
         pm.registerEvents(new PlayerQuit(this), this);
         pm.registerEvents(new PlayerDeath(this), this);
@@ -146,6 +152,8 @@ public class Main extends JavaPlugin {
         getCommand("fly").setExecutor(new CommandFly());
         getCommand("spawner").setExecutor(new CommandSpawner());
         getCommand("extras").setExecutor(new CommandExtras());
+        getCommand("ban").setExecutor(new CommandBan());
+        getCommand("mute").setExecutor(new CommandMute());
     }
 
     public FileManager getFileManager() {
@@ -210,6 +218,10 @@ public class Main extends JavaPlugin {
 
     public TransactionManager getTransactionManager() {
         return transactionManager;
+    }
+
+    public AbuseManager getAbuseManager() {
+        return abuseManager;
     }
 
     public static Main getInstance() {

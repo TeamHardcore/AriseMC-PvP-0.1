@@ -32,6 +32,8 @@ public class UserData {
     private Set<EnumCommand> unlockedCommands;
     private Set<EnumChatColor> unlockedChatColors;
 
+    private long mutePoints, banPoints;
+
     private EnumChatColor activeColor;
 
     public UserData(User user) {
@@ -48,6 +50,9 @@ public class UserData {
         this.unlockedCommands = new HashSet<>();
         this.unlockedChatColors = new HashSet<>();
         this.activeColor = null;
+
+        this.mutePoints = 0;
+        this.banPoints = 0;
 
         saveDefaults(async);
         loadData(async);
@@ -310,6 +315,24 @@ public class UserData {
 
     public EnumChatColor getActiveColor() {
         return activeColor;
+    }
+
+    public long getBanPoints() {
+        return banPoints;
+    }
+
+    public void setBanPoints(long banPoints) {
+        this.banPoints = banPoints;
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public long getMutePoints() {
+        return mutePoints;
+    }
+
+    public void setMutePoints(long mutePoints) {
+        this.mutePoints = mutePoints;
+        saveData(this.user.getPlayer() != null);
     }
 
     private void saveDefaults(boolean async) {
