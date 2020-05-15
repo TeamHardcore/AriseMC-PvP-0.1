@@ -10,6 +10,8 @@ package de.teamhardcore.pvp.listeners.player;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.GlobalmuteTier;
 import de.teamhardcore.pvp.model.Support;
+import de.teamhardcore.pvp.model.abuse.Abuse;
+import de.teamhardcore.pvp.model.abuse.AbuseType;
 import de.teamhardcore.pvp.model.clan.Clan;
 import de.teamhardcore.pvp.model.clan.ClanMember;
 import de.teamhardcore.pvp.user.UserData;
@@ -18,6 +20,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+
+import java.util.List;
 
 public class AsyncPlayerChat implements Listener {
 
@@ -36,6 +40,21 @@ public class AsyncPlayerChat implements Listener {
         if (message.contains("̇") || message.equalsIgnoreCase("")) {
             event.setCancelled(true);
             return;
+        }
+
+        List<Abuse> abuses = this.plugin.getAbuseManager().getAbuses(player.getUniqueId());
+        if (abuses != null) {
+            for (Abuse abuse : abuses) {
+                if (!abuse.getType().equals(AbuseType.MUTE)) continue;
+                if (abuse.isUnbanned()) continue;
+
+                long diff = (abuse.getCreate() + abuse.getEnd()) - System.currentTimeMillis();
+
+                if (diff > 0L || abuse.getEnd() == -1) {
+                    event.setCancelled(true);
+                    player.sendMessage(StringDefaults.PREFIX + "§cDu bist noch gemutet.");
+                }
+            }
         }
 
         if (this.plugin.getChatManager().getGlobalmuteTier() != GlobalmuteTier.NONE) {

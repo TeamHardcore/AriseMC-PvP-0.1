@@ -24,6 +24,7 @@ public class TimeUtil {
         long minutes = 0L;
         long seconds = 0L;
         boolean found = false;
+
         while (matcher.find()) {
             if (matcher.group() == null || matcher.group().isEmpty()) continue;
             for (int i = 0; i < matcher.groupCount(); ++i) {
@@ -89,7 +90,7 @@ public class TimeUtil {
         if (seconds >= 86400L) {
             long days = seconds / 86400L;
             msg = msg + days + (days == 1L ? " Tag " : " Tage ");
-            seconds %= 86400L;
+            return msg;
         }
 
         if (seconds >= 3600L) {
@@ -108,8 +109,7 @@ public class TimeUtil {
             msg = msg + seconds + (seconds == 1L ? " Sekunde" : " Sekunden");
             return msg;
         }
-        msg = "0 Sekunden";
+        msg = msg + "0 Sekunden";
         return msg;
     }
-
 }
