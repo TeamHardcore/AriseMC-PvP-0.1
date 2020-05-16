@@ -33,7 +33,7 @@ public class PlayerInteract implements Listener {
         if (itemStack == null || itemStack.getType() == Material.AIR) return;
         if (event.getClickedBlock() == null || event.getClickedBlock().getType() == Material.AIR) return;
 
-        if (itemStack.getType().equals(Material.CHEST) && itemStack.hasItemMeta() && itemStack.getItemMeta().hasDisplayName() && itemStack.getItemMeta().getDisplayName().equals("§a§lTest Crate")) {
+        if (itemStack.getType().equals(Material.SKULL_ITEM) && itemStack.hasItemMeta() && itemStack.getItemMeta().hasDisplayName() && itemStack.getItemMeta().getDisplayName().equals("§a§lTest Crate")) {
             event.setCancelled(true);
 
             AbstractCrate crate = this.plugin.getCrateManager().getCrate("Test");

@@ -17,9 +17,7 @@ import org.bukkit.entity.EntityType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class UserData {
 
@@ -31,6 +29,9 @@ public class UserData {
     private Set<EnumPerk> activatedPerks;
     private Set<EnumCommand> unlockedCommands;
     private Set<EnumChatColor> unlockedChatColors;
+    private Set<String> claimedUniqueKits;
+
+    private Map<String, Long> kitCooldowns;
 
     private long mutePoints, banPoints;
 
@@ -49,6 +50,10 @@ public class UserData {
         this.activatedPerks = new HashSet<>();
         this.unlockedCommands = new HashSet<>();
         this.unlockedChatColors = new HashSet<>();
+        this.claimedUniqueKits = new HashSet<>();
+
+        this.kitCooldowns = new HashMap<>();
+
         this.activeColor = null;
 
         this.mutePoints = 0;
@@ -333,6 +338,43 @@ public class UserData {
     public void setMutePoints(long mutePoints) {
         this.mutePoints = mutePoints;
         saveData(this.user.getPlayer() != null);
+    }
+
+    public Set<String> getClaimedUniqueKits() {
+        return claimedUniqueKits;
+    }
+
+    public void addClaimedUniqueKit(String name) {
+        if (this.claimedUniqueKits.contains(name))
+            return;
+        this.claimedUniqueKits.add(name);
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public void removeClaimedUniqueKit(String name) {
+        if (!this.claimedUniqueKits.contains(name)) return;
+        this.claimedUniqueKits.remove(name);
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public Map<String, Long> getKitCooldowns() {
+        return kitCooldowns;
+    }
+
+    public void addKitCooldown(String name, long cooldown) {
+        this.kitCooldowns.put(name, cooldown);
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public void removeKitCooldown(String name) {
+        if (!this.kitCooldowns.containsKey(name)) return;
+        this.kitCooldowns.remove(name);
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public boolean hasKitCooldown(String name) {
+        if (!this.kitCooldowns.containsKey(name)) return false;
+        return true;
     }
 
     private void saveDefaults(boolean async) {
