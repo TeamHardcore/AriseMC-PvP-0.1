@@ -136,7 +136,6 @@ public class CommandBan implements CommandExecutor {
             return true;
         }
 
-
         return true;
     }
 

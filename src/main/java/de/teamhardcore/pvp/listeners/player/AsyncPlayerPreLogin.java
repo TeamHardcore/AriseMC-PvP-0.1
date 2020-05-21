@@ -9,12 +9,10 @@ package de.teamhardcore.pvp.listeners.player;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.abuse.Abuse;
 import de.teamhardcore.pvp.model.abuse.AbuseType;
-import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.TimeUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent;
 
 import java.util.List;
@@ -38,15 +36,14 @@ public class AsyncPlayerPreLogin implements Listener {
                     return;
                 }
 
-                boolean temporallyBan = abuse.getEnd() == -1;
-                if (temporallyBan)
+                boolean permanentBan = abuse.getEnd() == -1;
+                if (permanentBan)
                     event.setKickMessage("§cDu bist permanent gesperrt. \n§cGrund§8: §7" + abuse.getReason());
                 else
                     event.setKickMessage("§cDu bist noch für §7" + TimeUtil.timeToString(diff) + " §cgesperrt. \n§cGrund§8: §7" + abuse.getReason());
                 event.setResult(PlayerPreLoginEvent.Result.KICK_OTHER);
             }
         }
-
     }
 
 }
