@@ -62,9 +62,10 @@ public class Kit {
             else player.getInventory().addItem(itemStack);
     }
 
-    public void giveKit(Player player) {
+    public boolean giveKit(Player player) {
         player.sendMessage(StringDefaults.PREFIX + "§eDu hast das Kit §7" + this.name + " §eerfolgreich abgeholt.");
         giveItems(player);
+        return true;
     }
 
 }

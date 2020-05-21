@@ -24,6 +24,7 @@ import de.teamhardcore.pvp.model.customspawner.CustomSpawner;
 import de.teamhardcore.pvp.model.extras.EnumChatColor;
 import de.teamhardcore.pvp.model.extras.EnumCommand;
 import de.teamhardcore.pvp.model.extras.EnumPerk;
+import de.teamhardcore.pvp.model.kits.Kit;
 import de.teamhardcore.pvp.user.User;
 import de.teamhardcore.pvp.user.UserData;
 import de.teamhardcore.pvp.utils.StringDefaults;
@@ -382,6 +383,7 @@ public class InventoryClick implements Listener {
             }
 
         }
+
         if (inventory.getTitle().equalsIgnoreCase("§c§lExtras - Perks")) {
             event.setCancelled(true);
 
@@ -430,5 +432,266 @@ public class InventoryClick implements Listener {
             }
 
         }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lKit-Vorschau")) {
+            event.setCancelled(true);
+
+            if (slot == inventory.getSize() - 9) {
+                this.plugin.getKitManager().openKitInventory(player, this.plugin.getKitManager().getPreviewCache().get(player));
+                player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
+            }
+
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lKits")) {
+            event.setCancelled(true);
+
+            if (slot == 12) {
+                Main.getInstance().getKitManager().openKitInventory(player, 2);
+                player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+            }
+
+            if (slot == 14) {
+                Main.getInstance().getKitManager().openKitInventory(player, 3);
+                player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+            }
+
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lKits - Rang")) {
+            event.setCancelled(true);
+
+            switch (slot) {
+                case 10:
+                    if (event.isLeftClick()) {
+                        Kit kit = this.plugin.getKitManager().getKit("member");
+                        if (kit == null) {
+                            player.sendMessage(StringDefaults.PREFIX + "§cDieses Kit existiert nicht.");
+                            return;
+                        }
+
+                        boolean success = kit.giveKit(player);
+                        if (success)
+                            event.getView().close();
+                    }
+
+                    if (event.isRightClick()) {
+                        this.plugin.getKitManager().openKitPreview(player, "member");
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                    }
+                    break;
+
+                case 12:
+                    if (event.isLeftClick()) {
+                        Kit kit = this.plugin.getKitManager().getKit("vip");
+                        if (kit == null) {
+                            player.sendMessage(StringDefaults.PREFIX + "§cDieses Kit existiert nicht.");
+                            return;
+                        }
+
+                        boolean success = kit.giveKit(player);
+                        if (success)
+                            event.getView().close();
+                    }
+
+                    if (event.isRightClick()) {
+                        this.plugin.getKitManager().openKitPreview(player, "vip");
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                    }
+                    break;
+
+                case 13:
+                    if (event.isLeftClick()) {
+                        Kit kit = this.plugin.getKitManager().getKit("pro");
+                        if (kit == null) {
+                            player.sendMessage(StringDefaults.PREFIX + "§cDieses Kit existiert nicht.");
+                            return;
+                        }
+
+                        boolean success = kit.giveKit(player);
+                        if (success)
+                            event.getView().close();
+                    }
+
+                    if (event.isRightClick()) {
+                        this.plugin.getKitManager().openKitPreview(player, "pro");
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                    }
+                    break;
+
+                case 14:
+                    if (event.isLeftClick()) {
+
+                        Kit kit = this.plugin.getKitManager().getKit("elite");
+                        if (kit == null) {
+                            player.sendMessage(StringDefaults.PREFIX + "§cDieses Kit existiert nicht.");
+                            return;
+                        }
+
+                        boolean success = kit.giveKit(player);
+                        if (success)
+                            event.getView().close();
+                    }
+
+                    if (event.isRightClick()) {
+                        this.plugin.getKitManager().openKitPreview(player, "elite");
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                    }
+                    break;
+
+                case 15:
+                    if (event.isLeftClick()) {
+                        Kit kit = this.plugin.getKitManager().getKit("divine");
+                        if (kit == null) {
+                            player.sendMessage(StringDefaults.PREFIX + "§cDieses Kit existiert nicht.");
+                            return;
+                        }
+
+                        boolean success = kit.giveKit(player);
+                        if (success)
+                            event.getView().close();
+                    }
+
+                    if (event.isRightClick()) {
+                        this.plugin.getKitManager().openKitPreview(player, "divine");
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                    }
+                    break;
+
+                case 16:
+                    if (event.isLeftClick()) {
+                        Kit kit = this.plugin.getKitManager().getKit("immortal");
+                        if (kit == null) {
+                            player.sendMessage(StringDefaults.PREFIX + "§cDieses Kit existiert nicht.");
+                            return;
+                        }
+
+                        boolean success = kit.giveKit(player);
+                        if (success)
+                            event.getView().close();
+                    }
+
+                    if (event.isRightClick()) {
+                        this.plugin.getKitManager().openKitPreview(player, "immortal");
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                    }
+                    break;
+
+                case 18:
+                    this.plugin.getKitManager().openKitInventory(player, 1);
+                    player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
+                    break;
+            }
+
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lKits - Einmalig")) {
+            event.setCancelled(true);
+
+            switch (slot) {
+                case 11:
+                    if (event.isLeftClick()) {
+                        Kit kit = this.plugin.getKitManager().getKit("einmaligVip");
+                        if (kit == null) {
+                            player.sendMessage(StringDefaults.PREFIX + "§cDieses Kit existiert nicht.");
+                            return;
+                        }
+
+                        boolean success = kit.giveKit(player);
+                        if (success)
+                            event.getView().close();
+                    }
+
+                    if (event.isRightClick()) {
+                        this.plugin.getKitManager().openKitPreview(player, "einmaligVip");
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                    }
+                    break;
+
+                case 12:
+                    if (event.isLeftClick()) {
+                        Kit kit = this.plugin.getKitManager().getKit("einmaligPro");
+                        if (kit == null) {
+                            player.sendMessage(StringDefaults.PREFIX + "§cDieses Kit existiert nicht.");
+                            return;
+                        }
+
+                        boolean success = kit.giveKit(player);
+                        if (success)
+                            event.getView().close();
+                    }
+
+                    if (event.isRightClick()) {
+                        this.plugin.getKitManager().openKitPreview(player, "einmaligPro");
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                    }
+                    break;
+
+                case 13:
+                    if (event.isLeftClick()) {
+                        Kit kit = this.plugin.getKitManager().getKit("einmaligElite");
+                        if (kit == null) {
+                            player.sendMessage(StringDefaults.PREFIX + "§cDieses Kit existiert nicht.");
+                            return;
+                        }
+
+                        boolean success = kit.giveKit(player);
+                        if (success)
+                            event.getView().close();
+                    }
+
+                    if (event.isRightClick()) {
+                        this.plugin.getKitManager().openKitPreview(player, "einmaligElite");
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                    }
+                    break;
+
+                case 14:
+                    if (event.isLeftClick()) {
+
+                        Kit kit = this.plugin.getKitManager().getKit("einmaligDivine");
+                        if (kit == null) {
+                            player.sendMessage(StringDefaults.PREFIX + "§cDieses Kit existiert nicht.");
+                            return;
+                        }
+
+                        boolean success = kit.giveKit(player);
+                        if (success)
+                            event.getView().close();
+                    }
+
+                    if (event.isRightClick()) {
+                        this.plugin.getKitManager().openKitPreview(player, "einmaligDivine");
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                    }
+                    break;
+
+                case 15:
+                    if (event.isLeftClick()) {
+                        Kit kit = this.plugin.getKitManager().getKit("einmaligImmortal");
+                        if (kit == null) {
+                            player.sendMessage(StringDefaults.PREFIX + "§cDieses Kit existiert nicht.");
+                            return;
+                        }
+
+                        boolean success = kit.giveKit(player);
+                        if (success)
+                            event.getView().close();
+                    }
+
+                    if (event.isRightClick()) {
+                        this.plugin.getKitManager().openKitPreview(player, "einmaligImmortal");
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                    }
+                    break;
+
+                case 18:
+                    this.plugin.getKitManager().openKitInventory(player, 1);
+                    player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
+                    break;
+            }
+
+        }
+
     }
 }

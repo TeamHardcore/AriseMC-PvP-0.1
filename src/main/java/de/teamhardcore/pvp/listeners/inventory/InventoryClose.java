@@ -28,11 +28,19 @@ public class InventoryClose implements Listener {
         Player player = (Player) event.getPlayer();
 
         if (inventory.getTitle().startsWith("§9§lReporte ")) {
-            Main.getInstance().getReportManager().getReportConfirmation().remove(player);
+            this.plugin.getReportManager().getReportConfirmation().remove(player);
         }
 
         if (inventory.getTitle().equalsIgnoreCase("§c§lWähle einen Typ")) {
-            Main.getInstance().getSpawnerManager().getPlayersInSpawnerChoosing().remove(player);
+            this.plugin.getSpawnerManager().getPlayersInSpawnerChoosing().remove(player);
+        }
+
+        if (inventory.getTitle().startsWith("§c§lKits")) {
+            this.plugin.getKitManager().getInventoryCache().remove(player);
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lKit-Vorschau")) {
+            this.plugin.getKitManager().getPreviewCache().remove(player);
         }
 
     }

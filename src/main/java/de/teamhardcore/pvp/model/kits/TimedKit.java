@@ -31,7 +31,7 @@ public class TimedKit extends Kit {
     }
 
     @Override
-    public void giveKit(Player player) {
+    public boolean giveKit(Player player) {
         UserData data = Main.getInstance().getUserManager().getUser(player.getUniqueId()).getUserData();
 
         long diff = data.getKitCooldowns().containsKey(getName()) ? (data.getKitCooldowns().get(getName()) - System.currentTimeMillis()) : -1L;
@@ -39,10 +39,12 @@ public class TimedKit extends Kit {
         if (diff / 1000L > 0L) {
             player.sendMessage(StringDefaults.PREFIX + "§cDas Kit §7" + getName() + " §cist in §7" + TimeUtil.timeToString(diff) + " §cwieder verfübar.");
             player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
-            return;
+            return false;
         }
 
+        player.closeInventory();
         data.addKitCooldown(getName(), this.cooldown + System.currentTimeMillis());
         super.giveKit(player);
+        return true;
     }
 }

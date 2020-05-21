@@ -71,3 +71,5 @@ commands:
   extras:
   ban:
   mute:
+  debug:
+  kit:

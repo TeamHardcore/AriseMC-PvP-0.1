@@ -22,16 +22,17 @@ public class UniqueKit extends Kit {
     }
 
     @Override
-    public void giveKit(Player player) {
+    public boolean giveKit(Player player) {
         UserData userData = Main.getInstance().getUserManager().getUser(player.getUniqueId()).getUserData();
         if (userData.getClaimedUniqueKits().contains(this.getName())) {
             player.sendMessage(StringDefaults.PREFIX + "§cDu hast die einmalige Belohnung bereits abgeholt.");
-            return;
+            return false;
         }
 
         userData.addClaimedUniqueKit(this.getName());
         giveItems(player);
         player.sendMessage(StringDefaults.PREFIX + "§eDu hast die einmalige Belohnung §7" + getName() + " §eabgeholt.");
         player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
+        return true;
     }
 }

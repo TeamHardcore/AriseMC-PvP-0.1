@@ -13,12 +13,10 @@ import de.teamhardcore.pvp.commands.abuse.CommandMute;
 import de.teamhardcore.pvp.commands.chat.CommandBroadcast;
 import de.teamhardcore.pvp.commands.chat.CommandGlobalmute;
 import de.teamhardcore.pvp.commands.chat.CommandMsg;
+import de.teamhardcore.pvp.commands.dev.CommandDebug;
 import de.teamhardcore.pvp.commands.help.CommandReport;
 import de.teamhardcore.pvp.commands.help.CommandSupport;
-import de.teamhardcore.pvp.commands.inventory.CommandBodysee;
-import de.teamhardcore.pvp.commands.inventory.CommandEnderchest;
-import de.teamhardcore.pvp.commands.inventory.CommandTrash;
-import de.teamhardcore.pvp.commands.inventory.CommandWorkbench;
+import de.teamhardcore.pvp.commands.inventory.*;
 import de.teamhardcore.pvp.commands.player.*;
 import de.teamhardcore.pvp.commands.pvp.CommandClan;
 import de.teamhardcore.pvp.commands.pvp.CommandFix;
@@ -60,7 +58,7 @@ public class Main extends JavaPlugin {
     private SpawnerManager spawnerManager;
     private TransactionManager transactionManager;
     private AbuseManager abuseManager;
-
+    private KitManager kitManager;
 
     private DatabaseManager databaseManager;
 
@@ -107,6 +105,7 @@ public class Main extends JavaPlugin {
         this.clanManager = new ClanManager(this);
         this.spawnerManager = new SpawnerManager(this);
         this.transactionManager = new TransactionManager(this);
+        this.kitManager = new KitManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -154,6 +153,8 @@ public class Main extends JavaPlugin {
         getCommand("extras").setExecutor(new CommandExtras());
         getCommand("ban").setExecutor(new CommandBan());
         getCommand("mute").setExecutor(new CommandMute());
+        getCommand("debug").setExecutor(new CommandDebug());
+        getCommand("kit").setExecutor(new CommandKit());
     }
 
     public FileManager getFileManager() {
@@ -222,6 +223,10 @@ public class Main extends JavaPlugin {
 
     public AbuseManager getAbuseManager() {
         return abuseManager;
+    }
+
+    public KitManager getKitManager() {
+        return kitManager;
     }
 
     public static Main getInstance() {

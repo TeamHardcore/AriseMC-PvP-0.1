@@ -17,8 +17,8 @@ public abstract class CustomUniqueKit extends UniqueKit {
         super(name, content);
     }
 
-    public void giveKit(Player player) {
-        super.giveKit(player);
+    public boolean giveKit(Player player) {
+        return super.giveKit(player);
     }
 
 }

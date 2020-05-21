@@ -26,6 +26,8 @@ public class PlayerQuit implements Listener {
         Player player = event.getPlayer();
 
         event.setQuitMessage(null);
+
+        this.plugin.getUserManager().removeFromCache(player.getUniqueId());
     }
 
     public Main getPlugin() {
