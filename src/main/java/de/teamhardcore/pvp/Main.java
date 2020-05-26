@@ -59,6 +59,7 @@ public class Main extends JavaPlugin {
     private TransactionManager transactionManager;
     private AbuseManager abuseManager;
     private KitManager kitManager;
+    private MarketManager marketManager;
 
     private DatabaseManager databaseManager;
 
@@ -106,6 +107,7 @@ public class Main extends JavaPlugin {
         this.spawnerManager = new SpawnerManager(this);
         this.transactionManager = new TransactionManager(this);
         this.kitManager = new KitManager(this);
+        this.marketManager = new MarketManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -155,6 +157,7 @@ public class Main extends JavaPlugin {
         getCommand("mute").setExecutor(new CommandMute());
         getCommand("debug").setExecutor(new CommandDebug());
         getCommand("kit").setExecutor(new CommandKit());
+        getCommand("markt").setExecutor(new CommandMarkt());
     }
 
     public FileManager getFileManager() {
@@ -227,6 +230,10 @@ public class Main extends JavaPlugin {
 
     public KitManager getKitManager() {
         return kitManager;
+    }
+
+    public MarketManager getMarketManager() {
+        return marketManager;
     }
 
     public static Main getInstance() {

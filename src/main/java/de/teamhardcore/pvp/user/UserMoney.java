@@ -18,36 +18,18 @@ public class UserMoney {
         this.money = 0;
     }
 
-    /**
-     * Set the money
-     *
-     * @param amount The amount to which the player's money is set
-     */
     public void setMoney(long amount) {
         this.money = amount;
     }
 
-    /**
-     * Add money
-     *
-     * @param amount The amount to which the player's money is added
-     */
     public void addMoney(long amount) {
         this.money += amount;
     }
 
-    /**
-     * Remove money
-     *
-     * @param amount The amount to which the player's money is removed
-     */
     public void removeMoney(long amount) {
         this.money -= amount;
     }
 
-    /**
-     * Get money
-     */
     public long getMoney() {
         return money;
     }

@@ -73,3 +73,6 @@ commands:
   mute:
   debug:
   kit:
+  markt:
+    aliases:
+      - verkaufen
