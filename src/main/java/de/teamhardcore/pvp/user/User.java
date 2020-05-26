@@ -20,6 +20,8 @@ public class User {
     private UserMoney userMoney;
     private UserData userData;
     private UserStats userStats;
+    private UserMarket userMarket;
+
 
     public User(UUID uuid) {
         this.uuid = uuid;
@@ -27,29 +29,17 @@ public class User {
         this.userData = new UserData(this);
         this.userMoney = new UserMoney(this);
         this.userStats = new UserStats(this);
+        this.userMarket = new UserMarket(this);
     }
 
-    /**
-     * Get the money of this user
-     */
     public long getMoney() {
         return this.userMoney.getMoney();
     }
 
-    /**
-     * Add money to this user
-     *
-     * @param amount
-     */
     public void addMoney(long amount) {
         this.userMoney.addMoney(amount);
     }
 
-    /**
-     * Remove money of this user
-     *
-     * @param amount
-     */
     public void removeMoney(long amount) {
         this.userMoney.removeMoney(amount);
     }
@@ -58,9 +48,6 @@ public class User {
         this.userMoney.setMoney(amount);
     }
 
-    /**
-     * The class where all currency will operated
-     */
     public UserMoney getUserMoney() {
         return userMoney;
     }
@@ -71,6 +58,10 @@ public class User {
 
     public UserStats getUserStats() {
         return userStats;
+    }
+
+    public UserMarket getUserMarket() {
+        return userMarket;
     }
 
     public UUID getUuid() {

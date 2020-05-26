@@ -8,8 +8,6 @@ package de.teamhardcore.pvp.user;
 
 import de.teamhardcore.pvp.database.TimedDatabaseUpdate;
 
-import java.util.UUID;
-
 public class UserStats extends TimedDatabaseUpdate {
 
     private User user;
@@ -23,7 +21,6 @@ public class UserStats extends TimedDatabaseUpdate {
 
     public UserStats(User user, boolean timedUpdate, boolean asyncLoad) {
         super("UserStats", timedUpdate, 30000L);
-
         setForceUpdate(true);
 
         this.user = user;
