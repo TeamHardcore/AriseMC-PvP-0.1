@@ -32,6 +32,7 @@ import de.teamhardcore.pvp.listeners.block.BlockPlace;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClick;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClose;
 import de.teamhardcore.pvp.listeners.player.*;
+import de.teamhardcore.pvp.listeners.world.FoodLevelChange;
 import de.teamhardcore.pvp.listeners.world.SignChange;
 import de.teamhardcore.pvp.managers.*;
 import de.teamhardcore.pvp.model.clan.shop.upgrades.EnumUpgrade;
@@ -122,6 +123,7 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new SignChange(this), this);
         pm.registerEvents(new BlockPlace(this), this);
         pm.registerEvents(new BlockBreak(this), this);
+        pm.registerEvents(new FoodLevelChange(this), this);
 
         getCommand("fix").setExecutor(new CommandFix());
         getCommand("stack").setExecutor(new CommandStack());

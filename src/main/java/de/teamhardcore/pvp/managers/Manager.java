@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -35,12 +36,27 @@ public class Manager {
 
         startTablistTask();
         startPerkUpdater();
+        startAutoMessages();
     }
 
     private void startTablistTask() {
         this.plugin.getServer().getScheduler().runTaskTimer(this.plugin, () -> Bukkit.getOnlinePlayers().forEach(players -> {
             Util.sendHeaderFooter(players, "\n " + StringDefaults.SERVER_NAME + "\n", "\n§9§lPing§8: §7" + players.spigot().getPing() + "\n");
         }), 20L, 20L);
+    }
+
+    private void startAutoMessages() {
+        if (this.plugin.getFileManager().getConfigFile().getAutoMessages().isEmpty()) return;
+
+        new BukkitRunnable() {
+            int counter = 0;
+
+            @Override
+            public void run() {
+                Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage("§c§lINFO§8: §7" + getPlugin().getFileManager().getConfigFile().getAutoMessages().get(counter)));
+                this.counter = (this.counter >= getPlugin().getFileManager().getConfigFile().getAutoMessages().size() - 1) ? 0 : (this.counter + 1);
+            }
+        }.runTaskTimer(this.plugin, 0L, 3600L);
     }
 
     private void startPerkUpdater() {
