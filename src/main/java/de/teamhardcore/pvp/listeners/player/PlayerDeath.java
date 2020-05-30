@@ -38,6 +38,9 @@ public class PlayerDeath implements Listener {
             if (this.plugin.getDuelManager().getDuelCache().containsKey(player.getUniqueId()) && this.plugin.getDuelManager().getDuelCache().containsKey(killer.getUniqueId())) {
                 Duel duel = this.plugin.getDuelManager().getDuelCache().get(player.getUniqueId());
                 duel.performDeath(player);
+                event.setKeepInventory(true);
+                event.setKeepLevel(true);
+                event.getDrops().clear();
                 return;
             }
 
