@@ -34,14 +34,14 @@ public class Manager {
         for (EnumPerk perk : EnumPerk.values())
             this.perkEffects.put(perk, new HashSet<>());
 
-        startTablistTask();
+        startTabListTask();
         startPerkUpdater();
         startAutoMessages();
     }
 
-    private void startTablistTask() {
+    private void startTabListTask() {
         this.plugin.getServer().getScheduler().runTaskTimer(this.plugin, () -> Bukkit.getOnlinePlayers().forEach(players -> {
-            Util.sendHeaderFooter(players, "\n " + StringDefaults.SERVER_NAME + "\n", "\n§9§lPing§8: §7" + players.spigot().getPing() + "\n");
+            Util.sendHeaderFooter(players, "\n " + StringDefaults.SERVER_NAME + "\n", "\n§6§lPing§8: §7" + players.spigot().getPing() + "\n");
         }), 20L, 20L);
     }
 
@@ -76,7 +76,7 @@ public class Manager {
         });
     }
 
-    public void unvanishAll(Player player) {
+    public void unVanishAll(Player player) {
         if (!this.playersInVanish.contains(player)) return;
         this.playersInVanish.remove(player);
         Bukkit.getOnlinePlayers().forEach(players -> players.showPlayer(player));

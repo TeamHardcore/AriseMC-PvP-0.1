@@ -9,6 +9,7 @@ package de.teamhardcore.pvp.listeners.inventory;
 
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.inventories.ClanShopInventory;
+import de.teamhardcore.pvp.inventories.DuelInventory;
 import de.teamhardcore.pvp.inventories.ExtrasInventory;
 import de.teamhardcore.pvp.inventories.SpawnerInventory;
 import de.teamhardcore.pvp.managers.MarketManager;
@@ -23,6 +24,9 @@ import de.teamhardcore.pvp.model.clan.shop.upgrades.requirements.AbstractRequire
 import de.teamhardcore.pvp.model.clan.shop.upgrades.requirements.RequirementType;
 import de.teamhardcore.pvp.model.customspawner.AbstractSpawnerType;
 import de.teamhardcore.pvp.model.customspawner.CustomSpawner;
+import de.teamhardcore.pvp.model.duel.configuration.DuelConfiguration;
+import de.teamhardcore.pvp.model.duel.configuration.DuelDeployment;
+import de.teamhardcore.pvp.model.duel.configuration.DuelSettings;
 import de.teamhardcore.pvp.model.extras.EnumChatColor;
 import de.teamhardcore.pvp.model.extras.EnumCommand;
 import de.teamhardcore.pvp.model.extras.EnumPerk;
@@ -31,8 +35,10 @@ import de.teamhardcore.pvp.user.User;
 import de.teamhardcore.pvp.user.UserData;
 import de.teamhardcore.pvp.user.UserMarket;
 import de.teamhardcore.pvp.user.UserMoney;
+import de.teamhardcore.pvp.utils.JSONMessage;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.Util;
+import de.teamhardcore.pvp.utils.VirtualAnvil;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
@@ -254,7 +260,6 @@ public class InventoryClick implements Listener {
                 boolean hasUnlocked = type.hasUnlocked(this.plugin.getUserManager().getUser(player.getUniqueId()));
 
                 if (!hasUnlocked) {
-
                     if (user.getMoney() < type.getPrice()) {
                         player.sendMessage(StringDefaults.PREFIX + "§cDu besitzt zu wenig Münzen, um diesen Typ freizuschalten.");
                         return;
@@ -869,5 +874,109 @@ public class InventoryClick implements Listener {
             } else player.getInventory().addItem(item.getOriginal());
         }
 
+        if (inventory.getTitle().equalsIgnoreCase("§c§lDuelleinsatz")) {
+            event.setCancelled(true);
+
+            DuelConfiguration configuration = this.plugin.getDuelManager().getConfigurationCache().get(player.getUniqueId());
+            DuelDeployment deployment = configuration.getDeployment();
+
+            if (slot == 20) {
+                new VirtualAnvil(player, "Einsatz: ") {
+                    @Override
+                    public void onConfirm(String text) {
+                        if (text == null) {
+                            player.sendMessage("§c§lDUELL " + StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
+                            player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
+                            return;
+                        }
+
+                        String coinString = text.startsWith("Einsatz: ") ? text.substring(9) : text;
+
+                        long coins;
+                        try {
+                            coins = Long.parseLong(coinString);
+                        } catch (NumberFormatException ex) {
+                            player.sendMessage("§c§lDUELL " + StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
+                            return;
+                        }
+
+                        setConfirmedSuccessfully(true);
+                        deployment.setCoins(coins);
+                        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> DuelInventory.openDuelRewardsInventory(player, configuration), 1L);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        if (!isConfirmedSuccessfully())
+                            Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> DuelInventory.openDuelRewardsInventory(player, configuration), 1L);
+                    }
+                };
+            }
+
+            if (slot == 24) {
+                deployment.setInventory(!deployment.isInventory());
+                DuelInventory.openDuelRewardsInventory(player, configuration);
+            }
+
+            if (slot == 36)
+                DuelInventory.openDuelRequestInventory(player, true, configuration);
+
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lDuelleinstellungen")) {
+            event.setCancelled(true);
+
+            DuelConfiguration configuration = this.plugin.getDuelManager().getConfigurationCache().get(player.getUniqueId());
+            DuelSettings settings = configuration.getSettings();
+
+
+            if (slot == 20) {
+                settings.updateMaxHealStacks();
+                DuelInventory.openDuelSettingsInventory(player, configuration);
+            }
+
+            if (slot == 22) {
+                settings.setUseGoldenApple(!settings.isUseGoldenApple());
+                DuelInventory.openDuelSettingsInventory(player, configuration);
+            }
+
+            if (slot == 24) {
+                settings.setUsePoison(!settings.isUsePoison());
+                DuelInventory.openDuelSettingsInventory(player, configuration);
+            }
+
+            if (slot == 36)
+                DuelInventory.openDuelRequestInventory(player, true, configuration);
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lDuell erstellen")) {
+            event.setCancelled(true);
+
+            DuelConfiguration configuration = this.plugin.getDuelManager().getConfigurationCache().get(player.getUniqueId());
+
+            if (configuration == null) {
+                player.closeInventory();
+                player.sendMessage(StringDefaults.DUEL_PREFIX + "§cEin Fehler ist aufgetreten, bitte versuche es erneut.");
+                return;
+            }
+
+            if (slot == 22) {
+                DuelInventory.openDuelSettingsInventory(player, configuration);
+                return;
+            }
+
+            if (slot == 24) {
+                DuelInventory.openDuelRewardsInventory(player, configuration);
+                return;
+            }
+
+            if (slot == 40) {
+                player.closeInventory();
+                player.sendMessage(StringDefaults.DUEL_PREFIX + "§eDu hast eine Duell-Konfiguration erstellt.");
+                new JSONMessage(StringDefaults.DUEL_PREFIX + "§eBenutze §7/duel invite <Spieler> (Klick)").suggestCommand("/duel invite ").send(player);
+
+                Main.getInstance().getDuelManager().getConfigurationCache().put(player.getUniqueId(), configuration);
+            }
+        }
     }
 }

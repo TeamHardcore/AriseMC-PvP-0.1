@@ -38,6 +38,7 @@ public class BlockBreak implements Listener {
             event.setCancelled(true);
 
             CustomSpawner customSpawner = this.plugin.getSpawnerManager().getCustomSpawner(block.getLocation());
+
             if (customSpawner == null || !customSpawner.getOwner().equals(player.getUniqueId()) && !player.hasPermission("arisemc.spawner.admin")) {
                 block.setType(Material.AIR);
                 return;

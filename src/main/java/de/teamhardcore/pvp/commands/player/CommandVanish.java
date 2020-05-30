@@ -39,7 +39,7 @@ public class CommandVanish implements CommandExecutor {
                 Main.getInstance().getManager().vanishAll(player);
                 player.sendMessage(StringDefaults.PREFIX + "§eDein Vanishmode wurde aktiviert.");
             } else {
-                Main.getInstance().getManager().unvanishAll(player);
+                Main.getInstance().getManager().unVanishAll(player);
                 player.sendMessage(StringDefaults.PREFIX + "§eDein Vanishmode wurde deaktiviert.");
             }
         }
@@ -67,7 +67,7 @@ public class CommandVanish implements CommandExecutor {
                 target.sendMessage(StringDefaults.PREFIX + "§eDein Vanishmode wurde aktiviert.");
                 player.sendMessage(StringDefaults.PREFIX + "§eDu hast den Vanishmode für §7" + target.getName() + " §eaktiviert.");
             } else {
-                Main.getInstance().getManager().unvanishAll(target);
+                Main.getInstance().getManager().unVanishAll(target);
                 target.sendMessage(StringDefaults.PREFIX + "§eDein Vanishmode wurde deaktiviert.");
                 player.sendMessage(StringDefaults.PREFIX + "§eDu hast den Vanishmode für §7" + target.getName() + " §edeaktiviert.");
             }

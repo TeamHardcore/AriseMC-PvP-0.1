@@ -72,10 +72,4 @@ public class SpawnerInventory {
             inventory.setItem(slot, new ItemBuilder(type.getDisplayItem()).setLore(lore).setDurability(type.getDurability()).setDisplayName(type.getName()).build());
         }
     }
-
-    /*
-     * Platziere diesen Spawner in deiner Base,
-     * um ihn aufzuwerten.
-     */
-
 }
