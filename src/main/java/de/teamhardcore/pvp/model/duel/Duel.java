@@ -163,6 +163,11 @@ public class Duel {
     }
 
     private void startGameTask() {
+        if (this.startTask != null) {
+            this.startTask.cancel();
+            this.startTask = null;
+        }
+
         this.gameTask = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), new BukkitRunnable() {
             @Override
             public void run() {
@@ -182,11 +187,22 @@ public class Duel {
     }
 
     private void startEndTask() {
+        if (this.startTask != null) {
+            this.startTask.cancel();
+            this.startTask = null;
+        }
+
+        if (this.gameTask != null) {
+            this.gameTask.cancel();
+            this.gameTask = null;
+        }
+
         this.endTask = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), new BukkitRunnable() {
             @Override
             public void run() {
                 if (endCounter <= 0) {
                     endTask.cancel();
+                    endTask = null;
                     Main.getInstance().getDuelManager().stopDuel(Duel.this);
                     return;
                 }
