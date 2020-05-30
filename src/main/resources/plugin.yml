@@ -76,3 +76,7 @@ commands:
   markt:
     aliases:
       - verkaufen
+  more:
+  duel:
+    aliases:
+      - duell

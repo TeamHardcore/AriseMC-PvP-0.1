@@ -8,6 +8,7 @@
 package de.teamhardcore.pvp.listeners.player;
 
 import de.teamhardcore.pvp.Main;
+import de.teamhardcore.pvp.model.duel.Duel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,10 +25,14 @@ public class PlayerQuit implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-
         event.setQuitMessage(null);
 
         this.plugin.getUserManager().removeFromCache(player.getUniqueId());
+
+        if (this.plugin.getDuelManager().getDuelCache().containsKey(player.getUniqueId())) {
+            Duel duel = this.plugin.getDuelManager().getDuelCache().get(player.getUniqueId());
+            duel.performDeath(player);
+        }
     }
 
     public Main getPlugin() {

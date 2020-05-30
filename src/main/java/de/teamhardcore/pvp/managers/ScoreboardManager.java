@@ -39,6 +39,10 @@ public class ScoreboardManager {
 
         Scoreboard scoreboard = this.plugin.getServer().getScoreboardManager().getNewScoreboard();
 
+        Objective healthOb = scoreboard.registerNewObjective("PlayerHealth", "health");
+        healthOb.setDisplaySlot(DisplaySlot.BELOW_NAME);
+        healthOb.setDisplayName("§c§lHerzen");
+
         Team teamMember = scoreboard.registerNewTeam("LTeamMember");
         Team teamPro = scoreboard.registerNewTeam("KTeamUltra");
         Team teamElite = scoreboard.registerNewTeam("JTeamElite");
@@ -62,8 +66,8 @@ public class ScoreboardManager {
         teamSup.setPrefix("§a");
         teamMod.setPrefix("§5");
         teamDev.setPrefix("§3");
-        teamAdmin.setPrefix("§c§lADMIN §7");
-        teamOwner.setPrefix("§4§LOWNER §7");
+        teamAdmin.setPrefix("§c§lA §8× §7");
+        teamOwner.setPrefix("§4§lO §8× §7");
 
         Objective sidebar = scoreboard.registerNewObjective("Default", "Default");
         sidebar.setDisplayName("    " + StringDefaults.GLOBAL_PREFIX + "   ");

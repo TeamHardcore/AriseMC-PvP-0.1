@@ -53,9 +53,6 @@ public class CommandHeal implements CommandExecutor {
             player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
             player.setFireTicks(0);
 
-            player.playSound(player.getLocation(), Sound.VILLAGER_YES, 1.0F, 1.0F);
-            player.playEffect(player.getLocation(), Effect.HEART, 1.0F);
-
             player.sendMessage(StringDefaults.PREFIX + "§eDu wurdest geheilt.");
             Main.getInstance().getManager().getHealCooldown().put(player, System.currentTimeMillis() + 3600000L);
 

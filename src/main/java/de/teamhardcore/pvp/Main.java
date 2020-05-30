@@ -7,6 +7,7 @@
 
 package de.teamhardcore.pvp;
 
+import de.teamhardcore.pvp.commands.CommandDuel;
 import de.teamhardcore.pvp.commands.abuse.CommandAbuse;
 import de.teamhardcore.pvp.commands.abuse.CommandBan;
 import de.teamhardcore.pvp.commands.abuse.CommandMute;
@@ -33,9 +34,11 @@ import de.teamhardcore.pvp.listeners.inventory.InventoryClick;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClose;
 import de.teamhardcore.pvp.listeners.player.*;
 import de.teamhardcore.pvp.listeners.world.FoodLevelChange;
+import de.teamhardcore.pvp.listeners.world.PotionSplash;
 import de.teamhardcore.pvp.listeners.world.SignChange;
 import de.teamhardcore.pvp.managers.*;
 import de.teamhardcore.pvp.model.clan.shop.upgrades.EnumUpgrade;
+import de.teamhardcore.pvp.utils.VirtualAnvil;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -61,6 +64,7 @@ public class Main extends JavaPlugin {
     private AbuseManager abuseManager;
     private KitManager kitManager;
     private MarketManager marketManager;
+    private DuelManager duelManager;
 
     private DatabaseManager databaseManager;
 
@@ -77,6 +81,7 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         registerAll();
+        VirtualAnvil.onEnable();
     }
 
     private void registerAll() {
@@ -109,6 +114,7 @@ public class Main extends JavaPlugin {
         this.transactionManager = new TransactionManager(this);
         this.kitManager = new KitManager(this);
         this.marketManager = new MarketManager(this);
+        this.duelManager = new DuelManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -124,6 +130,7 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new BlockPlace(this), this);
         pm.registerEvents(new BlockBreak(this), this);
         pm.registerEvents(new FoodLevelChange(this), this);
+        pm.registerEvents(new PotionSplash(this), this);
 
         getCommand("fix").setExecutor(new CommandFix());
         getCommand("stack").setExecutor(new CommandStack());
@@ -160,6 +167,8 @@ public class Main extends JavaPlugin {
         getCommand("debug").setExecutor(new CommandDebug());
         getCommand("kit").setExecutor(new CommandKit());
         getCommand("markt").setExecutor(new CommandMarkt());
+        getCommand("more").setExecutor(new CommandMore());
+        getCommand("duel").setExecutor(new CommandDuel());
     }
 
     public FileManager getFileManager() {
@@ -236,6 +245,10 @@ public class Main extends JavaPlugin {
 
     public MarketManager getMarketManager() {
         return marketManager;
+    }
+
+    public DuelManager getDuelManager() {
+        return duelManager;
     }
 
     public static Main getInstance() {

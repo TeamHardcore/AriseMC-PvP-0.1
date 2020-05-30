@@ -129,6 +129,10 @@ public class CombatManager {
             if (event.getDamager() instanceof Player) {
                 Player damager = (Player) event.getDamager();
 
+                if (Main.getInstance().getDuelManager().getDuelCache().containsKey(damager.getUniqueId()) || Main.getInstance().getDuelManager().getDuelCache().containsKey(player.getUniqueId())) {
+                    return;
+                }
+
                 if (damager == player) return;
 
                 if (this.manager.isTagged(damager))
@@ -154,6 +158,10 @@ public class CombatManager {
                     return;
                 }
                 Player damager = (Player) pro.getShooter();
+
+                if (Main.getInstance().getDuelManager().getDuelCache().containsKey(damager.getUniqueId()) || Main.getInstance().getDuelManager().getDuelCache().containsKey(player.getUniqueId())) {
+                    return;
+                }
 
                 if (damager == player) return;
                 if (isTagged(damager)) {
