@@ -33,6 +33,9 @@ public class UserManager {
         if (!this.users.containsKey(uuid))
             return;
 
+        User user = getUser(uuid);
+        user.unload();
+
         //TODO: SAVE ALL
         this.users.remove(uuid);
     }

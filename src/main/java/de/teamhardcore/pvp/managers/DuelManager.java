@@ -48,7 +48,6 @@ public class DuelManager {
 
         DuelArena arena = generateArena(configuration.getArenaType());
         Duel duel = new Duel(configuration, arena);
-
         this.duelCache.put(duel.getPlayer().getUniqueId(), duel);
         this.duelCache.put(duel.getTarget().getUniqueId(), duel);
     }

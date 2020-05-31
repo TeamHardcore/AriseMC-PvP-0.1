@@ -119,6 +119,8 @@ public class CommandDuel implements CommandExecutor {
 
                 configuration.getInvites().remove(player);
                 configuration.getPlayers().add(player);
+
+                Main.getInstance().getDuelManager().getConfigurationCache().remove(player.getUniqueId());
                 Main.getInstance().getDuelManager().createDuel(configuration);
             }
         }
