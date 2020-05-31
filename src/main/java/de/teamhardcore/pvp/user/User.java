@@ -64,6 +64,12 @@ public class User {
         return userMarket;
     }
 
+    public void unload() {
+        if (this.userMoney != null) {
+            //    this.userMoney;
+        }
+    }
+
     public UUID getUuid() {
         return uuid;
     }
