@@ -49,7 +49,7 @@ public class DuelSettings {
         return maxHealStacks;
     }
 
-    public boolean isUseGoldenApple() {
+    public boolean canUseGoldenApple() {
         return useGoldenApple;
     }
 

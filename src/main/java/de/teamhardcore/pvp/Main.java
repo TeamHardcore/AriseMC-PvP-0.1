@@ -131,6 +131,8 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new BlockBreak(this), this);
         pm.registerEvents(new FoodLevelChange(this), this);
         pm.registerEvents(new PotionSplash(this), this);
+        pm.registerEvents(new PlayerItemConsume(this), this);
+        pm.registerEvents(new PlayerMove(this), this);
 
         getCommand("fix").setExecutor(new CommandFix());
         getCommand("stack").setExecutor(new CommandStack());

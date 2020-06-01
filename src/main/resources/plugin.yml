@@ -3,6 +3,9 @@ version: 1.0.0
 author: TeamHardcore
 main: de.teamhardcore.pvp.Main
 
+depend:
+  - ProtocolLib
+
 commands:
   fix:
   stack:
