@@ -33,7 +33,7 @@ public class PlayerItemConsume implements Listener {
             if (this.plugin.getDuelManager().getDuelCache().containsKey(player.getUniqueId())) {
                 Duel duel = this.plugin.getDuelManager().getDuelCache().get(player.getUniqueId());
 
-                if (duel.getConfiguration().getSettings().isUseGoldenApple()) {
+                if (!duel.getConfiguration().getSettings().canUseGoldenApple()) {
                     player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu kannst keine Goldenen Äpfel benutzen.");
                     event.setCancelled(true);
                     player.setItemInHand(itemStack);

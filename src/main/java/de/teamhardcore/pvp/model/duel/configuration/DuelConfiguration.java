@@ -7,6 +7,7 @@
 package de.teamhardcore.pvp.model.duel.configuration;
 
 import de.teamhardcore.pvp.model.duel.arena.DuelArenaType;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -23,14 +24,20 @@ public class DuelConfiguration {
     private DuelSettings settings;
     private DuelDeployment deployment;
 
-    public DuelConfiguration(DuelArenaType arenaType, DuelSettings settings, DuelDeployment deployment) {
+    private Location location;
+
+    public DuelConfiguration(Location location, DuelSettings settings, DuelDeployment deployment) {
         this.players = new ArrayList<>();
         this.invites = new ArrayList<>();
         this.created = System.currentTimeMillis();
 
-        this.arenaType = arenaType;
+        this.location = location;
         this.settings = settings;
         this.deployment = deployment;
+    }
+
+    public Location getLocation() {
+        return location;
     }
 
     public long getCreated() {

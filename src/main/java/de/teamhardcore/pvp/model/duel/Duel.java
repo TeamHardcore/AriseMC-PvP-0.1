@@ -6,12 +6,20 @@
 
 package de.teamhardcore.pvp.model.duel;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.WrappedBlockData;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.duel.arena.DuelArena;
 import de.teamhardcore.pvp.model.duel.configuration.DuelConfiguration;
+import de.teamhardcore.pvp.user.UserMoney;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.Util;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -19,10 +27,12 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.github.paperspigot.Title;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Duel {
@@ -40,31 +50,32 @@ public class Duel {
     private final DuelConfiguration configuration;
     private final List<Player> alive;
     private final Map<Player, AtomicInteger> remainingPotions;
+    private final Map<Player, List<Location>> wallBlocks;
 
+    private DuelWall duelWall;
     private Player player, target;
-
     private BukkitTask startTask, gameTask, endTask;
-    private DuelArena arena;
-
     private int startCounter = 5, gameCounter = 300, endCounter = 2;
 
-    public Duel(DuelConfiguration configuration, DuelArena arena) {
+    public Duel(DuelConfiguration configuration) {
         this.configuration = configuration;
-        this.arena = arena;
 
+        Location middle = configuration.getLocation().clone();
+        Location min = middle.clone().add(4, 0, -4);
+        Location max = middle.clone().add(-4, middle.clone().getY() + 20, 4);
+
+        this.duelWall = new DuelWall(min, max);
+
+        this.wallBlocks = new HashMap<>();
         this.remainingPotions = new HashMap<>();
 
-        this.alive = new ArrayList<>();
-        this.alive.addAll(this.configuration.getPlayers());
-
+        this.alive = new ArrayList<>(this.configuration.getPlayers());
         this.player = this.configuration.getPlayers().get(0);
         this.target = this.configuration.getPlayers().get(1);
 
         preparePlayer(this.player);
         preparePlayer(this.target);
-
         sendMessage(StringDefaults.DUEL_PREFIX + "§aDas Duell beginnt in Kürze.");
-
         this.startTask = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), new BukkitRunnable() {
             @Override
             public void run() {
@@ -111,10 +122,12 @@ public class Duel {
             sendMessage(StringDefaults.PREFIX + "§6§lGewinn§8: ");
             if (this.configuration.getDeployment().getCoins() > 0)
                 sendMessage("  §8■ §eMünzen§8: §a§l" + Util.formatNumber((this.configuration.getDeployment().getCoins() * 2)) + "$");
-            if (this.configuration.getDeployment().isInventory())
-                sendMessage("  §8■ §eInventar des Gegners");
             sendMessage(" ");
             sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
+
+            UserMoney lastMoney = Main.getInstance().getUserManager().getUser(last.getUniqueId()).getUserMoney();
+            lastMoney.addMoney(this.configuration.getDeployment().getCoins() * 2);
+
             last.playSound(last.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
             startEndTask();
             return;
@@ -211,32 +224,77 @@ public class Duel {
         }, 20L, 20L);
     }
 
-    public BukkitTask getStartTask() {
-        return startTask;
+    public void updateWall(Player player) {
+        if (this.duelWall == null || this.duelWall.getWorld() != player.getWorld())
+            return;
+
+        if (!this.wallBlocks.containsKey(player))
+            this.wallBlocks.put(player, new CopyOnWriteArrayList<>());
+
+        List<Location> visibleBlocks = this.wallBlocks.get(player);
+        List<Location> locationsInRange = getLocationsInRange(player.getLocation(), 4, 6);
+
+        for (Location visible : visibleBlocks) {
+            if (!locationsInRange.contains(visible)) {
+                Block b = visible.getBlock();
+                visibleBlocks.remove(visible);
+                sendBlockChange(player, visible, b.getType(), b.getData());
+            }
+        }
+
+        for (Location loc : locationsInRange) {
+            if (!this.duelWall.contains(loc) || visibleBlocks.contains(loc))
+                continue;
+            visibleBlocks.add(loc);
+            sendBlockChange(player, loc, Material.STAINED_GLASS, 14);
+        }
     }
 
-    public BukkitTask getGameTask() {
-        return gameTask;
+    public void removeWall(Player player) {
+        if (!this.wallBlocks.containsKey(player)) return;
+        for (Location location : this.wallBlocks.get(player)) {
+            Block block = location.getBlock();
+            sendBlockChange(player, location, block.getType(), block.getData());
+        }
+        this.wallBlocks.remove(player);
     }
 
-    public BukkitTask getEndTask() {
-        return endTask;
+    public void sendBlockChange(Player p, Location loc, Material mat, int data) {
+        ProtocolManager m = ProtocolLibrary.getProtocolManager();
+        PacketContainer packet = m.createPacket(PacketType.Play.Server.BLOCK_CHANGE);
+        packet.getBlockPositionModifier().write(0, new BlockPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+        packet.getBlockData().write(0, WrappedBlockData.createData(mat, data));
+        try {
+            m.sendServerPacket(p, packet);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
-    public DuelArena getArena() {
-        return arena;
+    private List<Location> getLocationsInRange(Location loc, int height, int width) {
+        List<Location> locations = new ArrayList<>();
+        World w = loc.getWorld();
+        int startX = loc.getBlockX();
+        int startY = loc.getBlockY();
+        int startZ = loc.getBlockZ();
+        for (int x = startX - width; x <= startX + width; x++) {
+            for (int y = startY - height; y <= startY + height; y++) {
+                for (int z = startZ - width; z <= startZ + width; z++) {
+                    Block current = w.getBlockAt(x, y, z);
+                    if (current != null && current.getType() == Material.AIR)
+                        locations.add(current.getLocation());
+                }
+            }
+        }
+        return locations;
     }
 
-    public int getStartCounter() {
-        return startCounter;
+    public DuelWall getDuelWall() {
+        return duelWall;
     }
 
-    public int getGameCounter() {
-        return gameCounter;
-    }
-
-    public int getEndCounter() {
-        return endCounter;
+    public Map<Player, List<Location>> getWallBlocks() {
+        return wallBlocks;
     }
 
     public DuelConfiguration getConfiguration() {

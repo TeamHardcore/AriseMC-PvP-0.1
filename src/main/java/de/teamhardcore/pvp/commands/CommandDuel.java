@@ -14,6 +14,7 @@ import de.teamhardcore.pvp.model.duel.configuration.DuelDeployment;
 import de.teamhardcore.pvp.model.duel.configuration.DuelSettings;
 import de.teamhardcore.pvp.utils.JSONMessage;
 import de.teamhardcore.pvp.utils.StringDefaults;
+import de.teamhardcore.pvp.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -29,15 +30,10 @@ public class CommandDuel implements CommandExecutor {
         Player player = (Player) cs;
 
         if (args.length == 0) {
-
-            DuelConfiguration configuration = Main.getInstance().getDuelManager().getConfigurationCache().get(player.getUniqueId());
-
-            if (configuration == null) {
-                configuration = new DuelConfiguration(DuelArenaType.PRISON, new DuelSettings(), new DuelDeployment());
-                configuration.getPlayers().add(player);
-                Main.getInstance().getDuelManager().getConfigurationCache().put(player.getUniqueId(), configuration);
-            }
-
+            DuelConfiguration configuration = new DuelConfiguration(player.getLocation(), new DuelSettings(), new DuelDeployment());
+            configuration.getPlayers().add(player);
+            Main.getInstance().getDuelManager().getConfigurationCache().remove(player.getUniqueId());
+            Main.getInstance().getDuelManager().getConfigurationCache().put(player.getUniqueId(), configuration);
             DuelInventory.openDuelRequestInventory(player, true, configuration);
         }
 
@@ -75,6 +71,11 @@ public class CommandDuel implements CommandExecutor {
                     return true;
                 }
 
+                if (target == player) {
+                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu kannst dich nicht selbst herausfordern.");
+                    return true;
+                }
+
                 DuelConfiguration configuration = Main.getInstance().getDuelManager().getConfigurationCache().get(player.getUniqueId());
 
                 if (configuration.getPlayers().size() >= 2) {
@@ -90,11 +91,20 @@ public class CommandDuel implements CommandExecutor {
                 configuration.getInvites().add(target);
 
                 player.sendMessage(StringDefaults.DUEL_PREFIX + "§eDu hast §7" + target.getName() + " §ezu einem Duell herausgefordert.");
-                target.sendMessage(StringDefaults.DUEL_PREFIX + "§eDu wurdest von §7" + player.getName() + " §ezu einem Duell herausgefordert.");
-                new JSONMessage(StringDefaults.DUEL_PREFIX + "§eKlicke hier§7, §eum die Einstellungen zu betrachten.").runCommand("/duel accept " + player.getName()).tooltip("§eEinstellungen betrachten").send(target);
-
-            } else if (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("entfernen")) {
-
+                target.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
+                target.sendMessage(StringDefaults.PREFIX + "§eDu wurdest von §7" + player.getName() + " §eherausgefordert.");
+                target.sendMessage(" ");
+                target.sendMessage(StringDefaults.PREFIX + "§6§lEinstellungen§8: ");
+                target.sendMessage(" §8● §eGoldene Äpfel§8: " + (configuration.getSettings().canUseGoldenApple() ? "§a§laktiviert" : "§c§ldeaktiviert"));
+                target.sendMessage(" §8● §eHeiltränke§8: " + (configuration.getSettings().getMaxHealStacks() == -1 ? "§a§lUnbegrenz" : "§a§l" + configuration.getSettings().getMaxHealStacks() + " Stacks"));
+                target.sendMessage(" ");
+                if (configuration.getDeployment().getCoins() != 0) {
+                    target.sendMessage(StringDefaults.PREFIX + "§6§lGewinn§8:");
+                    target.sendMessage(" §8● §eEinsatz§8: §a§l" + (Util.formatNumber(configuration.getDeployment().getCoins()) + "$"));
+                    target.sendMessage(" ");
+                }
+                new JSONMessage(StringDefaults.PREFIX + "§eKlicke hier§7, §eum die Herausforderung anzunehmen.").runCommand("/duel accept " + player.getName()).tooltip("§eHerausforderung annehmen").send(target);
+                target.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
             } else if (args[0].equalsIgnoreCase("accept") || args[0].equalsIgnoreCase("annehmen")) {
                 Player target = Bukkit.getPlayer(args[1]);
 
