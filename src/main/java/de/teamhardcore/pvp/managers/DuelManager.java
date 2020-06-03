@@ -65,7 +65,6 @@ public class DuelManager {
                     event.setCancelled(true);
                     if (packetContainer.getType() == PacketType.Play.Client.BLOCK_DIG) {
                         duel.sendBlockChange(player, location, Material.STAINED_GLASS, 14);
-                        System.out.println("called duel 4");
                     }
                 }
             }

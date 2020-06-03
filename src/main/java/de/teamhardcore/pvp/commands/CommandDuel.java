@@ -71,8 +71,15 @@ public class CommandDuel implements CommandExecutor {
                     return true;
                 }
 
-                if (target == player) {
+            /*    if (target == player) {
                     player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu kannst dich nicht selbst herausfordern.");
+                    return true;
+                }*/
+
+                double distance = player.getLocation().distanceSquared(target.getLocation());
+
+                if (distance > 5) {
+                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu musst dich näher an §7" + target.getName() + " §cbefinden.");
                     return true;
                 }
 
@@ -113,6 +120,13 @@ public class CommandDuel implements CommandExecutor {
                     return true;
                 }
 
+                double distance = player.getLocation().distanceSquared(target.getLocation());
+
+                if (distance > 5) {
+                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu musst dich näher an §7" + target.getName() + " §cbefinden.");
+                    return true;
+                }
+
                 DuelConfiguration configuration = Main.getInstance().getDuelManager().getConfigurationCache().get(target.getUniqueId());
                 if (configuration == null) {
                     player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu wurdest von diesem Spieler zu keinem Duell herausgefordert.");
@@ -129,6 +143,10 @@ public class CommandDuel implements CommandExecutor {
 
                 configuration.getInvites().remove(player);
                 configuration.getPlayers().add(player);
+
+                if (configuration.getLocation() != target.getLocation())
+                    configuration.setLocation(player.getLocation());
+
 
                 Main.getInstance().getDuelManager().getConfigurationCache().remove(player.getUniqueId());
                 Main.getInstance().getDuelManager().createDuel(configuration);

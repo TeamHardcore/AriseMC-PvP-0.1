@@ -38,22 +38,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Duel {
 
     /*
-     Knochen der Mobs
-     Knochen eines Zombies (Beispiel)
-     Benötigt um Spawn-Eier freizuschalten.
-
-     Merchant/Transmog (Prefix) System für Arena(ArenaPunkte bei Ranked Arena)
-
-     Eine Zone am Spawn, die ein Clan einnehmen kann für Belohnungen (Stronghold)
-
+    -/duel admin <gameID> <stop/info/spectate>
      */
+    private final int WALL_REGION = 8;
+
     private final DuelConfiguration configuration;
     private final List<Player> alive;
     private final Map<Player, AtomicInteger> remainingPotions;
     private final Map<Player, List<Location>> wallBlocks;
 
-    private DuelWall duelWall;
-    private Player player, target;
+    private final String gameID;
+
+    private final DuelWall duelWall;
+    private final Player player;
+    private final Player target;
     private BukkitTask startTask, gameTask, endTask;
     private int startCounter = 5, gameCounter = 300, endCounter = 2;
 
@@ -61,13 +59,15 @@ public class Duel {
         this.configuration = configuration;
 
         Location middle = configuration.getLocation().clone();
-        Location min = middle.clone().add(4, 0, -4);
-        Location max = middle.clone().add(-4, middle.clone().getY() + 20, 4);
+        Location min = middle.clone().add(this.WALL_REGION, 10, this.WALL_REGION);
+        Location max = middle.clone().add(-this.WALL_REGION, -10, -this.WALL_REGION);
 
-        this.duelWall = new DuelWall(min, max);
+        this.duelWall = new DuelWall(max, min);
 
         this.wallBlocks = new HashMap<>();
         this.remainingPotions = new HashMap<>();
+
+        this.gameID = "duel-2012dnAWmnad";
 
         this.alive = new ArrayList<>(this.configuration.getPlayers());
         this.player = this.configuration.getPlayers().get(0);
@@ -82,8 +82,6 @@ public class Duel {
                 if (startCounter <= 0) {
                     startTask.cancel();
                     sendMessage(StringDefaults.DUEL_PREFIX + "§eDas Duell hat begonnen.");
-                  /*  player.teleport(arena.getSpawnLocation(0));
-                    target.teleport(arena.getSpawnLocation(1));*/
                     startGameTask();
                     return;
                 }
@@ -232,7 +230,7 @@ public class Duel {
             this.wallBlocks.put(player, new CopyOnWriteArrayList<>());
 
         List<Location> visibleBlocks = this.wallBlocks.get(player);
-        List<Location> locationsInRange = getLocationsInRange(player.getLocation(), 4, 6);
+        List<Location> locationsInRange = getLocationsInRange(player.getLocation(), 3, 2);
 
         for (Location visible : visibleBlocks) {
             if (!locationsInRange.contains(visible)) {

@@ -8,7 +8,6 @@ package de.teamhardcore.pvp.model.duel;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,33 +16,33 @@ public class DuelWall {
 
     private final World world;
     private final Location minPos, maxPos;
-    private final List<Location> wallLocs;
+    private final List<Location> wallLocations;
 
     public DuelWall(Location minPos, Location maxPos) {
-        this.wallLocs = new ArrayList<>();
+        this.wallLocations = new ArrayList<>();
         this.world = minPos.getWorld();
         this.minPos = minPos;
         this.maxPos = maxPos;
+
         calculateRegion();
     }
 
-    public boolean contains(Location loc) {
-        if (this.world != loc.getWorld())
-            return false;
-        return (loc.getY() <= this.maxPos.getY() && loc.getY() >= this.minPos.getY() && ((loc
-                .getX() == this.minPos.getX() && loc.getZ() >= this.minPos.getZ() && loc.getZ() <= this.maxPos.getZ()) || (loc
-                .getZ() == this.minPos.getZ() && loc.getX() >= this.minPos.getX() && loc.getX() <= this.maxPos.getX()) || (loc
-                .getX() == this.maxPos.getX() && loc.getZ() >= this.minPos.getZ() && loc.getZ() <= this.maxPos.getZ()) || (loc
-                .getZ() == this.maxPos.getZ() && loc.getX() >= this.minPos.getX() && loc.getX() <= this.maxPos.getX())));
+    public boolean contains(Location location) {
+        return wallLocations.stream().anyMatch(location1 -> location1.getBlockX() == location.getBlockX() && location1.getBlockZ() == location.getBlockZ() && location1.getBlockY() == location.getBlockY());
     }
 
     private void calculateRegion() {
+        int maxX = Math.max(this.minPos.getBlockX(), this.maxPos.getBlockX());
+        int minX = Math.min(this.minPos.getBlockX(), this.maxPos.getBlockX());
+        int maxZ = Math.max(this.minPos.getBlockZ(), this.maxPos.getBlockZ());
+        int minZ = Math.min(this.minPos.getBlockZ(), this.maxPos.getBlockZ());
+
         for (int x = this.minPos.getBlockX(); x <= this.maxPos.getBlockX(); x++) {
             for (int y = this.minPos.getBlockY(); y <= this.maxPos.getBlockY(); y++) {
                 for (int z = this.minPos.getBlockZ(); z <= this.maxPos.getBlockZ(); z++) {
+                    if (!(x == minX || x == maxX || z == minZ || z == maxZ)) continue;
                     Location loc = new Location(this.world, x, y, z);
-                    if (contains(loc))
-                        this.wallLocs.add(loc);
+                    this.wallLocations.add(loc);
                 }
             }
         }
@@ -61,7 +60,7 @@ public class DuelWall {
         return maxPos;
     }
 
-    public List<Location> getWallLocs() {
-        return wallLocs;
+    public List<Location> getWallLocations() {
+        return wallLocations;
     }
 }
