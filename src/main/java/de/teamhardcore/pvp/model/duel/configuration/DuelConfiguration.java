@@ -40,6 +40,10 @@ public class DuelConfiguration {
         return location;
     }
 
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
     public long getCreated() {
         return created;
     }
