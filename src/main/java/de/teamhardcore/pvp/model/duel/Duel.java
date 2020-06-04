@@ -11,6 +11,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.duel.arena.DuelArena;
@@ -37,9 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Duel {
 
-    /*
-    -/duel admin <gameID> <stop/info/spectate>
-     */
+
     private final int WALL_REGION = 8;
 
     private final DuelConfiguration configuration;
@@ -55,7 +54,9 @@ public class Duel {
     private BukkitTask startTask, gameTask, endTask;
     private int startCounter = 5, gameCounter = 300, endCounter = 2;
 
-    public Duel(DuelConfiguration configuration) {
+    private boolean canPvP;
+
+    public Duel(DuelConfiguration configuration, String gameId) {
         this.configuration = configuration;
 
         Location middle = configuration.getLocation().clone();
@@ -67,11 +68,13 @@ public class Duel {
         this.wallBlocks = new HashMap<>();
         this.remainingPotions = new HashMap<>();
 
-        this.gameID = "duel-2012dnAWmnad";
+        this.gameID = gameId;
 
         this.alive = new ArrayList<>(this.configuration.getPlayers());
         this.player = this.configuration.getPlayers().get(0);
         this.target = this.configuration.getPlayers().get(1);
+
+        this.canPvP = false;
 
         preparePlayer(this.player);
         preparePlayer(this.target);
@@ -85,9 +88,8 @@ public class Duel {
                     startGameTask();
                     return;
                 }
-
-                player.sendTitle(new Title(String.valueOf(startCounter), "", 5, 10, 5));
-                target.sendTitle(new Title(String.valueOf(startCounter), "", 5, 10, 5));
+                Util.sendTitle(player, String.valueOf(startCounter), EnumWrappers.TitleAction.TITLE, 5, 10, 5);
+                Util.sendTitle(target, String.valueOf(startCounter), EnumWrappers.TitleAction.TITLE, 5, 10, 5);
                 sendMessage(StringDefaults.DUEL_PREFIX + "§eDas Duell beginnt in §7" + startCounter + " §e" + (startCounter == 1 ? "Sekunde" : "Sekunden"));
                 startCounter--;
             }
@@ -179,6 +181,8 @@ public class Duel {
             this.startTask = null;
         }
 
+        this.canPvP = true;
+
         this.gameTask = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), new BukkitRunnable() {
             @Override
             public void run() {
@@ -197,7 +201,7 @@ public class Duel {
         }, 20L, 20L);
     }
 
-    private void startEndTask() {
+    public void startEndTask() {
         if (this.startTask != null) {
             this.startTask.cancel();
             this.startTask = null;
@@ -207,6 +211,8 @@ public class Duel {
             this.gameTask.cancel();
             this.gameTask = null;
         }
+
+        this.canPvP = false;
 
         this.endTask = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), new BukkitRunnable() {
             @Override
@@ -220,6 +226,10 @@ public class Duel {
                 endCounter--;
             }
         }, 20L, 20L);
+    }
+
+    public boolean canPvP() {
+        return this.canPvP;
     }
 
     public void updateWall(Player player) {
@@ -297,6 +307,10 @@ public class Duel {
 
     public DuelConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public String getGameID() {
+        return gameID;
     }
 
     public Player getPlayer() {

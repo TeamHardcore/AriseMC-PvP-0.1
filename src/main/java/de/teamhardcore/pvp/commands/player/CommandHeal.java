@@ -94,7 +94,6 @@ public class CommandHeal implements CommandExecutor {
             target.setFireTicks(0);
 
             target.playSound(player.getLocation(), Sound.VILLAGER_YES, 1.0F, 1.0F);
-            target.playEffect(player.getLocation(), Effect.HEART, 1.0F);
 
             target.sendMessage(StringDefaults.PREFIX + "§eDu wurdest geheilt.");
             player.sendMessage(StringDefaults.PREFIX + "§eDu hast den Spieler §7" + target.getName() + " §eerfolgreich geheilt.");

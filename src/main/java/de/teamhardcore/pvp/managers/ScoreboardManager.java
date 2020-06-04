@@ -66,11 +66,11 @@ public class ScoreboardManager {
         teamSup.setPrefix("§a");
         teamMod.setPrefix("§5");
         teamDev.setPrefix("§3");
-        teamAdmin.setPrefix("§c§lA §8× §7");
-        teamOwner.setPrefix("§4§lO §8× §7");
+        teamAdmin.setPrefix("§c");
+        teamOwner.setPrefix("§4");
 
         Objective sidebar = scoreboard.registerNewObjective("Default", "Default");
-        sidebar.setDisplayName("    " + StringDefaults.GLOBAL_PREFIX + "   ");
+        sidebar.setDisplayName("    " + StringDefaults.SERVER_NAME + "   ");
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         switch (type) {

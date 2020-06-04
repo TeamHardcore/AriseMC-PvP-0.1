@@ -33,12 +33,13 @@ public class DuelManager {
 
     private final Map<UUID, DuelConfiguration> configurationCache;
     private final Map<UUID, Duel> duelCache;
+    private final Set<String> gameIdCache;
 
     public DuelManager(Main plugin) {
         this.plugin = plugin;
         this.configurationCache = new HashMap<>();
         this.duelCache = new HashMap<>();
-
+        this.gameIdCache = new HashSet<>();
         registerPacketListener();
     }
 
@@ -74,9 +75,15 @@ public class DuelManager {
     public void createDuel(DuelConfiguration configuration) {
         if (configuration.getPlayers().size() <= 1) return;
 
-        Duel duel = new Duel(configuration);
+        String gameID = null;
+
+        while (gameID == null || this.gameIdCache.contains(gameID))
+            gameID = generateGameID();
+
+        Duel duel = new Duel(configuration, gameID);
         this.duelCache.put(duel.getPlayer().getUniqueId(), duel);
         this.duelCache.put(duel.getTarget().getUniqueId(), duel);
+        this.gameIdCache.add(gameID);
     }
 
     public void stopDuel(Duel duel) {
@@ -84,6 +91,19 @@ public class DuelManager {
             duel.removeWall(player);
             this.duelCache.remove(player.getUniqueId());
         }
+        this.gameIdCache.remove(duel.getGameID());
+    }
+
+    public Duel getDuel(String gameID) {
+        return this.duelCache.values().stream().filter(duel -> duel.getGameID().equals(gameID)).findFirst().orElse(null);
+    }
+
+    private String generateGameID() {
+        return "duel-" + UUID.randomUUID().toString().substring(0, 8);
+    }
+
+    public Set<String> getGameIdCache() {
+        return gameIdCache;
     }
 
     public Map<UUID, DuelConfiguration> getConfigurationCache() {

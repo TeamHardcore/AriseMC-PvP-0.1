@@ -41,7 +41,7 @@ public class Manager {
 
     private void startTabListTask() {
         this.plugin.getServer().getScheduler().runTaskTimer(this.plugin, () -> Bukkit.getOnlinePlayers().forEach(players -> {
-            Util.sendHeaderFooter(players, "\n " + StringDefaults.SERVER_NAME + "\n", "\n§6§lPing§8: §7" + players.spigot().getPing() + "\n");
+            Util.sendHeaderFooter(players, "\n " + StringDefaults.SERVER_NAME + " \n§a\n §7Es befinden sich §6" + Bukkit.getOnlinePlayers().size() * new Random().nextInt(256) + " Spieler §7auf dem Server \n", "\n§7Unsere Website§8: §6www.arisemc.de\n§7Unser TeamSpeak§8: §6ts.arisemc.de");
         }), 20L, 20L);
     }
 
