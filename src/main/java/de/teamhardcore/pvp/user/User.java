@@ -21,6 +21,9 @@ public class User {
     private UserData userData;
     private UserStats userStats;
     private UserMarket userMarket;
+    private UserHomes userHomes;
+
+    private int homeLimit;
 
 
     public User(UUID uuid) {
@@ -30,6 +33,27 @@ public class User {
         this.userMoney = new UserMoney(this);
         this.userStats = new UserStats(this);
         this.userMarket = new UserMarket(this);
+        this.userHomes = new UserHomes(this);
+
+        loadHomeLimit();
+    }
+
+    private void loadHomeLimit() {
+        if (this.player == null) {
+            this.homeLimit = -2;
+            return;
+        }
+
+        if (this.player.isOp() || this.player.hasPermission("*")) {
+            this.homeLimit = -1;
+            return;
+        }
+    }
+
+    public void unload() {
+        if (this.userMoney != null) {
+            //    this.userMoney;
+        }
     }
 
     public long getMoney() {
@@ -64,10 +88,12 @@ public class User {
         return userMarket;
     }
 
-    public void unload() {
-        if (this.userMoney != null) {
-            //    this.userMoney;
-        }
+    public UserHomes getUserHomes() {
+        return userHomes;
+    }
+
+    public int getHomeLimit() {
+        return homeLimit;
     }
 
     public UUID getUuid() {

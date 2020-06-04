@@ -5,6 +5,8 @@ main: de.teamhardcore.pvp.Main
 
 depend:
   - ProtocolLib
+  - WorldGuard
+  - WorldEdit
 
 commands:
   fix:
@@ -69,6 +71,8 @@ commands:
       - w
   trash:
   clan:
+    aliases:
+      - c
   fly:
   spawner:
   extras:
@@ -83,3 +87,12 @@ commands:
   duel:
     aliases:
       - duell
+  invsee:
+  home:
+    aliases:
+      - homes
+      - sethome
+      - delhome
+  kick:
+    aliases:
+      - kickall

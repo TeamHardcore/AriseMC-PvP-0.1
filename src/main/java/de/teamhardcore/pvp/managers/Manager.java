@@ -26,6 +26,7 @@ public class Manager {
     private final HashMap<EnumPerk, Set<Player>> perkEffects = new HashMap<>();
 
     private final ArrayList<Player> playersInEnderchest = new ArrayList<>();
+    private final ArrayList<Player> playersInInvsee = new ArrayList<>();
     private final ArrayList<Player> playersInVanish = new ArrayList<>();
 
     public Manager(Main plugin) {
@@ -135,6 +136,10 @@ public class Manager {
 
     public ArrayList<Player> getPlayersInVanish() {
         return playersInVanish;
+    }
+
+    public ArrayList<Player> getPlayersInInvsee() {
+        return playersInInvsee;
     }
 
     public Main getPlugin() {

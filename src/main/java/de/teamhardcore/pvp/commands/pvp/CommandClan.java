@@ -172,7 +172,7 @@ public class CommandClan implements CommandExecutor {
                     Main.getInstance().getManager().getTeleportDelays().put(player, tpDelay);
                 }
             } else if (args[0].equalsIgnoreCase("rang") || args[0].equalsIgnoreCase("rank")) {
-                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §9§lAriseMC §8§l§m*-*-*-*-*-*-*-*-*");
+                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCLAN §8§l§m*-*-*-*-*-*-*-*-*");
                 player.sendMessage(StringDefaults.PREFIX + "§c§lRang §4§lOWNER");
                 player.sendMessage(StringDefaults.PREFIX + "§7/clan löschen");
                 player.sendMessage(StringDefaults.PREFIX + "§7/clan changeowner");
@@ -188,7 +188,7 @@ public class CommandClan implements CommandExecutor {
                 player.sendMessage("");
                 player.sendMessage(StringDefaults.PREFIX + "§c§lRang §9§lMEMBER");
                 player.sendMessage(StringDefaults.PREFIX + "§7/clan shop");
-                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §9§lAriseMC §8§l§m*-*-*-*-*-*-*-*-*");
+                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCLAN §8§l§m*-*-*-*-*-*-*-*-*");
 
             } else if (args[0].equalsIgnoreCase("stats")) {
                 if (Main.getInstance().getClanManager().getClan(player.getUniqueId()) == null) {
@@ -277,7 +277,7 @@ public class CommandClan implements CommandExecutor {
                 }
 
 
-                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §9§lAriseMC §8§l§m*-*-*-*-*-*-*-*-*");
+                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCLAN §8§l§m*-*-*-*-*-*-*-*-*");
                 player.sendMessage("§eDein Clan besitzt §7" + clan.getWarps().size() + " §evon §7" + clan.getMaxWarps() + "§e Clan-Warps.");
                 player.sendMessage(" ");
 
@@ -294,7 +294,7 @@ public class CommandClan implements CommandExecutor {
                 }
                 message.send(player);
                 player.sendMessage(" ");
-                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §9§lAriseMC §8§l§m*-*-*-*-*-*-*-*-*");
+                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCLAN §8§l§m*-*-*-*-*-*-*-*-*");
 
             } else {
                 sendHelp(player, label, 1);
@@ -423,7 +423,7 @@ public class CommandClan implements CommandExecutor {
                 Main.getInstance().getClanManager().addClanRequest(target.getUniqueId(), clan);
                 player.sendMessage(StringDefaults.PREFIX + "§eDu hast §7" + target.getName() + " §eerfolgreich in den Clan eingeladen.");
 
-                target.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §9§lAriseMC §8§l§m*-*-*-*-*-*-*-*-*");
+                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCLAN §8§l§m*-*-*-*-*-*-*-*-*");
                 target.sendMessage("§eDu hast eine Einladung vom Clan §7" + clan.getName() + " §eerhalten.");
                 target.sendMessage(" ");
                 target.sendMessage("§eKills§8: §7" + clan.getKills() + " §8- §eTode§8: §e" + clan.getDeaths());
@@ -431,7 +431,7 @@ public class CommandClan implements CommandExecutor {
                 target.sendMessage("§eLevel§8: §7" + clan.getLevel());
                 target.sendMessage(" ");
                 new JSONMessage("§a§lAnnehmen").tooltip("§aEinladung annehmen").runCommand("/clan annehmen " + clan.getName()).then(" §8● ").then("§c§lAblehnen").tooltip("§cEinladung ablehnen").runCommand("/clan ablehnen " + clan.getName()).send(target);
-                target.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §9§lAriseMC §8§l§m*-*-*-*-*-*-*-*-*");
+                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCLAN §8§l§m*-*-*-*-*-*-*-*-*");
 
                 for (ClanMember members : clan.getMemberList().getMembers().values()) {
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(members.getUuid());
@@ -841,7 +841,7 @@ public class CommandClan implements CommandExecutor {
     }
 
     private void sendHelp(Player player, String label, int page) {
-        player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §9§lAriseMC §8§l§m*-*-*-*-*-*-*-*-*");
+        player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCLAN §8§l§m*-*-*-*-*-*-*-*-*");
         if (page == 1) {
             player.sendMessage(StringDefaults.PREFIX + "§c/" + label + " erstellen <Name>: §7Erstellt einen Clan");
             player.sendMessage(StringDefaults.PREFIX + "§c/" + label + " löschen: §7Löscht einen Clan");
@@ -864,7 +864,7 @@ public class CommandClan implements CommandExecutor {
             player.sendMessage(StringDefaults.PREFIX + "§c#<Text>: §7Schreibt im Clanchat");
             player.sendMessage(StringDefaults.PREFIX + "§c/" + label + " <1-3>: §7Hilfe-Seiten");
         }
-        player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §9§lAriseMC §8§l§m*-*-*-*-*-*-*-*-*");
+        player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCLAN §8§l§m*-*-*-*-*-*-*-*-*");
     }
 
     private void sendStats(Player player, Clan clan) {
@@ -894,7 +894,7 @@ public class CommandClan implements CommandExecutor {
 
         String memberList = builder.substring(0, builder.length() - 4);
 
-        player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §9§lAriseMC §8§l§m*-*-*-*-*-*-*-*-*");
+        player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCLAN §8§l§m*-*-*-*-*-*-*-*-*");
         player.sendMessage("§c§lClan Stats von §7" + clan.getName() + "§8:");
         player.sendMessage("§c§lKills§8: §7" + Util.formatNumber(clan.getKills()) + " §c§lTode§8: §7" + Util.formatNumber(clan.getDeaths()));
         player.sendMessage("§c§lTrophäen§8: §7" + Util.formatNumber(clan.getTrophies()));
@@ -902,6 +902,6 @@ public class CommandClan implements CommandExecutor {
         player.sendMessage("§c§lRanking§8: §7" + clan.getRank() + ". Platz");
         player.sendMessage(" ");
         player.sendMessage("§c§lMitglieder§8: " + memberList);
-        player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §9§lAriseMC §8§l§m*-*-*-*-*-*-*-*-*");
+        player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCLAN §8§l§m*-*-*-*-*-*-*-*-*");
     }
 }

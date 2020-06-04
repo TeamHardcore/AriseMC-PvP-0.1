@@ -7,9 +7,9 @@
 
 package de.teamhardcore.pvp;
 
-import de.teamhardcore.pvp.commands.CommandDuel;
-import de.teamhardcore.pvp.commands.abuse.CommandAbuse;
+import de.teamhardcore.pvp.commands.pvp.CommandDuel;
 import de.teamhardcore.pvp.commands.abuse.CommandBan;
+import de.teamhardcore.pvp.commands.abuse.CommandKick;
 import de.teamhardcore.pvp.commands.abuse.CommandMute;
 import de.teamhardcore.pvp.commands.chat.CommandBroadcast;
 import de.teamhardcore.pvp.commands.chat.CommandGlobalmute;
@@ -23,6 +23,7 @@ import de.teamhardcore.pvp.commands.pvp.CommandClan;
 import de.teamhardcore.pvp.commands.pvp.CommandFix;
 import de.teamhardcore.pvp.commands.pvp.CommandStack;
 import de.teamhardcore.pvp.commands.teleport.*;
+import de.teamhardcore.pvp.commands.warp.CommandHome;
 import de.teamhardcore.pvp.commands.warp.CommandSpawn;
 import de.teamhardcore.pvp.commands.warp.CommandWarp;
 import de.teamhardcore.pvp.commands.world.CommandNear;
@@ -38,7 +39,6 @@ import de.teamhardcore.pvp.listeners.world.FoodLevelChange;
 import de.teamhardcore.pvp.listeners.world.PotionSplash;
 import de.teamhardcore.pvp.listeners.world.SignChange;
 import de.teamhardcore.pvp.managers.*;
-import de.teamhardcore.pvp.model.clan.shop.upgrades.EnumUpgrade;
 import de.teamhardcore.pvp.utils.VirtualAnvil;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -173,6 +173,9 @@ public class Main extends JavaPlugin {
         getCommand("markt").setExecutor(new CommandMarkt());
         getCommand("more").setExecutor(new CommandMore());
         getCommand("duel").setExecutor(new CommandDuel());
+        getCommand("invsee").setExecutor(new CommandInvsee());
+        getCommand("home").setExecutor(new CommandHome());
+        getCommand("kick").setExecutor(new CommandKick());
     }
 
     public FileManager getFileManager() {

@@ -74,6 +74,16 @@ public class InventoryClick implements Listener {
         User user = this.plugin.getUserManager().getUser(player.getUniqueId());
         UserData data = user.getUserData();
 
+        if (this.plugin.getManager().getPlayersInInvsee().contains(player) && !player.hasPermission("arisemc.invsee.edit")) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (this.plugin.getManager().getPlayersInEnderchest().contains(player) && !player.hasPermission("arisemc.enderchest.edit")) {
+            event.setCancelled(true);
+            return;
+        }
+
         if (inventory.getTitle().startsWith("§9§lReporte ")) {
             event.setCancelled(true);
 
@@ -873,80 +883,6 @@ public class InventoryClick implements Listener {
             } else player.getInventory().addItem(item.getOriginal());
         }
 
-    /*    if (inventory.getTitle().equalsIgnoreCase("§c§lDuelleinsatz")) {
-            event.setCancelled(true);
-
-            DuelConfiguration configuration = this.plugin.getDuelManager().getConfigurationCache().get(player.getUniqueId());
-            DuelDeployment deployment = configuration.getDeployment();
-
-            if (slot == 20) {
-                new VirtualAnvil(player, "Einsatz: ") {
-                    @Override
-                    public void onConfirm(String text) {
-                        if (text == null) {
-                            player.sendMessage("§c§lDUELL " + StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
-                            player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
-                            return;
-                        }
-
-                        String coinString = text.startsWith("Einsatz: ") ? text.substring(9) : text;
-
-                        long coins;
-                        try {
-                            coins = Long.parseLong(coinString);
-                        } catch (NumberFormatException ex) {
-                            player.sendMessage("§c§lDUELL " + StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
-                            return;
-                        }
-
-                        setConfirmedSuccessfully(true);
-                        deployment.setCoins(coins);
-                        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> DuelInventory.openDuelRewardsInventory(player, configuration), 1L);
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        if (!isConfirmedSuccessfully())
-                            Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> DuelInventory.openDuelRewardsInventory(player, configuration), 1L);
-                    }
-                };
-            }
-
-            if (slot == 24) {
-                DuelInventory.openDuelRewardsInventory(player, configuration);
-            }
-
-            if (slot == 36)
-                DuelInventory.openDuelRequestInventory(player, true, configuration);
-
-        }*/
-
-      /*  if (inventory.getTitle().equalsIgnoreCase("§c§lDuelleinstellungen")) {
-            event.setCancelled(true);
-
-            DuelConfiguration configuration = this.plugin.getDuelManager().getConfigurationCache().get(player.getUniqueId());
-            DuelSettings settings = configuration.getSettings();
-
-
-            if (slot == 20) {
-                settings.updateMaxHealStacks();
-                //   DuelInventory.openDuelSettingsInventory(player, configuration);
-            }
-
-            if (slot == 22) {
-                settings.setUseGoldenApple(!settings.canUseGoldenApple());
-             //   DuelInventory.openDuelSettingsInventory(player, configuration);
-            }
-
-            if (slot == 24) {
-                settings.setUsePoison(!settings.isUsePoison());
-           //     DuelInventory.openDuelSettingsInventory(player, configuration);
-            }
-
-            if (slot == 36)
-                DuelInventory.openDuelRequestInventory(player, true, configuration);
-        }
-*/
         if (inventory.getTitle().equalsIgnoreCase("§c§lDuell erstellen")) {
             event.setCancelled(true);
 
@@ -1013,7 +949,7 @@ public class InventoryClick implements Listener {
 
                 player.closeInventory();
                 player.sendMessage(StringDefaults.DUEL_PREFIX + "§eDu hast eine Duell-Konfiguration erstellt.");
-                new JSONMessage(StringDefaults.DUEL_PREFIX + "§eBenutze §7/duel invite <Spieler> (Klick)").suggestCommand("/duel invite ").send(player);
+                new JSONMessage(StringDefaults.DUEL_PREFIX + "§eVerwende §7/duell herausfordern <Spieler> §7§o[Klick]").suggestCommand("/duel herausfordern ").send(player);
 
                 Main.getInstance().getDuelManager().getConfigurationCache().put(player.getUniqueId(), configuration);
             }

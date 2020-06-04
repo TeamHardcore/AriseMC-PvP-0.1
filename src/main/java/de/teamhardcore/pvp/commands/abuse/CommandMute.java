@@ -42,12 +42,10 @@ public class CommandMute implements CommandExecutor {
 
         if (args.length == 2) {
             if (args[1].equalsIgnoreCase("confirm")) {
-
                 if (!Main.getInstance().getAbuseManager().getAbuseConfiguration().containsKey(player.getUniqueId())) {
                     player.sendMessage(StringDefaults.PREFIX + "§cVerwendung§8: §7/mute <Spieler> <Grund>");
                     return true;
                 }
-
 
                 UUID uuid = UUIDFetcher.getUUID(args[0]);
 
@@ -82,12 +80,7 @@ public class CommandMute implements CommandExecutor {
                     player.sendMessage(StringDefaults.PREFIX + "§cDieser Spieler wurde nicht gefunden.");
                     return;
                 }
-
-                User user = Main.getInstance().getUserManager().getUser(uuid);
-                UserData data = user.getUserData();
-
-                long count = data.getMutePoints();
-                long time = 0;
+                long time = -1;
 
                 AbuseConfiguration configuration = new AbuseConfiguration();
                 configuration.setEnd(time);
@@ -103,9 +96,10 @@ public class CommandMute implements CommandExecutor {
 
                 player.sendMessage(" ");
                 player.sendMessage(" ");
-                player.sendMessage(StringDefaults.PREFIX + "§cDu möchtest §7" + targetName + "§c für deinen eigenen Zeitraum muten.");
-                player.sendMessage(StringDefaults.PREFIX + "§cZeitraum§8: §7" + (time == -1 ? "Permanent" : TimeUtil.timeToString(time)));
-                new JSONMessage(StringDefaults.PREFIX + "§c§oKlicke hier, um den Zeitraum zu bestätigen.").tooltip("§7" + targetName + " §cfür " + (time == -1 ? "Permanent" : TimeUtil.timeToString(time)) + " mute.").runCommand("/mute " + targetName + " confirm").send(player);
+                player.sendMessage(StringDefaults.PREFIX + "§cDu möchtest §7" + targetName + "§c vom Chat sperren.");
+                player.sendMessage(StringDefaults.PREFIX + "§cZeitraum§8: §7" + "Permanent");
+                player.sendMessage(StringDefaults.PREFIX + "§cGrund§8: §7" + reason);
+                new JSONMessage(StringDefaults.PREFIX + "§c§oKlicke hier, um die Sperrung zu bestätigen.").tooltip("§7" + targetName + " §cfür " + "Permanent" + " sperren.").runCommand("/mute " + targetName + " confirm").send(player);
                 player.sendMessage(" ");
                 player.sendMessage(" ");
             });
@@ -114,12 +108,10 @@ public class CommandMute implements CommandExecutor {
         if (args.length == 3) {
             String reason = args[1];
             UUIDFetcher.getUUID(args[0], uuid -> {
-
                 if (uuid == null) {
                     player.sendMessage(StringDefaults.PREFIX + "§cDieser Spieler wurde nicht gefunden.");
                     return;
                 }
-
                 long time = TimeUtil.parseTime(args[2]);
 
                 AbuseConfiguration configuration = new AbuseConfiguration();
@@ -131,14 +123,14 @@ public class CommandMute implements CommandExecutor {
                 configuration.setLastSeenName(args[0]);
 
                 Main.getInstance().getAbuseManager().getAbuseConfiguration().put(player.getUniqueId(), configuration);
-
                 String targetName = UUIDFetcher.getName(uuid);
 
                 player.sendMessage(" ");
                 player.sendMessage(" ");
-                player.sendMessage(StringDefaults.PREFIX + "§cDu möchtest §7" + targetName + "§c für deinen eigenen Zeitraum muten.");
+                player.sendMessage(StringDefaults.PREFIX + "§cDu möchtest §7" + targetName + "§c vom Chat sperren.");
                 player.sendMessage(StringDefaults.PREFIX + "§cZeitraum§8: §7" + (time == -1 ? "Permanent" : TimeUtil.timeToString(time)));
-                new JSONMessage(StringDefaults.PREFIX + "§c§oKlicke hier, um den Zeitraum zu bestätigen.").tooltip("§7" + targetName + " §cfür " + (time == -1 ? "Permanent" : TimeUtil.timeToString(time)) + " muten.").runCommand("/mute " + targetName + " confirm").send(player);
+                player.sendMessage(StringDefaults.PREFIX + "§cGrund§8: §7" + reason);
+                new JSONMessage(StringDefaults.PREFIX + "§c§oKlicke hier, um die Sperrung zu bestätigen.").tooltip("§7" + targetName + " §cfür " + (time == -1 ? "Permanent" : TimeUtil.timeToString(time)) + " sperren.").runCommand("/mute " + targetName + " confirm").send(player);
                 player.sendMessage(" ");
                 player.sendMessage(" ");
             });

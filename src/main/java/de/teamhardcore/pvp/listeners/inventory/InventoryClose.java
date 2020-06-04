@@ -27,6 +27,9 @@ public class InventoryClose implements Listener {
         Inventory inventory = event.getInventory();
         Player player = (Player) event.getPlayer();
 
+        this.plugin.getManager().getPlayersInInvsee().remove(player);
+        this.plugin.getManager().getPlayersInEnderchest().remove(player);
+
         if (inventory.getTitle().startsWith("§9§lReporte ")) {
             this.plugin.getReportManager().getReportConfirmation().remove(player);
         }

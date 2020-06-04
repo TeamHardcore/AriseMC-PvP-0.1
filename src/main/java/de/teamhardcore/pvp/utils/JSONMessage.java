@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -233,6 +234,29 @@ public class JSONMessage {
         last().setOnHover(HoverEvent.showText(text));
         return this;
     }
+
+    public JSONMessage tooltip(String... lines) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < lines.length; i++) {
+            builder.append(lines[i]);
+            if (i != lines.length - 1)
+                builder.append('\n');
+        }
+        last().setOnHover(HoverEvent.showText(builder.toString()));
+        return this;
+    }
+
+    public JSONMessage tooltip(ArrayList<String> lines) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < lines.size(); i++) {
+            builder.append(lines.get(i));
+            if (i != lines.size() - 1)
+                builder.append('\n');
+        }
+        last().setOnHover(HoverEvent.showText(builder.toString()));
+        return this;
+    }
+
 
     /**
      * Shows text when you hover over it

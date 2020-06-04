@@ -25,8 +25,8 @@ public class AbuseManager {
     private final Map<UUID, AbuseConfiguration> abuseConfiguration = new HashMap<>();
     private final Map<UUID, List<Abuse>> abuseCache = new HashMap<>();
 
-    private final String permanentBanMessage = "§4§lDu wurdest permanent gebannt. \n§7Grund§8: §e%reason% \n\n §7§oFalls dies ein Fehlbann ist, nimm diese Nachricht auf und melde dich im TeamSpeak.";
-    private final String temporallyBanMessage = "§4§lDu wurdest für %time% gebannt. \n§7Grund§8: §e%reason% \n\n §7§oFalls dies ein Fehlbann ist, nimm diese Nachricht auf und melde dich im TeamSpeak.";
+    private final String permanentBanMessage = "§4Du wurdest permanent gebannt. \n§4Grund§8: §7%reason% \n\n §7§oFalls dies ein Fehlbann ist, nimm diese Nachricht auf und melde dich im TeamSpeak.";
+    private final String temporallyBanMessage = "§4Du wurdest für %time% gebannt. \n§4Grund§8: §7%reason% \n\n §7§oFalls dies ein Fehlbann ist, nimm diese Nachricht auf und melde dich im TeamSpeak.";
     private final String muteMessage = "";
 
     public AbuseManager(Main plugin) {
@@ -65,7 +65,7 @@ public class AbuseManager {
         abuses.add(abuse);
         this.abuseCache.put(configuration.getTarget(), abuses);
 
-        //todo: add abuse to databse
+        //todo: add abuse to database
 
         Player target = Bukkit.getPlayer(configuration.getTarget());
 

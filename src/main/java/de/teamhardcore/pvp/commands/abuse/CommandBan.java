@@ -74,14 +74,8 @@ public class CommandBan implements CommandExecutor {
                 return true;
             }
             String reason = args[1];
-
             UUIDFetcher.getUUID(args[0], uuid -> {
-
-                User user = Main.getInstance().getUserManager().getUser(uuid);
-                UserData data = user.getUserData();
-
-                long count = data.getBanPoints();
-                long time = 0;
+                long time = -1;
 
                 AbuseConfiguration configuration = new AbuseConfiguration();
                 configuration.setEnd(time);
@@ -93,13 +87,14 @@ public class CommandBan implements CommandExecutor {
 
                 Main.getInstance().getAbuseManager().getAbuseConfiguration().put(player.getUniqueId(), configuration);
 
-                String targetName = UUIDFetcher.getName(uuid);
+                String targetName = args[0];
 
                 player.sendMessage(" ");
                 player.sendMessage(" ");
-                player.sendMessage(StringDefaults.PREFIX + "§cDu möchtest §7" + targetName + "§c für deinen eigenen Zeitraum bannen.");
-                player.sendMessage(StringDefaults.PREFIX + "§cZeitraum§8: §7" + (time == -1 ? "Permanent" : TimeUtil.timeToString(time)));
-                new JSONMessage(StringDefaults.PREFIX + "§c§oKlicke hier, um den Zeitraum zu bestätigen.").tooltip("§7" + targetName + " §cfür " + (time == -1 ? "Permanent" : TimeUtil.timeToString(time)) + " sperren.").runCommand("/ban " + targetName + " confirm").send(player);
+                player.sendMessage(StringDefaults.PREFIX + "§cDu möchtest §7" + targetName + "§c vom Server sperren.");
+                player.sendMessage(StringDefaults.PREFIX + "§cZeitraum§8: §7" + "Permanent");
+                player.sendMessage(StringDefaults.PREFIX + "§cGrund§8: §7" + reason);
+                new JSONMessage(StringDefaults.PREFIX + "§c§oKlicke hier, um die Sperrung zu bestätigen.").tooltip("§7" + targetName + " §cfür " + "Permanent" + " sperren.").runCommand("/ban " + targetName + " confirm").send(player);
                 player.sendMessage(" ");
                 player.sendMessage(" ");
             });
@@ -126,9 +121,10 @@ public class CommandBan implements CommandExecutor {
 
                 player.sendMessage(" ");
                 player.sendMessage(" ");
-                player.sendMessage(StringDefaults.PREFIX + "§cDu möchtest §7" + targetName + "§c für deinen eigenen Zeitraum bannen.");
+                player.sendMessage(StringDefaults.PREFIX + "§cDu möchtest §7" + targetName + "§c vom Server sperren.");
                 player.sendMessage(StringDefaults.PREFIX + "§cZeitraum§8: §7" + (time == -1 ? "Permanent" : TimeUtil.timeToString(time)));
-                new JSONMessage(StringDefaults.PREFIX + "§c§oKlicke hier, um den Zeitraum zu bestätigen.").tooltip("§7" + targetName + " §cfür " + (time == -1 ? "Permanent" : TimeUtil.timeToString(time)) + " sperren.").runCommand("/ban " + targetName + " confirm").send(player);
+                player.sendMessage(StringDefaults.PREFIX + "§cGrund§8: §7" + reason);
+                new JSONMessage(StringDefaults.PREFIX + "§c§oKlicke hier, um die Sperrung zu bestätigen.").tooltip("§7" + targetName + " §cfür " + (time == -1 ? "Permanent" : TimeUtil.timeToString(time)) + " sperren.").runCommand("/ban " + targetName + " confirm").send(player);
                 player.sendMessage(" ");
                 player.sendMessage(" ");
             });

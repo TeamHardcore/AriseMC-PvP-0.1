@@ -37,8 +37,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Duel {
-
-
     private final int WALL_REGION = 8;
 
     private final DuelConfiguration configuration;

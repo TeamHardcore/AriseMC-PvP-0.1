@@ -4,7 +4,7 @@
  *   Copyright (c) 2020 by TeamHardcore to present. All rights reserved
  */
 
-package de.teamhardcore.pvp.commands;
+package de.teamhardcore.pvp.commands.pvp;
 
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.inventories.DuelInventory;
@@ -29,11 +29,6 @@ import java.util.List;
 import java.util.Set;
 
 public class CommandDuel implements CommandExecutor {
-
-        /*
-    -/duel admin - List all running duels
-    -/duel admin <gameID> <stop/info/spectate> - Operate a running duel
-     */
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
@@ -97,8 +92,9 @@ public class CommandDuel implements CommandExecutor {
                 player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
             }
         }
+
         if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("invite") || args[0].equalsIgnoreCase("einladen")) {
+            if (args[0].equalsIgnoreCase("herausfordern")) {
                 if (!Main.getInstance().getDuelManager().getConfigurationCache().containsKey(player.getUniqueId())) {
                     player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu hast noch kein Duell erstellt.");
                     return true;
@@ -115,7 +111,6 @@ public class CommandDuel implements CommandExecutor {
                     player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu kannst dich nicht selbst herausfordern.");
                     return true;
                 }
-
 
 
                 double distance = player.getLocation().distanceSquared(target.getLocation());
@@ -225,7 +220,6 @@ public class CommandDuel implements CommandExecutor {
                             players.sendMessage(StringDefaults.DUEL_PREFIX + "§7" + player.getName() + " §chat ein Duell beendet.");
                             players.sendMessage(StringDefaults.DUEL_PREFIX + "§cGameID§8: §7" + duel.getGameID());
                             players.sendMessage(StringDefaults.DUEL_PREFIX + "§cSpieler§8: §7" + duelPlayers);
-                            return;
                         }
                     });
 
