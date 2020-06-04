@@ -111,10 +111,10 @@ public class CommandDuel implements CommandExecutor {
                     return true;
                 }
 
-            /*    if (target == player) {
+                if (target == player) {
                     player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu kannst dich nicht selbst herausfordern.");
                     return true;
-                }*/
+                }
 
                 double distance = player.getLocation().distanceSquared(target.getLocation());
 
