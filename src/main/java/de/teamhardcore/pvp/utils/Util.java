@@ -3,6 +3,7 @@ package de.teamhardcore.pvp.utils;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
@@ -55,7 +56,35 @@ public class Util {
     }
 
     public static void sendHeaderFooter(Player player, String header, String footer) {
-        player.setPlayerListHeaderFooter(new ComponentBuilder(header).create(), new ComponentBuilder(footer).create());
+        PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER);
+
+        WrappedChatComponent wrapHeader = WrappedChatComponent.fromText(header);
+        WrappedChatComponent wrapFooter = WrappedChatComponent.fromText(footer);
+
+        packet.getChatComponents().write(0, wrapHeader);
+        packet.getChatComponents().write(1, wrapFooter);
+
+        try {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendTitle(Player player, String title, EnumWrappers.TitleAction action, int fadeIn, int stay, int fadeOut) {
+        PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.TITLE);
+        packet.getModifier().writeDefaults();
+        packet.getTitleActions().write(0, action);
+        packet.getChatComponents().write(0, WrappedChatComponent.fromText(title));
+        packet.getIntegers().write(0, fadeIn);
+        packet.getIntegers().write(1, stay);
+        packet.getIntegers().write(2, fadeOut);
+
+        try {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+        } catch (InvocationTargetException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public static <K, V extends Comparable<V>> Map<K, V> sortMapByValues(Map<K, V> map) {

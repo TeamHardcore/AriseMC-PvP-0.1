@@ -8,6 +8,7 @@ package de.teamhardcore.pvp.commands;
 
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.inventories.DuelInventory;
+import de.teamhardcore.pvp.model.duel.Duel;
 import de.teamhardcore.pvp.model.duel.configuration.DuelConfiguration;
 import de.teamhardcore.pvp.model.duel.arena.DuelArenaType;
 import de.teamhardcore.pvp.model.duel.configuration.DuelDeployment;
@@ -16,12 +17,24 @@ import de.teamhardcore.pvp.utils.JSONMessage;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.Util;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class CommandDuel implements CommandExecutor {
+
+        /*
+    -/duel admin - List all running duels
+    -/duel admin <gameID> <stop/info/spectate> - Operate a running duel
+     */
+
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
         if (!(cs instanceof Player))
@@ -54,9 +67,36 @@ public class CommandDuel implements CommandExecutor {
 
                 player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu hast das Duell abgebrochen.");
                 Main.getInstance().getDuelManager().getConfigurationCache().remove(player.getUniqueId());
+            } else if (args[0].equalsIgnoreCase("admin")) {
+                if (!player.hasPermission("arisemc.duel.admin")) {
+                    player.sendMessage(StringDefaults.NO_PERM);
+                    return true;
+                }
+
+                Set<String> runningDuels = new HashSet<>(Main.getInstance().getDuelManager().getGameIdCache());
+
+                if (runningDuels.isEmpty()) {
+                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§cEs existieren keine laufenden Duelle.");
+                    return true;
+                }
+
+                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
+                player.sendMessage(StringDefaults.PREFIX + "§cVerwendung§8: §7/duel admin <GameID> <Operating> §7§o(Klick auf eine GameID)");
+                player.sendMessage(" ");
+                for (String gameID : runningDuels) {
+                    Duel duel = Main.getInstance().getDuelManager().getDuel(gameID);
+                    if (duel == null) continue;
+
+                    String duelLocation = "X: " + (int) duel.getConfiguration().getLocation().getX() + ", Y: " + (int) duel.getConfiguration().getLocation().getY() + ", Z: " + (int) duel.getConfiguration().getLocation().getZ();
+                    String duelPlayers = duel.getPlayer().getName() + " vs. " + duel.getTarget().getName();
+
+                    new JSONMessage("§8■ §6§l" + duelPlayers).tooltip("§c§lPosition§8: §7" + duelLocation + "\n" + "§c§lGameID§8: §7" + gameID)
+                            .suggestCommand("/duel admin " + gameID + " ").send(player);
+                }
+                player.sendMessage(" ");
+                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
             }
         }
-
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("invite") || args[0].equalsIgnoreCase("einladen")) {
                 if (!Main.getInstance().getDuelManager().getConfigurationCache().containsKey(player.getUniqueId())) {
@@ -150,6 +190,58 @@ public class CommandDuel implements CommandExecutor {
 
                 Main.getInstance().getDuelManager().getConfigurationCache().remove(player.getUniqueId());
                 Main.getInstance().getDuelManager().createDuel(configuration);
+            }
+        }
+
+        if (args.length == 3) {
+            if (args[0].equalsIgnoreCase("admin")) {
+                if (!player.hasPermission("arisemc.duel.admin")) {
+                    player.sendMessage(StringDefaults.NO_PERM);
+                    return true;
+                }
+
+                String gameID = args[1];
+                Duel duel = Main.getInstance().getDuelManager().getDuel(gameID);
+
+                if (duel == null) {
+                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDie GameID ist ungültig!");
+                    return true;
+                }
+
+                String duelLocation = "X: " + (int) duel.getConfiguration().getLocation().getX() + ", Y: " + (int) duel.getConfiguration().getLocation().getY() + ", Z: " + (int) duel.getConfiguration().getLocation().getZ();
+                String duelPlayers = duel.getPlayer().getName() + ", " + duel.getTarget().getName();
+
+                if (args[2].equalsIgnoreCase("stop")) {
+                    duel.startEndTask();
+                    duel.sendMessage(StringDefaults.DUEL_PREFIX + "§cDas Duell wurde von einem Admin gestoppt.");
+                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu hast ein Duell gestoppt.");
+                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§cGameID§8: §7" + duel.getGameID());
+                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
+
+                    Bukkit.getOnlinePlayers().forEach(players -> {
+                        if (players.hasPermission("arisemc.duel.admin") && player != players) {
+                            players.sendMessage(StringDefaults.DUEL_PREFIX + "§7" + player.getName() + " §chat ein Duell beendet.");
+                            players.sendMessage(StringDefaults.DUEL_PREFIX + "§cGameID§8: §7" + duel.getGameID());
+                            players.sendMessage(StringDefaults.DUEL_PREFIX + "§cSpieler§8: §7" + duelPlayers);
+                            return;
+                        }
+                    });
+
+                } else if (args[2].equalsIgnoreCase("info")) {
+
+                    player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
+                    player.sendMessage(" ");
+                    player.sendMessage(StringDefaults.PREFIX + "§cGameID§8: §7" + duel.getGameID());
+                    player.sendMessage(" §8● §cPosition§8: §7" + duelLocation);
+                    player.sendMessage(" §8● §cSpieler§8: §7" + duelPlayers);
+                    player.sendMessage(" ");
+                    player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
+                } else if (args[2].equalsIgnoreCase("teleport")) {
+                    player.teleport(duel.getConfiguration().getLocation());
+                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§eDu wurdest zur Duell Location teleportiert.");
+                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
+                }
+
             }
         }
 

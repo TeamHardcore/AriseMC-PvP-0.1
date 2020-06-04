@@ -30,6 +30,7 @@ import de.teamhardcore.pvp.commands.world.CommandSpawner;
 import de.teamhardcore.pvp.database.DatabaseManager;
 import de.teamhardcore.pvp.listeners.block.BlockBreak;
 import de.teamhardcore.pvp.listeners.block.BlockPlace;
+import de.teamhardcore.pvp.listeners.entity.EntityDamage;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClick;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClose;
 import de.teamhardcore.pvp.listeners.player.*;
@@ -133,6 +134,7 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new PotionSplash(this), this);
         pm.registerEvents(new PlayerItemConsume(this), this);
         pm.registerEvents(new PlayerMove(this), this);
+        pm.registerEvents(new EntityDamage(this), this);
 
         getCommand("fix").setExecutor(new CommandFix());
         getCommand("stack").setExecutor(new CommandStack());
