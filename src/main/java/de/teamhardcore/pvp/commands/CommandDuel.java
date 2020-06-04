@@ -116,6 +116,8 @@ public class CommandDuel implements CommandExecutor {
                     return true;
                 }
 
+
+
                 double distance = player.getLocation().distanceSquared(target.getLocation());
 
                 if (distance > 5) {
