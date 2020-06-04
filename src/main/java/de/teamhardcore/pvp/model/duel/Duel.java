@@ -37,7 +37,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Duel {
-    private final int WALL_REGION = 8;
+    private final int WALL_REGION_SIZE = 14;
 
     private final DuelConfiguration configuration;
     private final List<Player> alive;
@@ -58,8 +58,8 @@ public class Duel {
         this.configuration = configuration;
 
         Location middle = configuration.getLocation().clone();
-        Location min = middle.clone().add(this.WALL_REGION, 10, this.WALL_REGION);
-        Location max = middle.clone().add(-this.WALL_REGION, -10, -this.WALL_REGION);
+        Location min = middle.clone().add(this.WALL_REGION_SIZE, 10, this.WALL_REGION_SIZE);
+        Location max = middle.clone().add(-this.WALL_REGION_SIZE, -10, -this.WALL_REGION_SIZE);
 
         this.duelWall = new DuelWall(max, min);
 
@@ -238,7 +238,7 @@ public class Duel {
             this.wallBlocks.put(player, new CopyOnWriteArrayList<>());
 
         List<Location> visibleBlocks = this.wallBlocks.get(player);
-        List<Location> locationsInRange = getLocationsInRange(player.getLocation(), 3, 2);
+        List<Location> locationsInRange = getLocationsInRange(player.getLocation(), 4, 4);
 
         for (Location visible : visibleBlocks) {
             if (!locationsInRange.contains(visible)) {

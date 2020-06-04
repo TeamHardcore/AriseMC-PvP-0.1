@@ -12,7 +12,6 @@ import de.teamhardcore.pvp.model.GlobalmuteTier;
 import de.teamhardcore.pvp.model.Support;
 import de.teamhardcore.pvp.model.abuse.Abuse;
 import de.teamhardcore.pvp.model.abuse.AbuseType;
-import de.teamhardcore.pvp.model.clan.Clan;
 import de.teamhardcore.pvp.model.clan.ClanMember;
 import de.teamhardcore.pvp.user.UserData;
 import de.teamhardcore.pvp.utils.StringDefaults;
@@ -30,7 +29,6 @@ public class AsyncPlayerChat implements Listener {
     public AsyncPlayerChat(Main plugin) {
         this.plugin = plugin;
     }
-
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
@@ -74,7 +72,7 @@ public class AsyncPlayerChat implements Listener {
             }
 
             if (event.isCancelled()) {
-                player.sendMessage(StringDefaults.PREFIX + "§cDer Chat ist im Moment gemutet, du kannst nicht schreiben.");
+                player.sendMessage(StringDefaults.PREFIX + "§cDer Chat ist derzeit deaktiviert.");
             }
         }
 
@@ -122,6 +120,4 @@ public class AsyncPlayerChat implements Listener {
         UserData userData = this.plugin.getUserManager().getUser(player.getUniqueId()).getUserData();
         return (userData.getActiveColor() == null) ? "§7" : userData.getActiveColor().getChatColor().toString();
     }
-
-
 }

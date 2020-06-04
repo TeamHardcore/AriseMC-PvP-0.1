@@ -43,10 +43,6 @@ public class PlayerInteract implements Listener {
                 opening.startOpening(new InventoryAnimation(opening));
 
                 //TODO: CHECK SETTINGS
-
-
             }
-
     }
-
 }
