@@ -26,17 +26,22 @@ public class CommandDebug implements CommandExecutor {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("handler")) {
-            if (args[1].equalsIgnoreCase("info")) {
-                for (HandlerGroup group : HandlerGroups.getHandlerGroups().values()) {
-                    player.sendMessage("§e" + group.getName() + " §8| §eStatus§8: §7" + (group.isRunning() ? "Aktiv" : "Inaktiv") + " §8| §eHandler§8: §7" + group.getHandlers().size());
+        if (args.length < 2) {
+            player.sendMessage(StringDefaults.PREFIX + "§cVerwendung§8: §7/debug <handler> <info>");
+            player.sendMessage(StringDefaults.PREFIX + "§7§oWeitere Möglichkeiten folgen.");
+            return true;
+        }
+
+        if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("handler")) {
+                if (args[1].equalsIgnoreCase("info")) {
+                    for (HandlerGroup group : HandlerGroups.getHandlerGroups().values()) {
+                        player.sendMessage("§e" + group.getName() + " §8| §eStatus§8: §7" + (group.isRunning() ? "Aktiv" : "Inaktiv") + " §8| §eHandler§8: §7" + group.getHandlers().size());
+                    }
                 }
             }
         }
-
-
         //todo: add others
-
         return true;
     }
 }
