@@ -949,7 +949,7 @@ public class InventoryClick implements Listener {
 
                 player.closeInventory();
                 player.sendMessage(StringDefaults.DUEL_PREFIX + "§eDu hast eine Duell-Konfiguration erstellt.");
-                new JSONMessage(StringDefaults.DUEL_PREFIX + "§eVerwende §7/duell herausfordern <Spieler> §7§o[Klick]").suggestCommand("/duel herausfordern ").send(player);
+                new JSONMessage(StringDefaults.DUEL_PREFIX + "§eVerwende §7/duell invite <Spieler> §7§o[Klick]").suggestCommand("/duel invite ").send(player);
 
                 Main.getInstance().getDuelManager().getConfigurationCache().put(player.getUniqueId(), configuration);
             }
