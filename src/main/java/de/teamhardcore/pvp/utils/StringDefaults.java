@@ -8,11 +8,11 @@ public class StringDefaults {
     public final static String NO_PERM = PREFIX + "§cDazu hast du keine Berechtigung!";
     public final static String NOT_ONLINE = PREFIX + "§cDieser Spieler ist nicht online.";
 
-    public final static String REPORT_PREFIX = "§c§LREPORT §8§l> §r";
-    public final static String MSG_PREFIX = "§c§lMSG §8§l> §r";
+    public final static String REPORT_PREFIX = "§c§LREPORT " + PREFIX;
+    public final static String MSG_PREFIX = "§c§lMSG " + PREFIX;
     public final static String CLAN_PREFIX = "§c§lCLAN " + PREFIX;
-    public final static String DUEL_PREFIX = "§c§lDUELL  " + PREFIX;
-
+    public final static String DUEL_PREFIX = "§c§lDUELL " + PREFIX;
+    public final static String SPY_PREFIX = "§c§lSPY " + PREFIX;
 
     public final static String SLOT_UPGRADE = "slot";
     public final static String WARP_UPGRADE = "warp";

@@ -12,15 +12,19 @@ import de.teamhardcore.pvp.model.GlobalmuteTier;
 import de.teamhardcore.pvp.model.Support;
 import de.teamhardcore.pvp.model.abuse.Abuse;
 import de.teamhardcore.pvp.model.abuse.AbuseType;
+import de.teamhardcore.pvp.model.clan.Clan;
 import de.teamhardcore.pvp.model.clan.ClanMember;
+import de.teamhardcore.pvp.model.clan.ClanRank;
 import de.teamhardcore.pvp.user.UserData;
 import de.teamhardcore.pvp.utils.StringDefaults;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.List;
+import java.util.UUID;
 
 public class AsyncPlayerChat implements Listener {
 
@@ -37,6 +41,26 @@ public class AsyncPlayerChat implements Listener {
 
         if (message.contains("̇") || message.equalsIgnoreCase("")) {
             event.setCancelled(true);
+            return;
+        }
+
+        if (message.startsWith("#") && this.plugin.getClanManager().hasClan(player.getUniqueId())) {
+            message = message.substring(1);
+            message = message.trim();
+            event.setMessage(message);
+
+            Clan clan = this.plugin.getClanManager().getClan(player.getUniqueId());
+            ClanMember member = clan.getMemberList().getMember(player.getUniqueId());
+
+            event.getRecipients().clear();
+
+            for (UUID clanMemberUUID : clan.getMemberList().getMembers().keySet()) {
+                Player clanMember = Bukkit.getPlayer(clanMemberUUID);
+                if (clanMember == null || !clanMember.isOnline()) continue;
+                event.getRecipients().add(clanMember);
+            }
+
+            event.setFormat("§8[§6§lClanChat§8] " + member.getRank().getColor() + "§l%1$s§8: §7%2$s");
             return;
         }
 

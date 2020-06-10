@@ -10,6 +10,7 @@ package de.teamhardcore.pvp.commands.teleport;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.teleport.TPDelay;
 import de.teamhardcore.pvp.utils.StringDefaults;
+import de.teamhardcore.pvp.utils.Util;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -39,9 +40,9 @@ public class CommandBack implements CommandExecutor {
         if (player.hasPermission("arisemc.teleport.nodelay")) {
             Main.getInstance().getManager().getLastPositions().put(player, player.getLocation());
             player.teleport(location);
-            player.sendMessage(StringDefaults.PREFIX + "§eDu wurdest an deine vorherige Position teleportiert.");
+            Util.sendActionbar(player, "§eDu wurdest an deine vorherige Position teleportiert.");
         } else {
-            player.sendMessage(StringDefaults.PREFIX + "§eDu wirst in §72 Sekunden §eteleportiert.");
+            Util.sendActionbar(player, "§eDu wirst in §72 Sekunden §eteleportiert.");
 
             TPDelay tpDelay = new TPDelay(player, 0, 2) {
                 @Override
@@ -53,7 +54,7 @@ public class CommandBack implements CommandExecutor {
                 public void onEnd() {
                     Main.getInstance().getManager().getLastPositions().put(getPlayer(), getPlayer().getLocation());
                     getPlayer().teleport(location);
-                    player.sendMessage(StringDefaults.PREFIX + "§eDu wurdest an deine vorherige Position teleportiert.");
+                    Util.sendActionbar(player, "§eDu wurdest an deine vorherige Position teleportiert.");
                 }
             };
             Main.getInstance().getManager().getTeleportDelays().put(player, tpDelay);

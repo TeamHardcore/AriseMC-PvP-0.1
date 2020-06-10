@@ -10,6 +10,7 @@ package de.teamhardcore.pvp.commands.player;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.TimeUtil;
+import de.teamhardcore.pvp.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
@@ -53,7 +54,7 @@ public class CommandHeal implements CommandExecutor {
             player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
             player.setFireTicks(0);
 
-            player.sendMessage(StringDefaults.PREFIX + "§eDu wurdest geheilt.");
+            Util.sendActionbar(player, "§eDu wurdest geheilt.");
             Main.getInstance().getManager().getHealCooldown().put(player, System.currentTimeMillis() + 3600000L);
 
 
@@ -95,7 +96,7 @@ public class CommandHeal implements CommandExecutor {
 
             target.playSound(player.getLocation(), Sound.VILLAGER_YES, 1.0F, 1.0F);
 
-            target.sendMessage(StringDefaults.PREFIX + "§eDu wurdest geheilt.");
+            Util.sendActionbar(target, "§eDu wurdest geheilt.");
             player.sendMessage(StringDefaults.PREFIX + "§eDu hast den Spieler §7" + target.getName() + " §eerfolgreich geheilt.");
             Main.getInstance().getManager().getHealCooldown().put(player, System.currentTimeMillis() + 3600000L);
         }

@@ -96,3 +96,4 @@ commands:
   kick:
     aliases:
       - kickall
+  commandspy:

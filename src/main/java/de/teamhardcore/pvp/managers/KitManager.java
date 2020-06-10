@@ -105,19 +105,16 @@ public class KitManager {
     }
 
     private void updateInventory(Player player, Inventory inventory, int state) {
-        if (!inventory.getTitle().startsWith("§c§lKits")) {
+        if (!inventory.getTitle().startsWith("§c§lKits"))
             return;
-        }
 
-        System.out.println(state + " update");
-
-        for (int i = 0; i < inventory.getSize(); i++) {
+        for (int i = 0; i < inventory.getSize(); i++)
             inventory.setItem(i, new ItemBuilder(Material.STAINED_GLASS_PANE).setDisplayName(" ").setDurability(7).build());
-        }
 
         if (state <= 1) {
             inventory.setItem(12, new ItemBuilder(Material.DIAMOND_HELMET).setDisplayName("§a§lRang-Kits").build());
             inventory.setItem(14, new ItemBuilder(Material.DIAMOND).setDisplayName("§b§lEinmalige Belohnung").build());
+
         } else if (state == 2) {
             UserData userData = Main.getInstance().getUserManager().getUser(player.getUniqueId()).getUserData();
 

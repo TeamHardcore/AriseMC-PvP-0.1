@@ -1,6 +1,7 @@
 package de.teamhardcore.pvp.managers;
 
 import de.teamhardcore.pvp.Main;
+import de.teamhardcore.pvp.model.SpyMode;
 import de.teamhardcore.pvp.model.extras.EnumPerk;
 import de.teamhardcore.pvp.model.teleport.TPDelay;
 import de.teamhardcore.pvp.model.teleport.TPRequest;
@@ -24,6 +25,8 @@ public class Manager {
     private final HashMap<Player, Location> lastPositions = new HashMap<>();
     private final HashMap<Player, Long> healCooldown = new HashMap<>();
     private final HashMap<EnumPerk, Set<Player>> perkEffects = new HashMap<>();
+    private final HashMap<UUID, SpyMode> commandSpyModeCache = new HashMap<>();
+    private final HashMap<UUID, SpyMode> messageSpyModeCache = new HashMap<>();
 
     private final ArrayList<Player> playersInEnderchest = new ArrayList<>();
     private final ArrayList<Player> playersInInvsee = new ArrayList<>();
@@ -140,6 +143,14 @@ public class Manager {
 
     public ArrayList<Player> getPlayersInInvsee() {
         return playersInInvsee;
+    }
+
+    public HashMap<UUID, SpyMode> getCommandSpyModeCache() {
+        return commandSpyModeCache;
+    }
+
+    public HashMap<UUID, SpyMode> getMessageSpyModeCache() {
+        return messageSpyModeCache;
     }
 
     public Main getPlugin() {

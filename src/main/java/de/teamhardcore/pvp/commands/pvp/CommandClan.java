@@ -12,10 +12,7 @@ import de.teamhardcore.pvp.model.clan.Clan;
 import de.teamhardcore.pvp.model.clan.ClanMember;
 import de.teamhardcore.pvp.model.clan.ClanRank;
 import de.teamhardcore.pvp.model.teleport.TPDelay;
-import de.teamhardcore.pvp.utils.JSONMessage;
-import de.teamhardcore.pvp.utils.StringDefaults;
-import de.teamhardcore.pvp.utils.UUIDFetcher;
-import de.teamhardcore.pvp.utils.Util;
+import de.teamhardcore.pvp.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -896,10 +893,11 @@ public class CommandClan implements CommandExecutor {
 
         player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCLAN §8§l§m*-*-*-*-*-*-*-*-*");
         player.sendMessage("§c§lClan Stats von §7" + clan.getName() + "§8:");
-        player.sendMessage("§c§lKills§8: §7" + Util.formatNumber(clan.getKills()) + " §c§lTode§8: §7" + Util.formatNumber(clan.getDeaths()));
+        player.sendMessage("§c§lKills§8: §7" + Util.formatNumber(clan.getKills()) + " §c§lTode§8: §7" + Util.formatNumber(clan.getDeaths()) + " §c§lKD§8: §7" + clan.getKD());
         player.sendMessage("§c§lTrophäen§8: §7" + Util.formatNumber(clan.getTrophies()));
         player.sendMessage("§c§lClan-Coins§8: §7" + Util.formatNumber(clan.getMoney()) + " Clan-Coins");
         player.sendMessage("§c§lRanking§8: §7" + clan.getRank() + ". Platz");
+        player.sendMessage("§c§lGegründet am§8: §7" + DateFormats.FORMAT_NORMAL.format(new Date(clan.getCreationTime())));
         player.sendMessage(" ");
         player.sendMessage("§c§lMitglieder§8: " + memberList);
         player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCLAN §8§l§m*-*-*-*-*-*-*-*-*");

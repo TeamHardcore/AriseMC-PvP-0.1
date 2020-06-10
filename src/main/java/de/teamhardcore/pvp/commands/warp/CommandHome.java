@@ -126,6 +126,7 @@ public class CommandHome implements CommandExecutor {
             }
 
             if (user.getHomeLimit() != -1 && user.getUserHomes().getHomes().size() >= user.getHomeLimit()) {
+                player.sendMessage(user.getUserHomes().getHomes().size() + "/" + user.getHomeLimit());
                 player.sendMessage(StringDefaults.PREFIX + "§cDu hast bereits die maximale Anzahl an Homes erreicht.");
                 return true;
             }

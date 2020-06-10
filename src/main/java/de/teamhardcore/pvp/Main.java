@@ -7,6 +7,7 @@
 
 package de.teamhardcore.pvp;
 
+import de.teamhardcore.pvp.commands.chat.CommandCommandSpy;
 import de.teamhardcore.pvp.commands.pvp.CommandDuel;
 import de.teamhardcore.pvp.commands.abuse.CommandBan;
 import de.teamhardcore.pvp.commands.abuse.CommandKick;
@@ -176,6 +177,7 @@ public class Main extends JavaPlugin {
         getCommand("invsee").setExecutor(new CommandInvsee());
         getCommand("home").setExecutor(new CommandHome());
         getCommand("kick").setExecutor(new CommandKick());
+        getCommand("commandspy").setExecutor(new CommandCommandSpy());
     }
 
     public FileManager getFileManager() {

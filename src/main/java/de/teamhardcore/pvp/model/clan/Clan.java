@@ -10,6 +10,7 @@ import de.teamhardcore.pvp.database.TimedDatabaseUpdate;
 import de.teamhardcore.pvp.model.clan.shop.upgrades.AbstractUpgrade;
 import org.bukkit.Location;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +27,8 @@ public class Clan extends TimedDatabaseUpdate {
 
     private int kills, deaths, trophies, maxMembers, maxWarps, rank, level;
     private long money;
+
+    private long creationTime;
 
     /**
      * @param name
@@ -46,6 +49,8 @@ public class Clan extends TimedDatabaseUpdate {
         this.maxMembers = 8;
         this.maxWarps = 0;
         this.level = 0;
+        this.creationTime = System.currentTimeMillis();
+
 
         this.clanChest = new ClanChest(this, async);
 
@@ -108,6 +113,16 @@ public class Clan extends TimedDatabaseUpdate {
 
     public void setRank(int rank) {
         this.rank = rank;
+    }
+
+    public double getKD() {
+        if (this.kills <= 0) return 0.0D;
+        if (this.deaths <= 0)
+            return this.kills;
+
+        BigDecimal decimal = new BigDecimal(this.kills / this.deaths);
+        decimal = decimal.setScale(2, 4);
+        return decimal.doubleValue();
     }
 
     public int getKills() {
@@ -206,6 +221,10 @@ public class Clan extends TimedDatabaseUpdate {
 
     public ClanChest getClanChest() {
         return clanChest;
+    }
+
+    public long getCreationTime() {
+        return creationTime;
     }
 
     @Override

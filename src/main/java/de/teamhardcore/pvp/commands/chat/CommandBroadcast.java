@@ -15,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandBroadcast implements CommandExecutor {
+
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
         if (!(cs instanceof Player))
@@ -38,6 +39,7 @@ public class CommandBroadcast implements CommandExecutor {
             builder.append(ChatColor.translateAlternateColorCodes('&', arg)).append(" ");
 
         String message = builder.substring(0, builder.length() - 1);
+
         Bukkit.broadcastMessage(StringDefaults.GLOBAL_PREFIX + message);
         return true;
     }
