@@ -97,3 +97,8 @@ commands:
     aliases:
       - kickall
   commandspy:
+  achievements:
+    aliases:
+      - achievement
+  rename:
+  relore:

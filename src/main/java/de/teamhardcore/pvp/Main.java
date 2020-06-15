@@ -8,6 +8,8 @@
 package de.teamhardcore.pvp;
 
 import de.teamhardcore.pvp.commands.chat.CommandCommandSpy;
+import de.teamhardcore.pvp.commands.dev.CommandRelore;
+import de.teamhardcore.pvp.commands.dev.CommandRename;
 import de.teamhardcore.pvp.commands.pvp.CommandDuel;
 import de.teamhardcore.pvp.commands.abuse.CommandBan;
 import de.teamhardcore.pvp.commands.abuse.CommandKick;
@@ -30,8 +32,11 @@ import de.teamhardcore.pvp.commands.warp.CommandWarp;
 import de.teamhardcore.pvp.commands.world.CommandNear;
 import de.teamhardcore.pvp.commands.world.CommandSpawner;
 import de.teamhardcore.pvp.database.DatabaseManager;
+import de.teamhardcore.pvp.listeners.AchievementReceive;
+import de.teamhardcore.pvp.listeners.AchievementTierReceive;
 import de.teamhardcore.pvp.listeners.block.BlockBreak;
 import de.teamhardcore.pvp.listeners.block.BlockPlace;
+import de.teamhardcore.pvp.listeners.custom.DuelWin;
 import de.teamhardcore.pvp.listeners.entity.EntityDamage;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClick;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClose;
@@ -67,6 +72,7 @@ public class Main extends JavaPlugin {
     private KitManager kitManager;
     private MarketManager marketManager;
     private DuelManager duelManager;
+    private AchievementManager achievementManager;
 
     private DatabaseManager databaseManager;
 
@@ -117,6 +123,7 @@ public class Main extends JavaPlugin {
         this.kitManager = new KitManager(this);
         this.marketManager = new MarketManager(this);
         this.duelManager = new DuelManager(this);
+        this.achievementManager = new AchievementManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -136,6 +143,9 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new PlayerItemConsume(this), this);
         pm.registerEvents(new PlayerMove(this), this);
         pm.registerEvents(new EntityDamage(this), this);
+        pm.registerEvents(new AchievementReceive(this), this);
+        pm.registerEvents(new AchievementTierReceive(this), this);
+        pm.registerEvents(new DuelWin(this), this);
 
         getCommand("fix").setExecutor(new CommandFix());
         getCommand("stack").setExecutor(new CommandStack());
@@ -178,6 +188,9 @@ public class Main extends JavaPlugin {
         getCommand("home").setExecutor(new CommandHome());
         getCommand("kick").setExecutor(new CommandKick());
         getCommand("commandspy").setExecutor(new CommandCommandSpy());
+        getCommand("achievements").setExecutor(new CommandAchievements());
+        getCommand("rename").setExecutor(new CommandRename());
+        getCommand("relore").setExecutor(new CommandRelore());
     }
 
     public FileManager getFileManager() {
@@ -258,6 +271,10 @@ public class Main extends JavaPlugin {
 
     public DuelManager getDuelManager() {
         return duelManager;
+    }
+
+    public AchievementManager getAchievementManager() {
+        return achievementManager;
     }
 
     public static Main getInstance() {

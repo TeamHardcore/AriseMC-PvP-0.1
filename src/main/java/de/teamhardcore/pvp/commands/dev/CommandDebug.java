@@ -21,10 +21,10 @@ public class CommandDebug implements CommandExecutor {
 
         Player player = (Player) cs;
 
-        if (!player.getUniqueId().toString().equals("dad65097-f091-4531-8431-42e2fb2bd80c") || !player.getUniqueId().toString().equals("032a105a-7029-48ed-8fb3-c85e115c2c31")) {
+       /* if (!player.getUniqueId().toString().equals("dad65097-f091-4531-8431-42e2fb2bd80c") || !player.getUniqueId().toString().equals("032a105a-7029-48ed-8fb3-c85e115c2c31")) {
             cs.sendMessage(StringDefaults.NO_PERM);
             return true;
-        }
+        }*/
 
         if (args.length < 2) {
             player.sendMessage(StringDefaults.PREFIX + "§cVerwendung§8: §7/debug <handler> <info>");
@@ -35,9 +35,11 @@ public class CommandDebug implements CommandExecutor {
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("handler")) {
                 if (args[1].equalsIgnoreCase("info")) {
+                    player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lHANDLER §8§l§m*-*-*-*-*-*-*-*-*");
                     for (HandlerGroup group : HandlerGroups.getHandlerGroups().values()) {
-                        player.sendMessage("§e" + group.getName() + " §8| §eStatus§8: §7" + (group.isRunning() ? "Aktiv" : "Inaktiv") + " §8| §eHandler§8: §7" + group.getHandlers().size());
+                        player.sendMessage(StringDefaults.PREFIX + "§e" + group.getName() + " §8| §eStatus§8: §7" + (group.isRunning() ? "Aktiv" : "Inaktiv") + " §8| §eHandler§8: §7" + group.getHandlers().size());
                     }
+                    player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lHANDLER §8§l§m*-*-*-*-*-*-*-*-*");
                 }
             }
         }

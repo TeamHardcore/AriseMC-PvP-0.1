@@ -14,8 +14,13 @@ import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import de.teamhardcore.pvp.Main;
+import de.teamhardcore.pvp.model.achievements.AchievementGroups;
+import de.teamhardcore.pvp.model.achievements.annotations.AchievementListener;
+import de.teamhardcore.pvp.model.achievements.type.Category;
+import de.teamhardcore.pvp.model.achievements.type.Type;
 import de.teamhardcore.pvp.model.duel.arena.DuelArena;
 import de.teamhardcore.pvp.model.duel.configuration.DuelConfiguration;
+import de.teamhardcore.pvp.model.duel.event.DuelWinEvent;
 import de.teamhardcore.pvp.user.UserMoney;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.Util;
@@ -112,23 +117,9 @@ public class Duel {
 
     public void checkDuel() {
         if (this.alive.size() == 1) {
-            Player last = this.alive.get(0);
-
-            sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
-            sendMessage(StringDefaults.PREFIX + "§c§l" + last.getName() + " §ehat das Duell gewonnen.");
-            sendMessage(" ");
-            sendMessage(StringDefaults.PREFIX + "§6§lGewinn§8: ");
-            if (this.configuration.getDeployment().getCoins() > 0)
-                sendMessage("  §8■ §eMünzen§8: §a§l" + Util.formatNumber((this.configuration.getDeployment().getCoins() * 2)) + "$");
-            sendMessage(" ");
-            sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
-
-            UserMoney lastMoney = Main.getInstance().getUserManager().getUser(last.getUniqueId()).getUserMoney();
-            lastMoney.addMoney(this.configuration.getDeployment().getCoins() * 2);
-
-            last.playSound(last.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
+            Player duelWinner = this.alive.get(0);
+            Main.getInstance().getServer().getPluginManager().callEvent(new DuelWinEvent(duelWinner, getOpposite(duelWinner), this));
             startEndTask();
-            return;
         }
     }
 
@@ -293,6 +284,12 @@ public class Duel {
             }
         }
         return locations;
+    }
+
+    public Player getOpposite(Player player) {
+        if (this.player.equals(player))
+            return this.target;
+        else return this.player;
     }
 
     public DuelWall getDuelWall() {

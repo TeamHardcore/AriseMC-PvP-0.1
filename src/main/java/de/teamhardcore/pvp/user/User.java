@@ -22,9 +22,9 @@ public class User {
     private UserStats userStats;
     private UserMarket userMarket;
     private UserHomes userHomes;
+    private UserAchievements userAchievements;
 
     private int homeLimit;
-
 
     public User(UUID uuid) {
         this.uuid = uuid;
@@ -34,6 +34,7 @@ public class User {
         this.userStats = new UserStats(this);
         this.userMarket = new UserMarket(this);
         this.userHomes = new UserHomes(this);
+        this.userAchievements = new UserAchievements(this);
 
         loadHomeLimit();
     }
@@ -90,6 +91,10 @@ public class User {
 
     public UserHomes getUserHomes() {
         return userHomes;
+    }
+
+    public UserAchievements getUserAchievements() {
+        return userAchievements;
     }
 
     public int getHomeLimit() {
