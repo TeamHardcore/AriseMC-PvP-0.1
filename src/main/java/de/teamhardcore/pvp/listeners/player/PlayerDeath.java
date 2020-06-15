@@ -7,6 +7,10 @@
 package de.teamhardcore.pvp.listeners.player;
 
 import de.teamhardcore.pvp.Main;
+import de.teamhardcore.pvp.model.achievements.AchievementGroups;
+import de.teamhardcore.pvp.model.achievements.annotations.AchievementListener;
+import de.teamhardcore.pvp.model.achievements.type.Category;
+import de.teamhardcore.pvp.model.achievements.type.Type;
 import de.teamhardcore.pvp.model.clan.Clan;
 import de.teamhardcore.pvp.model.duel.Duel;
 import de.teamhardcore.pvp.user.User;
@@ -48,7 +52,6 @@ public class PlayerDeath implements Listener {
             killer.sendMessage(StringDefaults.PREFIX + "§eDu hast §7" + player.getName() + " §egetötet.");
 
             User userKiller = this.plugin.getUserManager().getUser(killer.getUniqueId());
-
             user.getUserStats().addDeaths(1);
 
             if (this.plugin.getClanManager().hasClan(player.getUniqueId())) {
@@ -58,11 +61,21 @@ public class PlayerDeath implements Listener {
 
             userKiller.getUserStats().addKills(1);
 
+
             if (this.plugin.getClanManager().hasClan(killer.getUniqueId())) {
                 Clan clan = this.plugin.getClanManager().getClan(killer.getUniqueId());
                 clan.setDeaths(clan.getDeaths() + 1);
                 clan.addMoney(1);
             }
+
+            AchievementGroups.$().getGroup(Category.COMABT).getAchievements().forEach(abstractAchievement -> {
+                AchievementListener listener;
+                if ((listener = abstractAchievement.getClass().getAnnotation(AchievementListener.class)) != null) {
+                    if (listener.type() == Type.PLAYER_DEATH)
+                        abstractAchievement.onEvent(event);
+                }
+            });
+
         } else {
             player.sendMessage(StringDefaults.PREFIX + "§eDu bist gestorben.");
             user.getUserStats().addDeaths(1);

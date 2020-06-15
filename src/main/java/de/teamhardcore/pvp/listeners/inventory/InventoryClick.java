@@ -8,10 +8,7 @@
 package de.teamhardcore.pvp.listeners.inventory;
 
 import de.teamhardcore.pvp.Main;
-import de.teamhardcore.pvp.inventories.ClanShopInventory;
-import de.teamhardcore.pvp.inventories.DuelInventory;
-import de.teamhardcore.pvp.inventories.ExtrasInventory;
-import de.teamhardcore.pvp.inventories.SpawnerInventory;
+import de.teamhardcore.pvp.inventories.*;
 import de.teamhardcore.pvp.model.MarketItem;
 import de.teamhardcore.pvp.model.Report;
 import de.teamhardcore.pvp.model.Transaction;
@@ -84,47 +81,51 @@ public class InventoryClick implements Listener {
             return;
         }
 
-        if (inventory.getTitle().startsWith("§9§lReporte ")) {
+        if (inventory.getTitle().contains("Herausforderungserfolge")) {
             event.setCancelled(true);
 
-            if (!this.plugin.getReportManager().getReportConfirmation().containsKey(player)) {
-                player.closeInventory();
-                return;
+            if (slot == 45) {
+                player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openMainInventory(player), 1L);
             }
 
-            Player target = this.plugin.getReportManager().getReportConfirmation().get(player);
+        }
 
-            if (target == null || !target.isOnline()) {
-                player.sendMessage(StringDefaults.NOT_ONLINE);
-                player.closeInventory();
-                return;
+        if (inventory.getTitle().contains("Stufenerfolge")) {
+            event.setCancelled(true);
+
+            if (slot == 45) {
+                player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openMainInventory(player), 1L);
             }
 
-            Report.ReportReason reportReason = null;
+        }
 
+        if (inventory.getTitle().equalsIgnoreCase("§c§lErfolge")) {
+            event.setCancelled(true);
 
-            if (slot != 11 && slot != 13 && slot != 15)
-                return;
+            if (slot == 21) {
+                player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openPvPInventory(player, 0), 1L);
+            }
+        }
 
-            switch (slot) {
-                case 11:
-                    reportReason = Report.ReportReason.CHEATING;
-                    break;
-                case 13:
-                    reportReason = Report.ReportReason.INSULT;
-                    break;
-                case 15:
-                    reportReason = Report.ReportReason.SPAM;
-                    break;
+        if (inventory.getTitle().equalsIgnoreCase("§c§lPvP Erfolge")) {
+            event.setCancelled(true);
+
+            if (slot == 11) {
+                player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openPvPInventory(player, 1), 1L);
+            }
+            if (slot == 15) {
+                player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openPvPInventory(player, 2), 1L);
             }
 
-            this.plugin.getReportManager().addReport(player, target, reportReason);
-            player.sendMessage(StringDefaults.REPORT_PREFIX + "§eDu hast den Spieler §7" + target.getName() + " §eerfolgreich für den Grund §c§l" + reportReason.getName() + " §egemeldet.");
-            player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
-
-            this.plugin.getReportManager().getReportConfirmation().remove(player);
-            player.closeInventory();
-
+            if (slot == 27) {
+                player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openMainInventory(player), 1L);
+            }
         }
 
         if (inventory.getTitle().equalsIgnoreCase("§c§lClan-Shop")) {
@@ -715,6 +716,121 @@ public class InventoryClick implements Listener {
 
         }
 
+        if (inventory.getTitle().equalsIgnoreCase("§c§lDuell erstellen")) {
+            event.setCancelled(true);
+
+            DuelConfiguration configuration = this.plugin.getDuelManager().getConfigurationCache().get(player.getUniqueId());
+
+            if (configuration == null) {
+                player.closeInventory();
+                player.sendMessage(StringDefaults.DUEL_PREFIX + "§cEin Fehler ist aufgetreten, bitte versuche es erneut.");
+                return;
+            }
+
+            if (slot == 20) {
+                configuration.getSettings().updateMaxHealStacks();
+                DuelInventory.openDuelRequestInventory(player, true, configuration);
+            }
+
+            if (slot == 22) {
+                configuration.getSettings().setUseGoldenApple(!configuration.getSettings().canUseGoldenApple());
+                DuelInventory.openDuelRequestInventory(player, true, configuration);
+            }
+
+            if (slot == 24) {
+                new VirtualAnvil(player, "Einsatz: ") {
+                    @Override
+                    public void onConfirm(String text) {
+                        if (text == null) {
+                            player.sendMessage("§c§lDUELL " + StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
+                            player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
+                            return;
+                        }
+
+                        String coinString = text.startsWith("Einsatz: ") ? text.substring(9) : text;
+
+                        long coins;
+                        try {
+                            coins = Long.parseLong(coinString);
+                        } catch (NumberFormatException ex) {
+                            player.sendMessage("§c§lDUELL " + StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
+                            return;
+                        }
+
+                        setConfirmedSuccessfully(true);
+                        configuration.getDeployment().setCoins(coins);
+                        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> DuelInventory.openDuelRequestInventory(player, true, configuration),
+                                1L);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        if (!isConfirmedSuccessfully())
+                            Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> DuelInventory.openDuelRequestInventory(player, true, configuration), 1L);
+                    }
+                };
+            }
+
+            if (slot == 40) {
+                if (user.getUserMoney().getMoney() < configuration.getDeployment().getCoins()) {
+                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu hast nicht genug Münzen um für diesen Wetteinsatz.");
+                    player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
+                    return;
+                }
+
+                user.getUserMoney().removeMoney(configuration.getDeployment().getCoins());
+
+                player.closeInventory();
+                player.sendMessage(StringDefaults.DUEL_PREFIX + "§eDu hast eine Duell-Konfiguration erstellt.");
+                new JSONMessage(StringDefaults.DUEL_PREFIX + "§eVerwende §7/duell invite <Spieler> §7§o[Klick]").suggestCommand("/duel invite ").send(player);
+
+                Main.getInstance().getDuelManager().getConfigurationCache().put(player.getUniqueId(), configuration);
+            }
+        }
+
+        if (inventory.getTitle().startsWith("§9§lReporte ")) {
+            event.setCancelled(true);
+
+            if (!this.plugin.getReportManager().getReportConfirmation().containsKey(player)) {
+                player.closeInventory();
+                return;
+            }
+
+            Player target = this.plugin.getReportManager().getReportConfirmation().get(player);
+
+            if (target == null || !target.isOnline()) {
+                player.sendMessage(StringDefaults.NOT_ONLINE);
+                player.closeInventory();
+                return;
+            }
+
+            Report.ReportReason reportReason = null;
+
+
+            if (slot != 11 && slot != 13 && slot != 15)
+                return;
+
+            switch (slot) {
+                case 11:
+                    reportReason = Report.ReportReason.CHEATING;
+                    break;
+                case 13:
+                    reportReason = Report.ReportReason.INSULT;
+                    break;
+                case 15:
+                    reportReason = Report.ReportReason.SPAM;
+                    break;
+            }
+
+            this.plugin.getReportManager().addReport(player, target, reportReason);
+            player.sendMessage(StringDefaults.REPORT_PREFIX + "§eDu hast den Spieler §7" + target.getName() + " §eerfolgreich für den Grund §c§l" + reportReason.getName() + " §egemeldet.");
+            player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
+
+            this.plugin.getReportManager().getReportConfirmation().remove(player);
+            player.closeInventory();
+
+        }
+
         if (inventory.getTitle().startsWith("§c§lAuktionshaus")) {
             event.setCancelled(true);
 
@@ -881,78 +997,6 @@ public class InventoryClick implements Listener {
             if (player.getInventory().firstEmpty() == -1) {
                 player.getLocation().getWorld().dropItemNaturally(player.getLocation(), item.getOriginal());
             } else player.getInventory().addItem(item.getOriginal());
-        }
-
-        if (inventory.getTitle().equalsIgnoreCase("§c§lDuell erstellen")) {
-            event.setCancelled(true);
-
-            DuelConfiguration configuration = this.plugin.getDuelManager().getConfigurationCache().get(player.getUniqueId());
-
-            if (configuration == null) {
-                player.closeInventory();
-                player.sendMessage(StringDefaults.DUEL_PREFIX + "§cEin Fehler ist aufgetreten, bitte versuche es erneut.");
-                return;
-            }
-
-            if (slot == 20) {
-                configuration.getSettings().updateMaxHealStacks();
-                DuelInventory.openDuelRequestInventory(player, true, configuration);
-            }
-
-            if (slot == 22) {
-                configuration.getSettings().setUseGoldenApple(!configuration.getSettings().canUseGoldenApple());
-                DuelInventory.openDuelRequestInventory(player, true, configuration);
-            }
-
-            if (slot == 24) {
-                new VirtualAnvil(player, "Einsatz: ") {
-                    @Override
-                    public void onConfirm(String text) {
-                        if (text == null) {
-                            player.sendMessage("§c§lDUELL " + StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
-                            player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
-                            return;
-                        }
-
-                        String coinString = text.startsWith("Einsatz: ") ? text.substring(9) : text;
-
-                        long coins;
-                        try {
-                            coins = Long.parseLong(coinString);
-                        } catch (NumberFormatException ex) {
-                            player.sendMessage("§c§lDUELL " + StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
-                            return;
-                        }
-
-                        setConfirmedSuccessfully(true);
-                        configuration.getDeployment().setCoins(coins);
-                        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> DuelInventory.openDuelRequestInventory(player, true, configuration),
-                                1L);
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        if (!isConfirmedSuccessfully())
-                            Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> DuelInventory.openDuelRequestInventory(player, true, configuration), 1L);
-                    }
-                };
-            }
-
-            if (slot == 40) {
-                if (user.getUserMoney().getMoney() < configuration.getDeployment().getCoins()) {
-                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu hast nicht genug Münzen um für diesen Wetteinsatz.");
-                    player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
-                    return;
-                }
-
-                user.getUserMoney().removeMoney(configuration.getDeployment().getCoins());
-
-                player.closeInventory();
-                player.sendMessage(StringDefaults.DUEL_PREFIX + "§eDu hast eine Duell-Konfiguration erstellt.");
-                new JSONMessage(StringDefaults.DUEL_PREFIX + "§eVerwende §7/duell invite <Spieler> §7§o[Klick]").suggestCommand("/duel invite ").send(player);
-
-                Main.getInstance().getDuelManager().getConfigurationCache().put(player.getUniqueId(), configuration);
-            }
         }
     }
 }
