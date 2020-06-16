@@ -6,7 +6,6 @@
 
 package de.teamhardcore.pvp.model.achievements;
 
-import com.google.common.collect.ImmutableSet;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.achievements.annotations.AchievementCategory;
 import de.teamhardcore.pvp.model.achievements.annotations.AchievementLoadId;
@@ -14,7 +13,10 @@ import de.teamhardcore.pvp.model.achievements.base.AbstractAchievement;
 import de.teamhardcore.pvp.model.achievements.type.Category;
 import de.teamhardcore.pvp.utils.ClassUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 public class AchievementGroup {
 
