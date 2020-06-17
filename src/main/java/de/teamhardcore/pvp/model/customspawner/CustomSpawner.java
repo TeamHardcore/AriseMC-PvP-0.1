@@ -17,17 +17,17 @@ public class CustomSpawner {
 
     private String randomID;
     private UUID owner;
-    private AbstractSpawnerType type;
+    private EnumSpawnerType type;
     private Location location;
 
-    public CustomSpawner(String randomID, Location location, AbstractSpawnerType type, UUID owner) {
+    public CustomSpawner(String randomID, Location location, EnumSpawnerType type, UUID owner) {
         this.randomID = randomID;
         this.location = location;
         this.type = type;
         this.owner = owner;
     }
 
-    public void setType(AbstractSpawnerType type) {
+    public void setType(EnumSpawnerType type) {
         this.type = type;
     }
 
@@ -39,7 +39,7 @@ public class CustomSpawner {
         return owner;
     }
 
-    public AbstractSpawnerType getType() {
+    public EnumSpawnerType getType() {
         return type;
     }
 

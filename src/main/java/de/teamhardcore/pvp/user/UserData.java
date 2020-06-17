@@ -8,12 +8,11 @@ package de.teamhardcore.pvp.user;
 
 
 import de.teamhardcore.pvp.Main;
-import de.teamhardcore.pvp.model.customspawner.AbstractSpawnerType;
+import de.teamhardcore.pvp.model.customspawner.EnumSpawnerType;
 import de.teamhardcore.pvp.model.extras.EnumChatColor;
 import de.teamhardcore.pvp.model.extras.EnumCommand;
 import de.teamhardcore.pvp.model.extras.EnumPerk;
 import de.teamhardcore.pvp.model.gambling.crates.base.BaseCrate;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.EntityType;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -116,14 +115,14 @@ public class UserData {
         return array;
     }
 
-    public void addSpawnerType(AbstractSpawnerType type) {
+    public void addSpawnerType(EnumSpawnerType type) {
         if (this.spawnerTypes.contains(type.getType())) return;
 
         this.spawnerTypes.add(type.getType());
         saveData(this.user.getPlayer() != null);
     }
 
-    public void removeSpawnerType(AbstractSpawnerType type) {
+    public void removeSpawnerType(EnumSpawnerType type) {
         if (!this.spawnerTypes.contains(type.getType())) return;
         this.spawnerTypes.remove(type.getType());
         saveData(this.user.getPlayer() != null);
