@@ -46,12 +46,11 @@ public class AbuseManager {
 
         UserData userData = this.plugin.getUserManager().getUser(configuration.getTarget()).getUserData();
 
-        if (configuration.getType().equals(AbuseType.BAN)) {
+        if (configuration.getType().equals(AbuseType.BAN))
             userData.setBanPoints(userData.getBanPoints() + 1);
-
-        } else {
+        else
             userData.setMutePoints(userData.getMutePoints() + 1);
-        }
+
 
         Abuse abuse = new Abuse();
         abuse.setSender(configuration.getSender().toString());
@@ -67,6 +66,7 @@ public class AbuseManager {
 
         //todo: add abuse to database
 
+        Player sender = Bukkit.getPlayer(configuration.getSender());
         Player target = Bukkit.getPlayer(configuration.getTarget());
 
         if (configuration.getType().equals(AbuseType.BAN)) {
@@ -79,12 +79,17 @@ public class AbuseManager {
             }
             for (Player all : Bukkit.getOnlinePlayers()) {
                 if (configuration.getEnd() == -1) {
-                    all.sendMessage(StringDefaults.PREFIX + "§4Der Spieler §7" + configuration.getLastSeenName() + " §4wurde permanent vom Server gebannt.");
+                    all.sendMessage(StringDefaults.PREFIX + "§7" + configuration.getLastSeenName() + " §cwurde von §7" + sender.getName() + " §4PERMANENT §cgesperrt.");
+                    if (all.hasPermission("arisemc.abuse.notify")) {
+                        all.sendMessage("§4Grund§8: §7" + configuration.getReason());
+                    }
                 } else {
-                    all.sendMessage(StringDefaults.PREFIX + "§4Der Spieler §7" + configuration.getLastSeenName() + " §4wurde temporär vom Server gebannt.");
-                    all.sendMessage("§4Zeit§8: §7" + TimeUtil.timeToString(configuration.getEnd()));
+                    all.sendMessage(StringDefaults.PREFIX + "§7" + configuration.getLastSeenName() + " §cwurde von §7" + sender.getName() + " §4TEMPORÄR §cgesperrt.");
+                    if (all.hasPermission("arisemc.abuse.notify")) {
+                        all.sendMessage("§4Zeit§8: §7" + TimeUtil.timeToString(configuration.getEnd()));
+                        all.sendMessage("§4Grund§8: §7" + configuration.getReason());
+                    }
                 }
-                all.sendMessage("§4Grund§8: §7" + configuration.getReason());
             }
         } else {
             if (target != null && target.isOnline()) {
@@ -93,12 +98,17 @@ public class AbuseManager {
 
             for (Player all : Bukkit.getOnlinePlayers()) {
                 if (configuration.getEnd() == -1) {
-                    all.sendMessage(StringDefaults.PREFIX + "§4Der Spieler §7" + configuration.getLastSeenName() + " §4wurde permanent vom Server gemutet.");
+                    all.sendMessage(StringDefaults.PREFIX + "§7" + configuration.getLastSeenName() + " §cwurde von §7" + sender.getName() + " §4PERMANENT §cgemutet.");
+                    if (all.hasPermission("arisemc.abuse.notify")) {
+                        all.sendMessage("§4Grund§8: §7" + configuration.getReason());
+                    }
                 } else {
-                    all.sendMessage(StringDefaults.PREFIX + "§4Der Spieler §7" + configuration.getLastSeenName() + " §4wurde temporär vom Server gemutet.");
-                    all.sendMessage("§cZeit§8: §e" + TimeUtil.timeToString(configuration.getEnd()));
+                    all.sendMessage(StringDefaults.PREFIX + "§7" + configuration.getLastSeenName() + " §cwurde von §7" + sender.getName() + " §4TEMPORÄR §cgemutet.");
+                    if (all.hasPermission("arisemc.abuse.notify")) {
+                        all.sendMessage("§4Zeit§8: §7" + TimeUtil.timeToString(configuration.getEnd()));
+                        all.sendMessage("§4Grund§8: §7" + configuration.getReason());
+                    }
                 }
-                all.sendMessage("§cGrund§8: §e" + configuration.getReason());
             }
         }
     }
