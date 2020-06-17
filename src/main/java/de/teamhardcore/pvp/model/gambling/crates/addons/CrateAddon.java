@@ -18,8 +18,8 @@ import java.util.Map;
 
 public class CrateAddon {
 
-    private List<ContentPiece> crateContent;
-    private Map<ContentPiece, Double> cachedChances;
+    private final List<ContentPiece> crateContent;
+    private final Map<ContentPiece, Double> cachedChances;
 
     private final String name;
     private final String displayName;

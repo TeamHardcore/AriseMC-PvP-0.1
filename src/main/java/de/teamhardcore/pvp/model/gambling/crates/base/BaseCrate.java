@@ -226,7 +226,7 @@ public class BaseCrate extends FileBase {
         lore.add("");
         lore.add("§8● §7Wert§8: " + this.addon.getValue().getDisplayName());
         lore.add(" ");
-        lore.add("§eLinksklicke§8, §eum das Pack zu öffnen");
+        lore.add("§eLinksklicke§8, §eum die Crate zu öffnen");
         lore.add("§eRechtsklicke§8, §eum den Inhalt anzusehen");
         meta.setLore(lore);
         itemStack.setItemMeta(meta);

@@ -92,6 +92,7 @@ public class CrateOpening {
                     }
 
                     ContentPiece piece = CrateOpening.this.rewards.get(CrateOpening.this.getRewards().size() - 5);
+                    CrateOpening.this.player.playSound(CrateOpening.this.player.getLocation(), piece.getContentValue().getRewardSound(), 1.0F, piece.getContentValue().getSoundPitch());
                     piece.onWin(CrateOpening.this.player);
 
                     Main.getInstance().getCrateManager().getPlayersInCrateOpening().remove(CrateOpening.this.getPlayer());

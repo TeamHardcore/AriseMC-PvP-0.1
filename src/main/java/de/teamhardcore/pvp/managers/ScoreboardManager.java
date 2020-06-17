@@ -181,13 +181,15 @@ public class ScoreboardManager {
 
         switch (playerScoreboard.getType()) {
             case DEFAULT:
-
                 Team teamMoney = scoreboard.getTeam("Money");
                 Team teamLeague = scoreboard.getTeam("League");
                 teamMoney.setSuffix("§7" + Util.formatNumber(user.getMoney()) + "$");
                 teamLeague.setPrefix("§cUnplatziert §7");
                 teamLeague.setSuffix("[§60§7] ");
                 break;
+            case COMBAT:
+                break;
+            case EVENT:
         }
     }
 
