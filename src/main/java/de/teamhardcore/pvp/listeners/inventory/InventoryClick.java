@@ -12,6 +12,7 @@ import de.teamhardcore.pvp.inventories.*;
 import de.teamhardcore.pvp.model.MarketItem;
 import de.teamhardcore.pvp.model.Report;
 import de.teamhardcore.pvp.model.Transaction;
+import de.teamhardcore.pvp.model.achievements.type.Category;
 import de.teamhardcore.pvp.model.clan.Clan;
 import de.teamhardcore.pvp.model.clan.ClanMember;
 import de.teamhardcore.pvp.model.clan.ClanRank;
@@ -81,6 +82,217 @@ public class InventoryClick implements Listener {
             return;
         }
 
+        if (inventory.getTitle().startsWith("§9§lReporte ")) {
+            event.setCancelled(true);
+
+            if (!this.plugin.getReportManager().getReportConfirmation().containsKey(player)) {
+                player.closeInventory();
+                return;
+            }
+
+            Player target = this.plugin.getReportManager().getReportConfirmation().get(player);
+
+            if (target == null || !target.isOnline()) {
+                player.sendMessage(StringDefaults.NOT_ONLINE);
+                player.closeInventory();
+                return;
+            }
+
+            Report.ReportReason reportReason = null;
+
+
+            if (slot != 11 && slot != 13 && slot != 15)
+                return;
+
+            switch (slot) {
+                case 11:
+                    reportReason = Report.ReportReason.CHEATING;
+                    break;
+                case 13:
+                    reportReason = Report.ReportReason.INSULT;
+                    break;
+                case 15:
+                    reportReason = Report.ReportReason.SPAM;
+                    break;
+            }
+
+            this.plugin.getReportManager().addReport(player, target, reportReason);
+            player.sendMessage(StringDefaults.REPORT_PREFIX + "§eDu hast den Spieler §7" + target.getName() + " §eerfolgreich für den Grund §c§l" + reportReason.getName() + " §egemeldet.");
+            player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
+
+            this.plugin.getReportManager().getReportConfirmation().remove(player);
+            player.closeInventory();
+
+        }
+
+        if (inventory.getTitle().startsWith("§c§lAuktionshaus")) {
+            event.setCancelled(true);
+
+            if (slot == 2) {
+                if (inventory.getTitle().equalsIgnoreCase("§c§lAuktionshaus §8- Dein Profil")) return;
+                this.plugin.getMarketManager().openInventory(player, 0, 0);
+                player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
+                return;
+            }
+
+            if (slot == 6) {
+                if (inventory.getTitle().startsWith("§c§lAuktionshaus §8- Seite ")) return;
+                this.plugin.getMarketManager().openInventory(player, 1, 1);
+                player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
+                return;
+            }
+
+            if (inventory.getTitle().equalsIgnoreCase("§c§lAuktionshaus §8- Dein Profil")) {
+
+                if (slot < 38 || slot > 43)
+                    return;
+
+                NBTItem nbtItem = new NBTItem(itemStack);
+                String id = nbtItem.hasKey("marketId") ? nbtItem.getString("marketId") : null;
+
+                if (id == null) {
+                    player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #1");
+                    return;
+                }
+
+                UUID owner = nbtItem.hasKey("marketOwner") ? UUID.fromString(nbtItem.getString("marketOwner")) : null;
+
+                if (owner == null) {
+                    player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #2");
+                    return;
+                }
+
+                if (!owner.equals(player.getUniqueId())) {
+                    player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #4");
+                    return;
+                }
+
+                UserMarket userMarket = this.plugin.getUserManager().getUser(owner).getUserMarket();
+
+                MarketItem item = userMarket.getItem(id);
+
+                if (item == null) {
+                    player.sendMessage(StringDefaults.PREFIX + "§cDie Auktion wurde bereits gestoppt.");
+                    return;
+                }
+
+                long diff = item.getTime() - System.currentTimeMillis();
+
+                if (diff / 1000L < 0L) {
+
+                    userMarket.removeItem(item);
+                    this.plugin.getMarketManager().removeItemFromMarket(item);
+
+                    if (event.isRightClick()) {
+                        Main.getInstance().getMarketManager().createOffer(player.getUniqueId(), item.getOriginal(), item.getPrice());
+                        player.sendMessage(StringDefaults.PREFIX + "§eDu hast die Auktion erfolgreich verlängert.");
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                    } else {
+                        if (player.getInventory().firstEmpty() == -1) {
+                            player.getWorld().dropItemNaturally(player.getLocation(), item.getOriginal());
+                        } else player.getInventory().addItem(item.getOriginal());
+                        player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
+                    }
+                    this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> this.plugin.getMarketManager().openInventory(player, 0, 0), 1L);
+                    return;
+                }
+
+                this.plugin.getMarketManager().removeOffer(owner, item);
+
+                if (player.getInventory().firstEmpty() == -1) {
+                    player.getWorld().dropItemNaturally(player.getLocation(), item.getOriginal());
+                } else player.getInventory().addItem(item.getOriginal());
+                player.sendMessage(StringDefaults.PREFIX + "§eDu hast die Auktion erfolgreich gestoppt.");
+                player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> this.plugin.getMarketManager().openInventory(player, 0, 0), 1L);
+                return;
+            }
+
+            if (slot < 0 || slot > 53) return;
+
+            if (itemStack.getType().equals(Material.STAINED_GLASS_PANE)) return;
+
+            if (itemStack.getType() == Material.ARROW) {
+                int page = Integer.parseInt(inventory.getTitle().substring(27));
+
+                switch (slot) {
+                    case 47:
+                        if (!this.plugin.getMarketManager().existsPage(page - 1))
+                            return;
+                        this.plugin.getMarketManager().openInventory(player, 1, page - 1);
+                        player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
+                        break;
+                    case 51:
+                        if (!this.plugin.getMarketManager().existsPage(page + 1))
+                            return;
+                        this.plugin.getMarketManager().openInventory(player, 1, page + 1);
+                        player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
+                        break;
+                }
+                return;
+            }
+
+            NBTItem nbtItem = new NBTItem(itemStack);
+            String id = nbtItem.hasKey("marketId") ? nbtItem.getString("marketId") : null;
+
+            if (id == null) {
+                player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #1");
+                return;
+            }
+
+            UUID owner = nbtItem.hasKey("marketOwner") ? UUID.fromString(nbtItem.getString("marketOwner")) : null;
+
+            if (owner == null) {
+                player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #2");
+                return;
+            }
+
+            if (owner.equals(player.getUniqueId())) {
+                player.sendMessage(StringDefaults.PREFIX + "§cDu kannst dein eigenes Angebot nicht kaufen.");
+                return;
+            }
+
+            UserMarket targetMarket = this.plugin.getUserManager().getUser(owner).getUserMarket();
+            MarketItem item = targetMarket.getItem(id);
+
+            if (item == null) {
+                player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #3");
+                return;
+            }
+
+            long diff = item.getTime() - System.currentTimeMillis();
+
+            if (diff / 1000L < 0L) {
+                player.sendMessage(StringDefaults.PREFIX + "§cDie Auktion ist bereits ausgelaufen.");
+                return;
+            }
+
+            if (data.getUser().getUserMoney().getMoney() < item.getPrice()) {
+                player.sendMessage(StringDefaults.PREFIX + "§cDu besitzt zu wenig Münzen für dieses Item.");
+                return;
+            }
+
+            data.getUser().getUserMoney().removeMoney(item.getPrice());
+
+            Player target = Bukkit.getPlayer(targetMarket.getUser().getUuid());
+
+            User targetUser = this.plugin.getUserManager().getUser(targetMarket.getUser().getUuid());
+            targetUser.getUserMoney().addMoney(item.getPrice());
+            targetUser.getUserMarket().addTotalSale(item.getPrice());
+
+            this.plugin.getMarketManager().removeOffer(owner, item);
+
+            if (target != null && target.isOnline()) {
+                target.sendMessage(StringDefaults.PREFIX + "§eEin Item von dir wurde aus dem Auktionshaus gekauft.");
+                target.playSound(target.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+            }
+
+            player.sendMessage(StringDefaults.PREFIX + "§eDu hast erfolgreich ein Item aus dem Auktionshaus erworben.");
+            if (player.getInventory().firstEmpty() == -1) {
+                player.getLocation().getWorld().dropItemNaturally(player.getLocation(), item.getOriginal());
+            } else player.getInventory().addItem(item.getOriginal());
+        }
+
         if (inventory.getTitle().contains("Herausforderungserfolge")) {
             event.setCancelled(true);
 
@@ -101,30 +313,31 @@ public class InventoryClick implements Listener {
 
         }
 
-        if (inventory.getTitle().equalsIgnoreCase("§c§lErfolge")) {
-            event.setCancelled(true);
-
-            if (slot == 21) {
-                player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
-                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openPvPInventory(player, 0), 1L);
-            }
-        }
-
-        if (inventory.getTitle().equalsIgnoreCase("§c§lPvP Erfolge")) {
+        if (inventory.getTitle().contains("Erfolge")) {
             event.setCancelled(true);
 
             if (slot == 11) {
                 player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
-                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openPvPInventory(player, 1), 1L);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openChallengeInventory(player), 1L);
             }
+
             if (slot == 15) {
                 player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
-                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openPvPInventory(player, 2), 1L);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openTieredInventory(player), 1L);
             }
 
             if (slot == 27) {
                 player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
                 this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openMainInventory(player), 1L);
+            }
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lErfolge")) {
+            event.setCancelled(true);
+
+            if (slot == 21) {
+                player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openChooseInventory(player, Category.COMABT), 1L);
             }
         }
 
@@ -786,217 +999,6 @@ public class InventoryClick implements Listener {
 
                 Main.getInstance().getDuelManager().getConfigurationCache().put(player.getUniqueId(), configuration);
             }
-        }
-
-        if (inventory.getTitle().startsWith("§9§lReporte ")) {
-            event.setCancelled(true);
-
-            if (!this.plugin.getReportManager().getReportConfirmation().containsKey(player)) {
-                player.closeInventory();
-                return;
-            }
-
-            Player target = this.plugin.getReportManager().getReportConfirmation().get(player);
-
-            if (target == null || !target.isOnline()) {
-                player.sendMessage(StringDefaults.NOT_ONLINE);
-                player.closeInventory();
-                return;
-            }
-
-            Report.ReportReason reportReason = null;
-
-
-            if (slot != 11 && slot != 13 && slot != 15)
-                return;
-
-            switch (slot) {
-                case 11:
-                    reportReason = Report.ReportReason.CHEATING;
-                    break;
-                case 13:
-                    reportReason = Report.ReportReason.INSULT;
-                    break;
-                case 15:
-                    reportReason = Report.ReportReason.SPAM;
-                    break;
-            }
-
-            this.plugin.getReportManager().addReport(player, target, reportReason);
-            player.sendMessage(StringDefaults.REPORT_PREFIX + "§eDu hast den Spieler §7" + target.getName() + " §eerfolgreich für den Grund §c§l" + reportReason.getName() + " §egemeldet.");
-            player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
-
-            this.plugin.getReportManager().getReportConfirmation().remove(player);
-            player.closeInventory();
-
-        }
-
-        if (inventory.getTitle().startsWith("§c§lAuktionshaus")) {
-            event.setCancelled(true);
-
-            if (slot == 2) {
-                if (inventory.getTitle().equalsIgnoreCase("§c§lAuktionshaus §8- Dein Profil")) return;
-                this.plugin.getMarketManager().openInventory(player, 0, 0);
-                player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
-                return;
-            }
-
-            if (slot == 6) {
-                if (inventory.getTitle().startsWith("§c§lAuktionshaus §8- Seite ")) return;
-                this.plugin.getMarketManager().openInventory(player, 1, 1);
-                player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
-                return;
-            }
-
-            if (inventory.getTitle().equalsIgnoreCase("§c§lAuktionshaus §8- Dein Profil")) {
-
-                if (slot < 38 || slot > 43)
-                    return;
-
-                NBTItem nbtItem = new NBTItem(itemStack);
-                String id = nbtItem.hasKey("marketId") ? nbtItem.getString("marketId") : null;
-
-                if (id == null) {
-                    player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #1");
-                    return;
-                }
-
-                UUID owner = nbtItem.hasKey("marketOwner") ? UUID.fromString(nbtItem.getString("marketOwner")) : null;
-
-                if (owner == null) {
-                    player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #2");
-                    return;
-                }
-
-                if (!owner.equals(player.getUniqueId())) {
-                    player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #4");
-                    return;
-                }
-
-                UserMarket userMarket = this.plugin.getUserManager().getUser(owner).getUserMarket();
-
-                MarketItem item = userMarket.getItem(id);
-
-                if (item == null) {
-                    player.sendMessage(StringDefaults.PREFIX + "§cDie Auktion wurde bereits gestoppt.");
-                    return;
-                }
-
-                long diff = item.getTime() - System.currentTimeMillis();
-
-                if (diff / 1000L < 0L) {
-
-                    userMarket.removeItem(item);
-                    this.plugin.getMarketManager().removeItemFromMarket(item);
-
-                    if (event.isRightClick()) {
-                        Main.getInstance().getMarketManager().createOffer(player.getUniqueId(), item.getOriginal(), item.getPrice());
-                        player.sendMessage(StringDefaults.PREFIX + "§eDu hast die Auktion erfolgreich verlängert.");
-                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
-                    } else {
-                        if (player.getInventory().firstEmpty() == -1) {
-                            player.getWorld().dropItemNaturally(player.getLocation(), item.getOriginal());
-                        } else player.getInventory().addItem(item.getOriginal());
-                        player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
-                    }
-                    this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> this.plugin.getMarketManager().openInventory(player, 0, 0), 1L);
-                    return;
-                }
-
-                this.plugin.getMarketManager().removeOffer(owner, item);
-
-                if (player.getInventory().firstEmpty() == -1) {
-                    player.getWorld().dropItemNaturally(player.getLocation(), item.getOriginal());
-                } else player.getInventory().addItem(item.getOriginal());
-                player.sendMessage(StringDefaults.PREFIX + "§eDu hast die Auktion erfolgreich gestoppt.");
-                player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
-                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> this.plugin.getMarketManager().openInventory(player, 0, 0), 1L);
-                return;
-            }
-
-            if (slot < 0 || slot > 53) return;
-
-            if (itemStack.getType().equals(Material.STAINED_GLASS_PANE)) return;
-
-            if (itemStack.getType() == Material.ARROW) {
-                int page = Integer.parseInt(inventory.getTitle().substring(27));
-
-                switch (slot) {
-                    case 47:
-                        if (!this.plugin.getMarketManager().existsPage(page - 1))
-                            return;
-                        this.plugin.getMarketManager().openInventory(player, 1, page - 1);
-                        player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
-                        break;
-                    case 51:
-                        if (!this.plugin.getMarketManager().existsPage(page + 1))
-                            return;
-                        this.plugin.getMarketManager().openInventory(player, 1, page + 1);
-                        player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
-                        break;
-                }
-                return;
-            }
-
-            NBTItem nbtItem = new NBTItem(itemStack);
-            String id = nbtItem.hasKey("marketId") ? nbtItem.getString("marketId") : null;
-
-            if (id == null) {
-                player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #1");
-                return;
-            }
-
-            UUID owner = nbtItem.hasKey("marketOwner") ? UUID.fromString(nbtItem.getString("marketOwner")) : null;
-
-            if (owner == null) {
-                player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #2");
-                return;
-            }
-
-            if (owner.equals(player.getUniqueId())) {
-                player.sendMessage(StringDefaults.PREFIX + "§cDu kannst dein eigenes Angebot nicht kaufen.");
-                return;
-            }
-
-            UserMarket targetMarket = this.plugin.getUserManager().getUser(owner).getUserMarket();
-            MarketItem item = targetMarket.getItem(id);
-
-            if (item == null) {
-                player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #3");
-                return;
-            }
-
-            long diff = item.getTime() - System.currentTimeMillis();
-
-            if (diff / 1000L < 0L) {
-                player.sendMessage(StringDefaults.PREFIX + "§cDie Auktion ist bereits ausgelaufen.");
-                return;
-            }
-
-            if (data.getUser().getUserMoney().getMoney() < item.getPrice()) {
-                player.sendMessage(StringDefaults.PREFIX + "§cDu besitzt zu wenig Münzen für dieses Item.");
-                return;
-            }
-
-            data.getUser().getUserMoney().removeMoney(item.getPrice());
-
-            Player target = Bukkit.getPlayer(targetMarket.getUser().getUuid());
-
-            User targetUser = this.plugin.getUserManager().getUser(targetMarket.getUser().getUuid());
-            targetUser.getUserMoney().addMoney(item.getPrice());
-            targetUser.getUserMarket().addTotalSale(item.getPrice());
-
-            this.plugin.getMarketManager().removeOffer(owner, item);
-
-            if (target != null && target.isOnline()) {
-                target.sendMessage(StringDefaults.PREFIX + "§eEin Item von dir wurde aus dem Auktionshaus gekauft.");
-                target.playSound(target.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
-            }
-
-            player.sendMessage(StringDefaults.PREFIX + "§eDu hast erfolgreich ein Item aus dem Auktionshaus erworben.");
-            if (player.getInventory().firstEmpty() == -1) {
-                player.getLocation().getWorld().dropItemNaturally(player.getLocation(), item.getOriginal());
-            } else player.getInventory().addItem(item.getOriginal());
         }
     }
 }

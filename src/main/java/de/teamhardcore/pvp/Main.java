@@ -7,6 +7,7 @@
 
 package de.teamhardcore.pvp;
 
+import de.teamhardcore.pvp.commands.CommandCrate;
 import de.teamhardcore.pvp.commands.chat.CommandCommandSpy;
 import de.teamhardcore.pvp.commands.dev.CommandRelore;
 import de.teamhardcore.pvp.commands.dev.CommandRename;
@@ -38,6 +39,7 @@ import de.teamhardcore.pvp.listeners.block.BlockBreak;
 import de.teamhardcore.pvp.listeners.block.BlockPlace;
 import de.teamhardcore.pvp.listeners.custom.DuelWin;
 import de.teamhardcore.pvp.listeners.entity.EntityDamage;
+import de.teamhardcore.pvp.listeners.inventory.CrateEvents;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClick;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClose;
 import de.teamhardcore.pvp.listeners.player.*;
@@ -45,6 +47,7 @@ import de.teamhardcore.pvp.listeners.world.FoodLevelChange;
 import de.teamhardcore.pvp.listeners.world.PotionSplash;
 import de.teamhardcore.pvp.listeners.world.SignChange;
 import de.teamhardcore.pvp.managers.*;
+import de.teamhardcore.pvp.managers.CrateManager;
 import de.teamhardcore.pvp.utils.VirtualAnvil;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -146,6 +149,7 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new AchievementReceive(this), this);
         pm.registerEvents(new AchievementTierReceive(this), this);
         pm.registerEvents(new DuelWin(this), this);
+        pm.registerEvents(new CrateEvents(this), this);
 
         getCommand("fix").setExecutor(new CommandFix());
         getCommand("stack").setExecutor(new CommandStack());
@@ -191,6 +195,7 @@ public class Main extends JavaPlugin {
         getCommand("achievements").setExecutor(new CommandAchievements());
         getCommand("rename").setExecutor(new CommandRename());
         getCommand("relore").setExecutor(new CommandRelore());
+        getCommand("crates").setExecutor(new CommandCrate());
     }
 
     public FileManager getFileManager() {

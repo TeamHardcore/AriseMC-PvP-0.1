@@ -8,12 +8,19 @@ package de.teamhardcore.pvp.model.achievements.type;
 
 public enum Category {
 
-    COMABT("combat");
+    GENERAL("general", "Allgemeine"),
+    COMABT("combat", "PvP");
 
     private final String packageName;
+    private final String categoryName;
 
-    Category(String packageName) {
+    Category(String packageName, String categoryName) {
         this.packageName = packageName;
+        this.categoryName = categoryName;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
     }
 
     public String getPackageName() {

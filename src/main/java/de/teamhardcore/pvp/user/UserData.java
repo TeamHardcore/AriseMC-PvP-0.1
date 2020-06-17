@@ -12,6 +12,7 @@ import de.teamhardcore.pvp.model.customspawner.AbstractSpawnerType;
 import de.teamhardcore.pvp.model.extras.EnumChatColor;
 import de.teamhardcore.pvp.model.extras.EnumCommand;
 import de.teamhardcore.pvp.model.extras.EnumPerk;
+import de.teamhardcore.pvp.model.gambling.crates.base.BaseCrate;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.EntityType;
 import org.json.JSONArray;
@@ -30,6 +31,8 @@ public class UserData {
     private Set<EnumCommand> unlockedCommands;
     private Set<EnumChatColor> unlockedChatColors;
     private Set<String> claimedUniqueKits;
+
+    private List<BaseCrate> ownedCrates;
 
     private Map<String, Long> kitCooldowns;
 
@@ -52,6 +55,7 @@ public class UserData {
         this.unlockedChatColors = new HashSet<>();
         this.claimedUniqueKits = new HashSet<>();
 
+        this.ownedCrates = new ArrayList<>();
         this.kitCooldowns = new HashMap<>();
 
         this.activeColor = null;
@@ -375,6 +379,39 @@ public class UserData {
     public boolean hasKitCooldown(String name) {
         if (!this.kitCooldowns.containsKey(name)) return false;
         return true;
+    }
+
+    public List<BaseCrate> getOwnedCrates() {
+        return ownedCrates;
+    }
+
+    public void addCrate(BaseCrate crate) {
+        this.ownedCrates.add(crate);
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public void removeCrate(int index) {
+        if (index < 0 || index >= this.ownedCrates.size())
+            return;
+        this.ownedCrates.remove(index);
+        saveData((this.user.getPlayer() != null));
+    }
+
+    private JSONArray saveCrateData() {
+        JSONArray array = new JSONArray();
+        for (BaseCrate crate : this.ownedCrates)
+            array.put(crate.getAddon().getName());
+        return array;
+    }
+
+    private void loadCrateData(String jsonString) {
+        JSONArray array = new JSONArray(jsonString);
+        for (Object entry : array) {
+            String crateName = (String) entry;
+            BaseCrate crate = Main.getInstance().getCrateManager().getCrate(crateName);
+            if (crate == null) continue;
+            this.ownedCrates.add(crate);
+        }
     }
 
     private void saveDefaults(boolean async) {
