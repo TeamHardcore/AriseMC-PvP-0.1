@@ -7,7 +7,7 @@
 package de.teamhardcore.pvp.listeners.block;
 
 import de.teamhardcore.pvp.Main;
-import de.teamhardcore.pvp.model.customspawner.AbstractSpawnerType;
+import de.teamhardcore.pvp.model.customspawner.EnumSpawnerType;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.Material;
 import org.bukkit.block.CreatureSpawner;
@@ -36,7 +36,7 @@ public class BlockPlace implements Listener {
         if (itemStack == null || itemStack.getType() == Material.AIR) return;
 
         if (itemStack.getType().equals(Material.MOB_SPAWNER)) {
-            AbstractSpawnerType type = this.plugin.getSpawnerManager().getSpawnerType(EntityType.PIG);
+            EnumSpawnerType type = this.plugin.getSpawnerManager().getSpawnerType(EntityType.PIG);
             UUID ownerUUID = player.getUniqueId();
 
             if (itemStack.hasItemMeta() && itemStack.getItemMeta().hasDisplayName() && itemStack.getItemMeta().getDisplayName().equalsIgnoreCase("§e§lSpawner")) {

@@ -19,11 +19,9 @@ import de.teamhardcore.pvp.model.clan.ClanRank;
 import de.teamhardcore.pvp.model.clan.shop.upgrades.EnumUpgrade;
 import de.teamhardcore.pvp.model.clan.shop.upgrades.requirements.AbstractRequirement;
 import de.teamhardcore.pvp.model.clan.shop.upgrades.requirements.RequirementType;
-import de.teamhardcore.pvp.model.customspawner.AbstractSpawnerType;
 import de.teamhardcore.pvp.model.customspawner.CustomSpawner;
+import de.teamhardcore.pvp.model.customspawner.EnumSpawnerType;
 import de.teamhardcore.pvp.model.duel.configuration.DuelConfiguration;
-import de.teamhardcore.pvp.model.duel.configuration.DuelDeployment;
-import de.teamhardcore.pvp.model.duel.configuration.DuelSettings;
 import de.teamhardcore.pvp.model.extras.EnumChatColor;
 import de.teamhardcore.pvp.model.extras.EnumCommand;
 import de.teamhardcore.pvp.model.extras.EnumPerk;
@@ -52,9 +50,9 @@ public class InventoryClick implements Listener {
 
     private final Main plugin;
 
-    private Integer[] perkSlots = {11, 12, 13, 14, 15, 21, 22, 23};
-    private Integer[] commandSlots = {11, 12, 13, 14, 15, 21, 22, 23};
-    private Integer[] chatColorSlots = {11, 12, 13, 14, 15, 21, 22, 23};
+    private final Integer[] perkSlots = {11, 12, 13, 14, 15, 21, 22, 23};
+    private final Integer[] commandSlots = {11, 12, 13, 14, 15, 21, 22, 23};
+    private final Integer[] chatColorSlots = {11, 12, 13, 14, 15, 21, 22, 23};
 
     public InventoryClick(Main plugin) {
         this.plugin = plugin;
@@ -443,7 +441,7 @@ public class InventoryClick implements Listener {
 
         }
 
-        if (inventory.getTitle().equalsIgnoreCase("§c§lWähle einen Typ")) {
+        if (inventory.getTitle().equalsIgnoreCase("§c§lWähle einen Spawner")) {
             event.setCancelled(true);
 
             if (itemStack.getType() == Material.STAINED_GLASS_PANE) return;
@@ -451,13 +449,11 @@ public class InventoryClick implements Listener {
             Location location = this.plugin.getSpawnerManager().getPlayersInSpawnerChoosing().get(player);
 
             if (location == null) {
-                player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte versuche es erneut.");
                 player.closeInventory();
                 return;
             }
 
             if (location.getBlock() == null || location.getBlock().getType() != Material.MOB_SPAWNER) {
-                player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte versuche es erneut.");
                 player.closeInventory();
                 return;
             }
@@ -470,7 +466,12 @@ public class InventoryClick implements Listener {
             }
 
             CreatureSpawner spawner = (CreatureSpawner) location.getBlock().getState();
-            AbstractSpawnerType type = this.plugin.getSpawnerManager().getSpawnerType(itemStack.getDurability());
+            EnumSpawnerType type = this.plugin.getSpawnerManager().getSpawnerType(itemStack.getDurability());
+
+            if (customSpawner.getType().equals(type)) {
+                player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
+                return;
+            }
 
             if (type == null) {
                 player.sendMessage(StringDefaults.PREFIX + "§cDieser Typ existiert nicht.");
@@ -478,7 +479,7 @@ public class InventoryClick implements Listener {
             }
 
             if (type.isPremium()) {
-                boolean hasUnlocked = type.hasUnlocked(this.plugin.getUserManager().getUser(player.getUniqueId()));
+                boolean hasUnlocked = EnumSpawnerType.hasUnlocked(this.plugin.getUserManager().getUser(player.getUniqueId()), type);
 
                 if (!hasUnlocked) {
                     if (user.getMoney() < type.getPrice()) {
@@ -486,8 +487,9 @@ public class InventoryClick implements Listener {
                         return;
                     }
 
-                    //todo: unlock type
+
                     user.removeMoney(type.getPrice());
+                    user.getUserData().addSpawnerType(type);
                     player.sendMessage(StringDefaults.PREFIX + "§eDu hast den Typen §7" + type.getType().name() + " §efreigeschaltet.");
                     player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
                     SpawnerInventory.openInventory(player, customSpawner);
@@ -500,7 +502,8 @@ public class InventoryClick implements Listener {
 
             spawner.setSpawnedType(type.getType());
             spawner.update();
-            player.sendMessage(StringDefaults.PREFIX + "§eDu hast den Typ erfolgreich zu §7" + type.getType().name() + " §egewechselt.");
+            player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+            player.sendMessage(StringDefaults.PREFIX + "§eDu hast den Typ erfolgreich zu §7" + type.getName() + " §egewechselt.");
             player.closeInventory();
         }
 
