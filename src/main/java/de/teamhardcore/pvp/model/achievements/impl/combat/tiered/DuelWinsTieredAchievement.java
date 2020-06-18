@@ -33,9 +33,9 @@ public class DuelWinsTieredAchievement extends AbstractTieredAchievement {
         return new HashMap<Long, AchievementTier>() {{
             put(10L, new AchievementTier("Duel Wins I", "Gewinne 10 Duelle", "2.000$", user -> user.getUserMoney().addMoney(2000)));
             put(50L, new AchievementTier("Duel Wins II", "Gewinne 50 Duelle", "4.000$", user -> user.getUserMoney().addMoney(4000)));
-            put(150L, new AchievementTier("Duel Wins III", "Gewinne 100 Duelle", "6.000$", user -> user.getUserMoney().addMoney(6000)));
-            put(250L, new AchievementTier("Duel Wins IV", "Gewinne 500 Duelle", "12.000$", user -> user.getUserMoney().addMoney(12000)));
-            put(500L, new AchievementTier("Duel Wins V", "Gewinne 1000 Duelle", "24.000$", user -> user.getUserMoney().addMoney(24000)));
+            put(100L, new AchievementTier("Duel Wins III", "Gewinne 100 Duelle", "6.000$", user -> user.getUserMoney().addMoney(6000)));
+            put(500L, new AchievementTier("Duel Wins IV", "Gewinne 500 Duelle", "12.000$", user -> user.getUserMoney().addMoney(12000)));
+            put(1000L, new AchievementTier("Duel Wins V", "Gewinne 1000 Duelle", "24.000$", user -> user.getUserMoney().addMoney(24000)));
         }};
     }
 
