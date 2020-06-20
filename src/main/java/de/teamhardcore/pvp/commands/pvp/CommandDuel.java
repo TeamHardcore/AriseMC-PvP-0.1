@@ -30,12 +30,19 @@ import java.util.Set;
 
 public class CommandDuel implements CommandExecutor {
 
+    public static boolean DISABLED = true;
+
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
         if (!(cs instanceof Player))
             return true;
 
         Player player = (Player) cs;
+
+        if (DISABLED) {
+            player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDieses Feature ist aktuell nicht nutzbar.");
+            return true;
+        }
 
         if (args.length == 0) {
             DuelConfiguration configuration = new DuelConfiguration(player.getLocation(), new DuelSettings(), new DuelDeployment());
