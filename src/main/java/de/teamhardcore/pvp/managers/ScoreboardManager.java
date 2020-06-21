@@ -10,6 +10,7 @@ package de.teamhardcore.pvp.managers;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.PlayerScoreboard;
 import de.teamhardcore.pvp.user.User;
+import de.teamhardcore.pvp.user.UserStats;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.Util;
 import org.bukkit.entity.Player;
@@ -79,22 +80,27 @@ public class ScoreboardManager {
                 Team teamPlayer = scoreboard.registerNewTeam("Player");
                 Team teamMoney = scoreboard.registerNewTeam("Money");
                 Team teamLeague = scoreboard.registerNewTeam("League");
+                Team teamStats = scoreboard.registerNewTeam("Stats");
 
                 teamPlayer.setSuffix(player.getName());
                 teamPlayer.addEntry("§7");
-                teamLeague.addEntry("§7§7");
-                teamMoney.addEntry("§7§7§7");
+                teamMoney.addEntry("§7§7");
+                teamStats.addEntry("§7§7§7");
+                teamLeague.addEntry("§7§7§7§7");
 
-                sidebar.getScore(" ").setScore(10);
-                sidebar.getScore("§a§lName: §7").setScore(9);
-                sidebar.getScore("§7").setScore(8);
-                sidebar.getScore("  ").setScore(7);
-                sidebar.getScore("§6§lMünzen: §7").setScore(6);
+                sidebar.getScore(" ").setScore(13);
+                sidebar.getScore("§6§lName: §7").setScore(12);
+                sidebar.getScore("§7").setScore(11);
+                sidebar.getScore("  ").setScore(10);
+                sidebar.getScore("§e§lMünzen: §7").setScore(9);
+                sidebar.getScore("§7§7").setScore(8);
+                sidebar.getScore("    ").setScore(7);
+                sidebar.getScore("§a§lStats").setScore(6);
                 sidebar.getScore("§7§7§7").setScore(5);
-                sidebar.getScore("   ").setScore(4);
-                sidebar.getScore("§e§lLiga: §7").setScore(3);
-                sidebar.getScore("§7§7").setScore(2);
-                sidebar.getScore("    ").setScore(1);
+                sidebar.getScore("     ").setScore(4);
+                sidebar.getScore("§b§lLiga: §7").setScore(3);
+                sidebar.getScore("§7§7§7§7").setScore(2);
+
             case EVENT:
                 break;
             case COMBAT:
@@ -178,14 +184,20 @@ public class ScoreboardManager {
         Scoreboard scoreboard = playerScoreboard.getScoreboard();
 
         User user = this.plugin.getUserManager().getUser(player.getUniqueId());
+        UserStats stats = user.getUserStats();
+
 
         switch (playerScoreboard.getType()) {
             case DEFAULT:
                 Team teamMoney = scoreboard.getTeam("Money");
                 Team teamLeague = scoreboard.getTeam("League");
+                Team teamStats = scoreboard.getTeam("Stats");
                 teamMoney.setSuffix("§7" + Util.formatNumber(user.getMoney()) + "$");
                 teamLeague.setPrefix("§cUnplatziert §7");
                 teamLeague.setSuffix("[§60§7] ");
+
+                teamStats.setPrefix("§7" + stats.getKills() + " §aKills");
+                teamStats.setSuffix(" §8/ §7" + stats.getDeaths() + " §cTode");
                 break;
             case COMBAT:
                 break;
