@@ -9,7 +9,7 @@ package de.teamhardcore.pvp.utils;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class BaseEvent extends Event {
+public class CustomEvent extends Event {
 
     private static final HandlerList handlerList = new HandlerList();
 

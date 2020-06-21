@@ -44,7 +44,7 @@ public class SimpleUID {
         char[] chars = new char[length];
 
         for (int i = 0; i < length; i++)
-            chars[i] = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789".charAt(generator.nextInt("aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789".length()));
+            chars[i] = charPattern.charAt(generator.nextInt(charPattern.length()));
 
         return new SimpleUID(chars);
     }

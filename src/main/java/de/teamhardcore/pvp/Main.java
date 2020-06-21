@@ -8,6 +8,7 @@
 package de.teamhardcore.pvp;
 
 import de.teamhardcore.pvp.commands.CommandCrate;
+import de.teamhardcore.pvp.commands.CommandEvent;
 import de.teamhardcore.pvp.commands.chat.CommandCommandSpy;
 import de.teamhardcore.pvp.commands.dev.CommandRelore;
 import de.teamhardcore.pvp.commands.dev.CommandRename;
@@ -33,6 +34,7 @@ import de.teamhardcore.pvp.commands.warp.CommandWarp;
 import de.teamhardcore.pvp.commands.world.CommandNear;
 import de.teamhardcore.pvp.commands.world.CommandSpawner;
 import de.teamhardcore.pvp.database.DatabaseManager;
+import de.teamhardcore.pvp.events.EventManager;
 import de.teamhardcore.pvp.listeners.AchievementReceive;
 import de.teamhardcore.pvp.listeners.AchievementTierReceive;
 import de.teamhardcore.pvp.listeners.block.BlockBreak;
@@ -49,6 +51,7 @@ import de.teamhardcore.pvp.listeners.world.SignChange;
 import de.teamhardcore.pvp.managers.*;
 import de.teamhardcore.pvp.managers.CrateManager;
 import de.teamhardcore.pvp.utils.VirtualAnvil;
+import net.minecraft.server.v1_8_R3.GameRules;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -76,6 +79,7 @@ public class Main extends JavaPlugin {
     private MarketManager marketManager;
     private DuelManager duelManager;
     private AchievementManager achievementManager;
+    private EventManager eventManager;
 
     private DatabaseManager databaseManager;
 
@@ -127,6 +131,7 @@ public class Main extends JavaPlugin {
         this.marketManager = new MarketManager(this);
         this.duelManager = new DuelManager(this);
         this.achievementManager = new AchievementManager(this);
+        this.eventManager = new EventManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -196,6 +201,7 @@ public class Main extends JavaPlugin {
         getCommand("rename").setExecutor(new CommandRename());
         getCommand("relore").setExecutor(new CommandRelore());
         getCommand("crates").setExecutor(new CommandCrate());
+        getCommand("event").setExecutor(new CommandEvent());
     }
 
     public FileManager getFileManager() {
@@ -280,6 +286,10 @@ public class Main extends JavaPlugin {
 
     public AchievementManager getAchievementManager() {
         return achievementManager;
+    }
+
+    public EventManager getEventManager() {
+        return eventManager;
     }
 
     public static Main getInstance() {

@@ -7,11 +7,11 @@
 package de.teamhardcore.pvp.model.achievements.events;
 
 import de.teamhardcore.pvp.model.achievements.base.AbstractAchievement;
-import de.teamhardcore.pvp.utils.BaseEvent;
+import de.teamhardcore.pvp.utils.CustomEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 
-public class AchievementReceiveEvent extends BaseEvent implements Cancellable {
+public class AchievementReceiveEvent extends CustomEvent implements Cancellable {
 
     private final Player player;
     private final AbstractAchievement achievement;

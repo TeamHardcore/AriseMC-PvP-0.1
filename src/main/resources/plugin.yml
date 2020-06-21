@@ -103,3 +103,5 @@ commands:
   rename:
   relore:
   crates:
+  testevent:
+  event:
