@@ -42,7 +42,8 @@ public class SpawnerManager {
         for (String id : cfg.getConfigurationSection("Spawners").getKeys(false)) {
             Location location = Util.stringToLocation(cfg.getString("Spawners." + id + ".Location"));
 
-            if (location.getBlock() == null || location.getBlock().getType() != Material.MOB_SPAWNER) continue;
+            if (location == null || location.getBlock() == null || location.getBlock().getType() != Material.MOB_SPAWNER)
+                continue;
 
             EnumSpawnerType type = getSpawnerType(EntityType.valueOf(cfg.getString("Spawners." + id + ".Type")));
             UUID owner = UUID.fromString(cfg.getString("Spawners." + id + ".Owner"));
