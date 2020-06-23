@@ -7,26 +7,16 @@
 package de.teamhardcore.pvp.commands.pvp;
 
 import de.teamhardcore.pvp.Main;
-import de.teamhardcore.pvp.inventories.DuelInventory;
-import de.teamhardcore.pvp.model.duel.Duel;
-import de.teamhardcore.pvp.model.duel.configuration.DuelConfiguration;
-import de.teamhardcore.pvp.model.duel.arena.DuelArenaType;
-import de.teamhardcore.pvp.model.duel.configuration.DuelDeployment;
-import de.teamhardcore.pvp.model.duel.configuration.DuelSettings;
-import de.teamhardcore.pvp.utils.JSONMessage;
+import de.teamhardcore.pvp.duel.map.DuelMap;
+import de.teamhardcore.pvp.duel.request.DuelDeployment;
+import de.teamhardcore.pvp.duel.request.DuelRequest;
+import de.teamhardcore.pvp.duel.request.DuelSettings;
 import de.teamhardcore.pvp.utils.StringDefaults;
-import de.teamhardcore.pvp.utils.Util;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class CommandDuel implements CommandExecutor {
 
@@ -39,7 +29,36 @@ public class CommandDuel implements CommandExecutor {
 
         Player player = (Player) cs;
 
-        if (DISABLED) {
+        if (args.length == 1) {
+            DuelSettings settings = new DuelSettings();
+            settings.updateMaxHealStacks();
+            settings.setUseGoldenApple(false);
+
+            DuelDeployment deployment = new DuelDeployment();
+            deployment.setCoins(2000);
+
+            DuelMap map = Main.getInstance().getDuelManager().getAvailableMap("Prison");
+
+            if (map == null) {
+                player.sendMessage(StringDefaults.DUEL_PREFIX + "§cEs konnten keine verfügbaren Maps dieser Kategorie gefunden werden.");
+                return true;
+            }
+
+            DuelRequest request = new DuelRequest(map, settings, deployment);
+            request.getPlayers().add(player);
+            request.getPlayers().add(Bukkit.getPlayer(args[0]));
+
+            System.out.println("Available Map: " + map.getName());
+
+            Main.getInstance().getDuelManager().createDuel(request, player, Bukkit.getPlayer(args[0]));
+        }
+
+
+        return true;
+    }
+}
+
+   /*   if (DISABLED) {
             player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDieses Feature ist aktuell nicht nutzbar.");
             return true;
         }
@@ -114,10 +133,10 @@ public class CommandDuel implements CommandExecutor {
                     return true;
                 }
 
-            /*    if (target == player) {
+               if (target == player) {
                     player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu kannst dich nicht selbst herausfordern.");
                     return true;
-                }*/
+                }
 
 
                 double distance = player.getLocation().distanceSquared(target.getLocation());
@@ -247,7 +266,5 @@ public class CommandDuel implements CommandExecutor {
 
             }
         }
-
-        return true;
-    }
 }
+    */

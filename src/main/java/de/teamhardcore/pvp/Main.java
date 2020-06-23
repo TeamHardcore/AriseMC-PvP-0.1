@@ -7,24 +7,23 @@
 
 package de.teamhardcore.pvp;
 
-import de.teamhardcore.pvp.commands.CommandCrate;
-import de.teamhardcore.pvp.commands.CommandEvent;
-import de.teamhardcore.pvp.commands.chat.CommandCommandSpy;
-import de.teamhardcore.pvp.commands.dev.CommandRelore;
-import de.teamhardcore.pvp.commands.dev.CommandRename;
-import de.teamhardcore.pvp.commands.pvp.CommandDuel;
+import de.teamhardcore.pvp.commands.inventory.CommandCrate;
 import de.teamhardcore.pvp.commands.abuse.CommandBan;
 import de.teamhardcore.pvp.commands.abuse.CommandKick;
 import de.teamhardcore.pvp.commands.abuse.CommandMute;
 import de.teamhardcore.pvp.commands.chat.CommandBroadcast;
+import de.teamhardcore.pvp.commands.chat.CommandCommandSpy;
 import de.teamhardcore.pvp.commands.chat.CommandGlobalmute;
 import de.teamhardcore.pvp.commands.chat.CommandMsg;
 import de.teamhardcore.pvp.commands.dev.CommandDebug;
+import de.teamhardcore.pvp.commands.dev.CommandRelore;
+import de.teamhardcore.pvp.commands.dev.CommandRename;
 import de.teamhardcore.pvp.commands.help.CommandReport;
 import de.teamhardcore.pvp.commands.help.CommandSupport;
 import de.teamhardcore.pvp.commands.inventory.*;
 import de.teamhardcore.pvp.commands.player.*;
 import de.teamhardcore.pvp.commands.pvp.CommandClan;
+import de.teamhardcore.pvp.commands.pvp.CommandDuel;
 import de.teamhardcore.pvp.commands.pvp.CommandFix;
 import de.teamhardcore.pvp.commands.pvp.CommandStack;
 import de.teamhardcore.pvp.commands.teleport.*;
@@ -34,12 +33,11 @@ import de.teamhardcore.pvp.commands.warp.CommandWarp;
 import de.teamhardcore.pvp.commands.world.CommandNear;
 import de.teamhardcore.pvp.commands.world.CommandSpawner;
 import de.teamhardcore.pvp.database.DatabaseManager;
-import de.teamhardcore.pvp.events.EventManager;
-import de.teamhardcore.pvp.listeners.AchievementReceive;
-import de.teamhardcore.pvp.listeners.AchievementTierReceive;
+import de.teamhardcore.pvp.managers.DuelManager;
+import de.teamhardcore.pvp.listeners.custom.AchievementReceive;
+import de.teamhardcore.pvp.listeners.custom.AchievementTierReceive;
 import de.teamhardcore.pvp.listeners.block.BlockBreak;
 import de.teamhardcore.pvp.listeners.block.BlockPlace;
-import de.teamhardcore.pvp.listeners.custom.DuelWin;
 import de.teamhardcore.pvp.listeners.entity.EntityDamage;
 import de.teamhardcore.pvp.listeners.inventory.CrateEvents;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClick;
@@ -49,9 +47,7 @@ import de.teamhardcore.pvp.listeners.world.FoodLevelChange;
 import de.teamhardcore.pvp.listeners.world.PotionSplash;
 import de.teamhardcore.pvp.listeners.world.SignChange;
 import de.teamhardcore.pvp.managers.*;
-import de.teamhardcore.pvp.managers.CrateManager;
 import de.teamhardcore.pvp.utils.VirtualAnvil;
-import net.minecraft.server.v1_8_R3.GameRules;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -79,7 +75,6 @@ public class Main extends JavaPlugin {
     private MarketManager marketManager;
     private DuelManager duelManager;
     private AchievementManager achievementManager;
-    private EventManager eventManager;
 
     private DatabaseManager databaseManager;
 
@@ -131,7 +126,6 @@ public class Main extends JavaPlugin {
         this.marketManager = new MarketManager(this);
         this.duelManager = new DuelManager(this);
         this.achievementManager = new AchievementManager(this);
-        this.eventManager = new EventManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -153,7 +147,6 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new EntityDamage(this), this);
         pm.registerEvents(new AchievementReceive(this), this);
         pm.registerEvents(new AchievementTierReceive(this), this);
-        pm.registerEvents(new DuelWin(this), this);
         pm.registerEvents(new CrateEvents(this), this);
 
         getCommand("fix").setExecutor(new CommandFix());
@@ -201,7 +194,6 @@ public class Main extends JavaPlugin {
         getCommand("rename").setExecutor(new CommandRename());
         getCommand("relore").setExecutor(new CommandRelore());
         getCommand("crates").setExecutor(new CommandCrate());
-        getCommand("event").setExecutor(new CommandEvent());
     }
 
     public FileManager getFileManager() {
@@ -286,10 +278,6 @@ public class Main extends JavaPlugin {
 
     public AchievementManager getAchievementManager() {
         return achievementManager;
-    }
-
-    public EventManager getEventManager() {
-        return eventManager;
     }
 
     public static Main getInstance() {

@@ -93,7 +93,7 @@ public class CombatManager {
     }
 
     public class CombatEvents implements Listener {
-        private CombatManager manager;
+        private final CombatManager manager;
 
         public CombatEvents(CombatManager manager) {
             this.manager = manager;

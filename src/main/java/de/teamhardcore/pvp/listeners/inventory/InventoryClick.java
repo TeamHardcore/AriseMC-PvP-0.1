@@ -932,7 +932,7 @@ public class InventoryClick implements Listener {
 
         }
 
-        if (inventory.getTitle().equalsIgnoreCase("§c§lDuell erstellen")) {
+    /*    if (inventory.getTitle().equalsIgnoreCase("§c§lDuell erstellen")) {
             event.setCancelled(true);
 
             DuelConfiguration configuration = this.plugin.getDuelManager().getConfigurationCache().get(player.getUniqueId());
@@ -1003,5 +1003,6 @@ public class InventoryClick implements Listener {
                 Main.getInstance().getDuelManager().getConfigurationCache().put(player.getUniqueId(), configuration);
             }
         }
+    }*/
     }
 }

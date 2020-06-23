@@ -7,7 +7,7 @@
 package de.teamhardcore.pvp.listeners.world;
 
 import de.teamhardcore.pvp.Main;
-import de.teamhardcore.pvp.model.duel.Duel;
+import de.teamhardcore.pvp.duel.Duel;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;

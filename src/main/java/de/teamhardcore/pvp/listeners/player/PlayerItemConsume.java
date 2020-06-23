@@ -7,7 +7,7 @@
 package de.teamhardcore.pvp.listeners.player;
 
 import de.teamhardcore.pvp.Main;
-import de.teamhardcore.pvp.model.duel.Duel;
+import de.teamhardcore.pvp.duel.Duel;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,7 +33,7 @@ public class PlayerItemConsume implements Listener {
             if (this.plugin.getDuelManager().getDuelCache().containsKey(player.getUniqueId())) {
                 Duel duel = this.plugin.getDuelManager().getDuelCache().get(player.getUniqueId());
 
-                if (!duel.getConfiguration().getSettings().canUseGoldenApple()) {
+                if (!duel.getRequest().getSettings().canUseGoldenApple()) {
                     player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu kannst keine Goldenen Äpfel benutzen.");
                     event.setCancelled(true);
                     player.setItemInHand(itemStack);
