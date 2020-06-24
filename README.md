@@ -7,7 +7,7 @@ Main pvp system for arisemc. This is a full plugin which individual and custom f
 - [Version](#version)
 
 ## General Info
-Main pvp system for arisemc. This is a full plugin which individual and custom features.
+> Main pvp system for arisemc. This is a full plugin which individual and custom features.
 
 ## Status
 * In Working
