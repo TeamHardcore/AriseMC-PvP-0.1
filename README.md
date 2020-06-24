@@ -10,7 +10,7 @@ Main pvp system for arisemc. This is a full plugin which individual and custom f
 > Main pvp system for arisemc. This is a full plugin which individual and custom features.
 
 ## Status
-* In Working
+* WIP
 
 ## Version
 * 1.0
