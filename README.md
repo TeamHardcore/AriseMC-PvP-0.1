@@ -13,4 +13,4 @@ Main pvp system for arisemc. This is a full plugin which individual and custom f
 * WIP
 
 ## Version
-* 1.0
+* 0.0.1
