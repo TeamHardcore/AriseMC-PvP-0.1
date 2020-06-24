@@ -4,10 +4,10 @@
  *   Copyright (c) 2020 by TeamHardcore to present. All rights reserved
  */
 
-package de.teamhardcore.pvp.duel.phases;
+package de.teamhardcore.pvp.model.duel.phases;
 
 import de.teamhardcore.pvp.Main;
-import de.teamhardcore.pvp.duel.Duel;
+import de.teamhardcore.pvp.model.duel.Duel;
 import de.teamhardcore.pvp.model.Warp;
 import org.bukkit.entity.Player;
 

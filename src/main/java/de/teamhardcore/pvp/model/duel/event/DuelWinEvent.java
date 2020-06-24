@@ -4,9 +4,9 @@
  *   Copyright (c) 2020 by TeamHardcore to present. All rights reserved
  */
 
-package de.teamhardcore.pvp.duel.event;
+package de.teamhardcore.pvp.model.duel.event;
 
-import de.teamhardcore.pvp.duel.Duel;
+import de.teamhardcore.pvp.model.duel.Duel;
 import de.teamhardcore.pvp.utils.CustomEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

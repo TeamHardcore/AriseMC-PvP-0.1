@@ -7,11 +7,11 @@
 package de.teamhardcore.pvp.managers;
 
 import de.teamhardcore.pvp.Main;
-import de.teamhardcore.pvp.duel.Duel;
-import de.teamhardcore.pvp.duel.event.DuelWinEvent;
-import de.teamhardcore.pvp.duel.phases.DuelPhase;
-import de.teamhardcore.pvp.duel.request.DuelRequest;
-import de.teamhardcore.pvp.duel.map.DuelMap;
+import de.teamhardcore.pvp.model.duel.Duel;
+import de.teamhardcore.pvp.model.duel.event.DuelWinEvent;
+import de.teamhardcore.pvp.model.duel.phases.DuelPhase;
+import de.teamhardcore.pvp.model.duel.request.DuelRequest;
+import de.teamhardcore.pvp.model.duel.map.DuelMap;
 import de.teamhardcore.pvp.model.achievements.AchievementGroups;
 import de.teamhardcore.pvp.model.achievements.annotations.AchievementListener;
 import de.teamhardcore.pvp.model.achievements.type.Category;
@@ -30,13 +30,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DuelManager {
 
@@ -48,9 +48,11 @@ public class DuelManager {
 
     private final Map<String, List<DuelMap>> duelMaps;
     private final Map<String, List<DuelMap>> availableMaps;
+    private final Map<Player, DuelRequest> requests;
 
     public DuelManager(Main plugin) {
         this.plugin = plugin;
+        this.requests = new HashMap<>();
         this.duelCache = new HashMap<>();
         this.gameIdCache = new HashSet<>();
         this.playerQuits = new HashSet<>();
@@ -60,7 +62,7 @@ public class DuelManager {
         this.plugin.getServer().getPluginManager().registerEvents(new DuelEvents(this), this.plugin);
 
 
-        DuelMap map = new DuelMap("Test1", "Prison");
+        DuelMap map = new DuelMap("Test1", "Castle");
         map.addLocation(new Location(Bukkit.getWorld("world"), -263, 68, 308));
         map.addLocation(new Location(Bukkit.getWorld("world"), -263, 68, 300));
 
@@ -68,10 +70,8 @@ public class DuelManager {
         map2.addLocation(new Location(Bukkit.getWorld("world"), -263, 68, 308));
         map2.addLocation(new Location(Bukkit.getWorld("world"), -263, 68, 300));
 
-        ArrayList<DuelMap> maps = new ArrayList<>();
-        maps.add(map);
-        maps.add(map2);
-        this.duelMaps.put("Prison", maps);
+        this.duelMaps.put("Prison", Collections.singletonList(map2));
+        this.duelMaps.put("Castle", Collections.singletonList(map));
         saveMaps();
         loadMaps();
     }
@@ -136,29 +136,27 @@ public class DuelManager {
     public void createDuel(DuelRequest request, Player player, Player target) {
         if (request.getPlayers().size() <= 1) return;
 
-        String gameID = null;
-
-        while (gameID == null || this.gameIdCache.contains(gameID))
-            gameID = "duel-" + UUID.randomUUID().toString().substring(0, 8);
-
-        Duel duel = new Duel(request, gameID);
+        Duel duel = new Duel(request);
 
         this.availableMaps.get(duel.getMap().getCategory()).remove(duel.getMap());
         this.duelCache.put(player.getUniqueId(), duel);
         this.duelCache.put(target.getUniqueId(), duel);
-        this.gameIdCache.add(gameID);
     }
 
     public void stopDuel(Duel duel) {
-        for (Player player : duel.getPlayers()) {
+        for (Player player : duel.getPlayers())
             this.duelCache.remove(player.getUniqueId());
-        }
-        this.gameIdCache.remove(duel.getGameID());
         this.availableMaps.get(duel.getMap().getCategory()).add(duel.getMap());
     }
 
-    public Duel getDuel(String gameID) {
-        return this.duelCache.values().stream().filter(duel -> duel.getGameID().equals(gameID)).findFirst().orElse(null);
+    public Duel getDuel(String id) {
+        return this.duelCache.values().stream().filter(duel -> duel.getId().toString().equals(id)).findFirst().orElse(null);
+    }
+
+    public Duel getDuel(Player player) {
+        if (!this.duelCache.containsKey(player.getUniqueId()))
+            return null;
+        return this.duelCache.get(player.getUniqueId());
     }
 
     public DuelMap getAvailableMap(String category) {
@@ -188,6 +186,10 @@ public class DuelManager {
 
     public Set<UUID> getPlayerQuits() {
         return playerQuits;
+    }
+
+    public Map<Player, DuelRequest> getRequests() {
+        return requests;
     }
 
     public Main getPlugin() {
@@ -245,10 +247,10 @@ public class DuelManager {
                 Duel playerDuel = this.manager.getDuelCache().get(player.getUniqueId());
                 Duel damagerDuel = this.manager.getDuelCache().get(damager.getUniqueId());
 
-                if (playerDuel.getGameID().equals(damagerDuel.getGameID()))
+                if (playerDuel.getId().equals(damagerDuel.getId())) {
                     if (playerDuel.getPhase().getType() == DuelPhase.START)
                         event.setCancelled(true);
-
+                }
             }
         }
 
@@ -324,14 +326,14 @@ public class DuelManager {
 
 
             UserMoney playerMoney = Main.getInstance().getUserManager().getUser(player.getUniqueId()).getUserMoney();
-            playerMoney.addMoney(duel.getRequest().getDeployment().getCoins() * 2);
+            playerMoney.addMoney(duel.getRequest().getCoins() * 2);
 
             duel.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
             duel.sendMessage(StringDefaults.PREFIX + "§c§l" + player.getName() + " §ehat das Duell gewonnen.");
             duel.sendMessage(" ");
             duel.sendMessage(StringDefaults.PREFIX + "§6§lGewinn§8: ");
-            if (duel.getRequest().getDeployment().getCoins() > 0)
-                duel.sendMessage("  §8● §eMünzen§8: §a§l" + Util.formatNumber((duel.getRequest().getDeployment().getCoins() * 2)) + "$");
+            if (duel.getRequest().getCoins() > 0)
+                duel.sendMessage("  §8● §eMünzen§8: §a§l" + Util.formatNumber((duel.getRequest().getCoins() * 2)) + "$");
             duel.sendMessage(" ");
             duel.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
             player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
@@ -345,6 +347,23 @@ public class DuelManager {
             });
         }
 
+        @EventHandler
+        public void onPlayerConsume(PlayerItemConsumeEvent event) {
+            Player player = event.getPlayer();
+            ItemStack itemStack = event.getItem();
+
+            if (itemStack.getType().equals(Material.GOLDEN_APPLE)) {
+                if (this.manager.getDuelCache().containsKey(player.getUniqueId())) {
+                    Duel duel = this.manager.getDuel(player);
+
+                    if (duel.getRequest().getGoldenAppleOption() == 1) {
+                        player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu kannst keine Goldenen Äpfel benutzen.");
+                        event.setCancelled(true);
+                        player.setItemInHand(itemStack);
+                    }
+                }
+            }
+        }
     }
 
 }

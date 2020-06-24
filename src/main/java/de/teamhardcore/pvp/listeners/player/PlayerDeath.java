@@ -7,7 +7,6 @@
 package de.teamhardcore.pvp.listeners.player;
 
 import de.teamhardcore.pvp.Main;
-import de.teamhardcore.pvp.duel.Duel;
 import de.teamhardcore.pvp.model.achievements.AchievementGroups;
 import de.teamhardcore.pvp.model.achievements.annotations.AchievementListener;
 import de.teamhardcore.pvp.model.achievements.type.Category;

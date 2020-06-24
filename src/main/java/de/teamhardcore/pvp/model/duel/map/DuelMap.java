@@ -4,7 +4,7 @@
  *   Copyright (c) 2020 by TeamHardcore to present. All rights reserved
  */
 
-package de.teamhardcore.pvp.duel.map;
+package de.teamhardcore.pvp.model.duel.map;
 
 import org.bukkit.Location;
 
@@ -19,15 +19,6 @@ public class DuelMap {
     private List<Location> locations;
 
     private boolean isValid;
-
-    /*
-    /duel admin create categorie <name>
-    /duel admin create arena <categorie> <name>
-    /duel admin delete categorie <name>
-    /duel admin delete arena <name>
-    /duel admin location add arena
-    /duel admin location remove arena
-     */
 
     public DuelMap(String name, String category) {
         this.name = name;

@@ -7,12 +7,9 @@
 package de.teamhardcore.pvp.commands.pvp;
 
 import de.teamhardcore.pvp.Main;
-import de.teamhardcore.pvp.duel.map.DuelMap;
-import de.teamhardcore.pvp.duel.request.DuelDeployment;
-import de.teamhardcore.pvp.duel.request.DuelRequest;
-import de.teamhardcore.pvp.duel.request.DuelSettings;
+import de.teamhardcore.pvp.inventories.DuelInventory;
+import de.teamhardcore.pvp.model.duel.request.DuelRequest;
 import de.teamhardcore.pvp.utils.StringDefaults;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,7 +17,14 @@ import org.bukkit.entity.Player;
 
 public class CommandDuel implements CommandExecutor {
 
-    public static boolean DISABLED = true;
+    /*
+    /duel admin create categorie <name>
+    /duel admin create arena <categorie> <name>
+    /duel admin delete categorie <name>
+    /duel admin delete arena <name>
+    /duel admin location add arena
+    /duel admin location remove arena
+     */
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
@@ -29,28 +33,24 @@ public class CommandDuel implements CommandExecutor {
 
         Player player = (Player) cs;
 
-        if (args.length == 1) {
-            DuelSettings settings = new DuelSettings();
-            settings.updateMaxHealStacks();
-            settings.setUseGoldenApple(false);
-
-            DuelDeployment deployment = new DuelDeployment();
-            deployment.setCoins(2000);
-
-            DuelMap map = Main.getInstance().getDuelManager().getAvailableMap("Prison");
-
-            if (map == null) {
-                player.sendMessage(StringDefaults.DUEL_PREFIX + "§cEs konnten keine verfügbaren Maps dieser Kategorie gefunden werden.");
+        if (args.length == 0) {
+            if (Main.getInstance().getDuelManager().getAvailableMaps().isEmpty()) {
+                player.sendMessage(StringDefaults.DUEL_PREFIX + "§cEs sind keine freien Arenen verfügbar.");
                 return true;
             }
 
-            DuelRequest request = new DuelRequest(map, settings, deployment);
-            request.getPlayers().add(player);
-            request.getPlayers().add(Bukkit.getPlayer(args[0]));
+            if (Main.getInstance().getDuelManager().getDuel(player) != null) {
+                player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu befindest dich bereits in einem Duell.");
+                return true;
+            }
 
-            System.out.println("Available Map: " + map.getName());
+        }
 
-            Main.getInstance().getDuelManager().createDuel(request, player, Bukkit.getPlayer(args[0]));
+        if (args.length == 1) {
+            DuelRequest request = new DuelRequest(player);
+
+            DuelInventory.openRequestInventory(player, true, request);
+            Main.getInstance().getDuelManager().getRequests().put(player, request);
         }
 
 

@@ -4,7 +4,7 @@
  *   Copyright (c) 2020 by TeamHardcore to present. All rights reserved
  */
 
-package de.teamhardcore.pvp.duel.request;
+package de.teamhardcore.pvp.model.duel.request;
 
 public class DuelDeployment {
 

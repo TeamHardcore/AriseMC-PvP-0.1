@@ -7,8 +7,6 @@
 package de.teamhardcore.pvp.listeners.entity;
 
 import de.teamhardcore.pvp.Main;
-import de.teamhardcore.pvp.duel.Duel;
-import de.teamhardcore.pvp.duel.phases.DuelPhase;
 import de.teamhardcore.pvp.model.clan.Clan;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import org.bukkit.entity.Entity;

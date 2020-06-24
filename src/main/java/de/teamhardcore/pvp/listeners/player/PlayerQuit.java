@@ -8,7 +8,6 @@
 package de.teamhardcore.pvp.listeners.player;
 
 import de.teamhardcore.pvp.Main;
-import de.teamhardcore.pvp.duel.Duel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
