@@ -8,29 +8,23 @@ package de.teamhardcore.pvp.commands.pvp;
 
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.inventories.DuelInventory;
-import de.teamhardcore.pvp.model.duel.Duel;
-import de.teamhardcore.pvp.model.duel.configuration.DuelConfiguration;
-import de.teamhardcore.pvp.model.duel.arena.DuelArenaType;
-import de.teamhardcore.pvp.model.duel.configuration.DuelDeployment;
-import de.teamhardcore.pvp.model.duel.configuration.DuelSettings;
-import de.teamhardcore.pvp.utils.JSONMessage;
+import de.teamhardcore.pvp.model.duel.request.DuelRequest;
 import de.teamhardcore.pvp.utils.StringDefaults;
-import de.teamhardcore.pvp.utils.Util;
-import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 public class CommandDuel implements CommandExecutor {
 
-    public static boolean DISABLED = true;
+    /*
+    /duel admin create categorie <name>
+    /duel admin create arena <categorie> <name>
+    /duel admin delete categorie <name>
+    /duel admin delete arena <name>
+    /duel admin location add arena
+    /duel admin location remove arena
+     */
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
@@ -39,7 +33,32 @@ public class CommandDuel implements CommandExecutor {
 
         Player player = (Player) cs;
 
-        if (DISABLED) {
+        if (args.length == 0) {
+            if (Main.getInstance().getDuelManager().getAvailableMaps().isEmpty()) {
+                player.sendMessage(StringDefaults.DUEL_PREFIX + "§cEs sind keine freien Arenen verfügbar.");
+                return true;
+            }
+
+            if (Main.getInstance().getDuelManager().getDuel(player) != null) {
+                player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu befindest dich bereits in einem Duell.");
+                return true;
+            }
+
+        }
+
+        if (args.length == 1) {
+            DuelRequest request = new DuelRequest(player);
+
+            DuelInventory.openRequestInventory(player, true, request);
+            Main.getInstance().getDuelManager().getRequests().put(player, request);
+        }
+
+
+        return true;
+    }
+}
+
+   /*   if (DISABLED) {
             player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDieses Feature ist aktuell nicht nutzbar.");
             return true;
         }
@@ -114,10 +133,10 @@ public class CommandDuel implements CommandExecutor {
                     return true;
                 }
 
-            /*    if (target == player) {
+               if (target == player) {
                     player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu kannst dich nicht selbst herausfordern.");
                     return true;
-                }*/
+                }
 
 
                 double distance = player.getLocation().distanceSquared(target.getLocation());
@@ -247,7 +266,5 @@ public class CommandDuel implements CommandExecutor {
 
             }
         }
-
-        return true;
-    }
 }
+    */

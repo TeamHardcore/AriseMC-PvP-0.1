@@ -13,22 +13,17 @@ import org.bukkit.event.Cancellable;
 
 public class DuelWinEvent extends CustomEvent implements Cancellable {
 
-    private final Player winner, loser;
+    private final Player winner;
     private final Duel duel;
     private boolean canceled;
 
-    public DuelWinEvent(Player winner, Player loser, Duel duel) {
+    public DuelWinEvent(Player winner, Duel duel) {
         this.winner = winner;
-        this.loser = loser;
         this.duel = duel;
     }
 
     public Player getWinner() {
         return winner;
-    }
-
-    public Player getLoser() {
-        return loser;
     }
 
     public Duel getDuel() {

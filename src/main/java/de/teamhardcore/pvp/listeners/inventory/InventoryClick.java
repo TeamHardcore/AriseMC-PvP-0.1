@@ -21,7 +21,7 @@ import de.teamhardcore.pvp.model.clan.shop.upgrades.requirements.AbstractRequire
 import de.teamhardcore.pvp.model.clan.shop.upgrades.requirements.RequirementType;
 import de.teamhardcore.pvp.model.customspawner.CustomSpawner;
 import de.teamhardcore.pvp.model.customspawner.EnumSpawnerType;
-import de.teamhardcore.pvp.model.duel.configuration.DuelConfiguration;
+import de.teamhardcore.pvp.model.duel.request.DuelRequest;
 import de.teamhardcore.pvp.model.extras.EnumChatColor;
 import de.teamhardcore.pvp.model.extras.EnumCommand;
 import de.teamhardcore.pvp.model.extras.EnumPerk;
@@ -932,7 +932,134 @@ public class InventoryClick implements Listener {
 
         }
 
-        if (inventory.getTitle().equalsIgnoreCase("§c§lDuell erstellen")) {
+        if (inventory.getTitle().equalsIgnoreCase("§c§lDuelleinsatz")) {
+            event.setCancelled(true);
+
+            DuelRequest request = this.plugin.getDuelManager().getRequests().get(player);
+            if (request == null) {
+                player.closeInventory();
+                return;
+            }
+
+            if (slot == 11) {
+                request.switchArmorOption();
+                DuelInventory.openDeploymentInventory(player, request);
+                return;
+            }
+
+            if (slot == 13) {
+                new VirtualAnvil(player, "Einsatz: ") {
+                    @Override
+                    public void onConfirm(String text) {
+                        if (text == null) {
+                            player.sendMessage(StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
+                            player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
+                            return;
+                        }
+
+                        String coinString = text.startsWith("Einsatz: ") ? text.substring(9) : text;
+
+                        long coins;
+                        try {
+                            coins = Long.parseLong(coinString);
+                        } catch (NumberFormatException ex) {
+                            player.sendMessage(StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
+                            return;
+                        }
+
+                        setConfirmedSuccessfully(true);
+                        request.setCoins(coins);
+                        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> DuelInventory.openDeploymentInventory(player, request), 1L);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        if (!isConfirmedSuccessfully())
+                            Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> DuelInventory.openDeploymentInventory(player, request), 1L);
+                    }
+                };
+                return;
+            }
+
+            if (slot == 18) {
+                DuelInventory.openRequestInventory(player, true, request);
+                return;
+            }
+
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lDuelleinstellungen")) {
+            event.setCancelled(true);
+
+            DuelRequest request = this.plugin.getDuelManager().getRequests().get(player);
+            if (request == null) {
+                player.closeInventory();
+                return;
+            }
+
+            if (slot == 11) {
+                request.switchGoldenAppleOption();
+                DuelInventory.openSettingsInventory(player, request);
+                return;
+            }
+
+            if (slot == 13) {
+                request.switchPotionLimitation();
+                DuelInventory.openSettingsInventory(player, request);
+                return;
+            }
+
+            if (slot == 15) {
+                request.switchDebuffOption();
+                DuelInventory.openSettingsInventory(player, request);
+                return;
+            }
+
+
+            if (slot == 18) {
+                DuelInventory.openRequestInventory(player, true, request);
+                return;
+            }
+
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lDuell")) {
+            event.setCancelled(true);
+
+            DuelRequest request = this.plugin.getDuelManager().getRequests().get(player);
+            if (request == null) {
+                player.closeInventory();
+                return;
+            }
+
+            if (slot == 11) {
+                request.switchCategory();
+                DuelInventory.openRequestInventory(player, true, request);
+                return;
+            }
+
+            if (slot == 13) {
+                DuelInventory.openSettingsInventory(player, request);
+            }
+
+            if (slot == 15) {
+                DuelInventory.openDeploymentInventory(player, request);
+            }
+
+            if (slot == 31) {
+                player.closeInventory();
+                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
+                player.sendMessage(" ");
+                player.sendMessage(StringDefaults.PREFIX + "§eDie Konfiguration wurde gespeichert.");
+                player.sendMessage(StringDefaults.PREFIX + "§eFordere jetzt deinen Gegner heraus:");
+                new JSONMessage(StringDefaults.PREFIX + "§6/duell invite <Spieler> §7§o[Klick]").tooltip("§6Spieler herausfordern").suggestCommand("/duell invite ").send(player);
+                player.sendMessage(" ");
+                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
+            }
+
+        }
+
+    /*    if (inventory.getTitle().equalsIgnoreCase("§c§lDuell erstellen")) {
             event.setCancelled(true);
 
             DuelConfiguration configuration = this.plugin.getDuelManager().getConfigurationCache().get(player.getUniqueId());
@@ -1003,5 +1130,6 @@ public class InventoryClick implements Listener {
                 Main.getInstance().getDuelManager().getConfigurationCache().put(player.getUniqueId(), configuration);
             }
         }
+    }*/
     }
 }

@@ -7,8 +7,6 @@
 package de.teamhardcore.pvp.listeners.player;
 
 import de.teamhardcore.pvp.Main;
-import de.teamhardcore.pvp.model.duel.Duel;
-import de.teamhardcore.pvp.utils.StringDefaults;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,7 +35,7 @@ public class PlayerMove implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
 
-        if (!locationChanged(event.getFrom(), event.getTo()) || this.plugin.getDuelManager().getDuelCache().get(player.getUniqueId()) == null) {
+   /*     if (!locationChanged(event.getFrom(), event.getTo()) || this.plugin.getDuelManager().getDuelCache().get(player.getUniqueId()) == null) {
             return;
         }
 
@@ -48,7 +46,7 @@ public class PlayerMove implements Listener {
             duel.performDeath(player);
             player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu hast die Duell Zone verlassen.");
             return;
-        }
+        }*/
     }
 
     private boolean locationChanged(Location from, Location to) {

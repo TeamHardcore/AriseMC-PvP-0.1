@@ -4,7 +4,7 @@
  *   Copyright (c) 2020 by TeamHardcore to present. All rights reserved
  */
 
-package de.teamhardcore.pvp.model.duel.configuration;
+package de.teamhardcore.pvp.model.duel.request;
 
 public class DuelSettings {
 
@@ -20,21 +20,6 @@ public class DuelSettings {
 
     public void setMaxHealStacks(long maxHealStacks) {
         this.maxHealStacks = maxHealStacks;
-    }
-
-    public void updateMaxHealStacks() {
-        if (getMaxHealStacks() == -1)
-            setMaxHealStacks(1);
-        else if (getMaxHealStacks() == 1)
-            setMaxHealStacks(2);
-        else if (getMaxHealStacks() == 2)
-            setMaxHealStacks(4);
-        else if (getMaxHealStacks() == 4)
-            setMaxHealStacks(6);
-        else if (getMaxHealStacks() == 6)
-            setMaxHealStacks(10);
-        else if (getMaxHealStacks() == 10)
-            setMaxHealStacks(-1);
     }
 
     public void setUseGoldenApple(boolean useGoldenApple) {
@@ -56,5 +41,4 @@ public class DuelSettings {
     public boolean isUsePoison() {
         return usePoison;
     }
-
 }
