@@ -10,6 +10,7 @@ import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.clan.Clan;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -57,6 +58,11 @@ public class EntityDamage implements Listener {
 
         if (damager == null) return;
         if (damager == player) return;
+
+        if (event.getDamager().getType().equals(EntityType.SNOWBALL) || event.getDamager().getType().equals(EntityType.FISHING_HOOK)) {
+            event.setCancelled(true);
+            return;
+        }
 
         if (this.plugin.getClanManager().hasClan(player.getUniqueId()) && this.plugin.getClanManager().hasClan(damager.getUniqueId())) {
             Clan playerClan = this.plugin.getClanManager().getClan(player.getUniqueId());

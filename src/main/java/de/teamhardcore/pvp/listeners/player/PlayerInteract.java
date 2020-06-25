@@ -22,6 +22,11 @@ public class PlayerInteract implements Listener {
         this.plugin = plugin;
     }
 
+    /*
+    Global Angel fürs PvP Deaktivieren
+Schneebälle deaktivieren bzw knockback wegmachen
+     */
+
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
