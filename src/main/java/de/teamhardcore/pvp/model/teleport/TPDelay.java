@@ -1,6 +1,7 @@
 package de.teamhardcore.pvp.model.teleport;
 
 import de.teamhardcore.pvp.Main;
+import de.teamhardcore.pvp.utils.StringDefaults;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -38,12 +39,19 @@ public abstract class TPDelay {
                     return;
                 }
 
-                TPDelay.this.times = TPDelay.this.times + 0.39269908169872414D;
+                if (TPDelay.this.hasMoved(TPDelay.this.location, TPDelay.this.player.getLocation())) {
+                    TPDelay.this.player.sendMessage(StringDefaults.PREFIX + "§cDer Teleport wurde abgebrochen.");
+                    cancel();
+                    Main.getInstance().getManager().getTeleportDelays().remove(getPlayer());
+                }
+
+                TPDelay.this.times = TPDelay.this.times + Math.atan(0.41421356237309503);
                 TPDelay.this.runs = TPDelay.this.runs + 1;
 
                 for (int i = 0; i < 1; i++) {
                     //todo: play effect
                 }
+
 
                 if (TPDelay.this.runs >= TPDelay.this.time) {
                     onEnd();
@@ -58,6 +66,10 @@ public abstract class TPDelay {
 
     public void cancel() {
         this.task.cancel();
+    }
+
+    private boolean hasMoved(Location from, Location to) {
+        return from.getBlockX() != to.getBlockX() || from.getBlockY() != to.getBlockY() || from.getBlockZ() != to.getBlockZ();
     }
 
     public abstract boolean onTick();
