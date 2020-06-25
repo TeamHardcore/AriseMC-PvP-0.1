@@ -7,18 +7,24 @@
 package de.teamhardcore.pvp.managers;
 
 import de.teamhardcore.pvp.Main;
+import de.teamhardcore.pvp.inventories.DuelInventory;
 import de.teamhardcore.pvp.model.duel.Duel;
 import de.teamhardcore.pvp.model.duel.event.DuelWinEvent;
 import de.teamhardcore.pvp.model.duel.phases.DuelPhase;
+import de.teamhardcore.pvp.model.duel.request.DuelConfiguration;
 import de.teamhardcore.pvp.model.duel.request.DuelRequest;
 import de.teamhardcore.pvp.model.duel.map.DuelMap;
 import de.teamhardcore.pvp.model.achievements.AchievementGroups;
 import de.teamhardcore.pvp.model.achievements.annotations.AchievementListener;
 import de.teamhardcore.pvp.model.achievements.type.Category;
 import de.teamhardcore.pvp.model.achievements.type.Type;
+import de.teamhardcore.pvp.user.User;
+import de.teamhardcore.pvp.user.UserData;
 import de.teamhardcore.pvp.user.UserMoney;
+import de.teamhardcore.pvp.utils.JSONMessage;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.Util;
+import de.teamhardcore.pvp.utils.VirtualAnvil;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -29,7 +35,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -43,35 +51,23 @@ public class DuelManager {
     private final Main plugin;
 
     private final Map<UUID, Duel> duelCache;
-    private final Set<String> gameIdCache;
     private final Set<UUID> playerQuits;
 
     private final Map<String, List<DuelMap>> duelMaps;
     private final Map<String, List<DuelMap>> availableMaps;
+    private final Map<Player, DuelConfiguration> configurations;
     private final Map<Player, DuelRequest> requests;
 
     public DuelManager(Main plugin) {
         this.plugin = plugin;
-        this.requests = new HashMap<>();
+        this.configurations = new HashMap<>();
         this.duelCache = new HashMap<>();
-        this.gameIdCache = new HashSet<>();
         this.playerQuits = new HashSet<>();
         this.duelMaps = new HashMap<>();
         this.availableMaps = new HashMap<>();
+        this.requests = new HashMap<>();
 
         this.plugin.getServer().getPluginManager().registerEvents(new DuelEvents(this), this.plugin);
-
-
-        DuelMap map = new DuelMap("Test1", "Castle");
-        map.addLocation(new Location(Bukkit.getWorld("world"), -263, 68, 308));
-        map.addLocation(new Location(Bukkit.getWorld("world"), -263, 68, 300));
-
-        DuelMap map2 = new DuelMap("Test2", "Prison");
-        map2.addLocation(new Location(Bukkit.getWorld("world"), -263, 68, 308));
-        map2.addLocation(new Location(Bukkit.getWorld("world"), -263, 68, 300));
-
-        this.duelMaps.put("Prison", Collections.singletonList(map2));
-        this.duelMaps.put("Castle", Collections.singletonList(map));
         saveMaps();
         loadMaps();
     }
@@ -92,6 +88,8 @@ public class DuelManager {
             for (Object object : categoryArray) {
                 JSONObject map = (JSONObject) object;
                 String name = map.getString("name");
+
+                System.out.println("-------- " + name + " ---------");
 
                 DuelMap duelMap = new DuelMap(name, category);
                 JSONArray array = map.getJSONArray("locations");
@@ -133,7 +131,21 @@ public class DuelManager {
         this.plugin.getFileManager().getDuelFile().saveConfig();
     }
 
-    public void createDuel(DuelRequest request, Player player, Player target) {
+    public void addDuelRequest(Player player, DuelRequest request) {
+        this.requests.put(player, request);
+    }
+
+    public void removeDuelRequest(Player player, DuelRequest request) {
+        this.requests.remove(player);
+    }
+
+    public DuelRequest getDuelRequest(Player player) {
+        if (!this.requests.containsKey(player))
+            return null;
+        return this.requests.get(player);
+    }
+
+    public void createDuel(DuelConfiguration request, Player player, Player target) {
         if (request.getPlayers().size() <= 1) return;
 
         Duel duel = new Duel(request);
@@ -176,6 +188,42 @@ public class DuelManager {
         return this.duelMaps.get(category);
     }
 
+    public DuelMap getMap(String mapName) {
+        for (Map.Entry<String, List<DuelMap>> entry : this.duelMaps.entrySet()) {
+            for (DuelMap map : entry.getValue()) {
+                if (map.getName().equals(mapName))
+                    return map;
+            }
+        }
+        return null;
+    }
+
+    public void removeMap(String name) {
+        DuelMap toRemove = null;
+
+        for (Map.Entry<String, List<DuelMap>> entry : this.duelMaps.entrySet()) {
+            for (DuelMap map : entry.getValue()) {
+                if (map.getName().equals(name)) {
+                    toRemove = map;
+                }
+            }
+            if (toRemove != null)
+                entry.getValue().remove(toRemove);
+        }
+    }
+
+    public void addMap(String name, String category) {
+        if (!this.duelMaps.containsKey(category))
+            return;
+
+        if (getMap(name) != null) return;
+        this.duelMaps.get(category).add(new DuelMap(name, category));
+    }
+
+    public Map<String, List<DuelMap>> getDuelMaps() {
+        return duelMaps;
+    }
+
     public Map<String, List<DuelMap>> getAvailableMaps() {
         return availableMaps;
     }
@@ -188,6 +236,10 @@ public class DuelManager {
         return playerQuits;
     }
 
+    public Map<Player, DuelConfiguration> getConfigurations() {
+        return configurations;
+    }
+
     public Map<Player, DuelRequest> getRequests() {
         return requests;
     }
@@ -197,6 +249,8 @@ public class DuelManager {
     }
 
     public static class DuelEvents implements Listener {
+
+        private final String[] allowedDuelCommands = new String[]{"fix", "ifix", "bodyrepair", "stack", "report", "support"};
 
         private final DuelManager manager;
 
@@ -326,14 +380,14 @@ public class DuelManager {
 
 
             UserMoney playerMoney = Main.getInstance().getUserManager().getUser(player.getUniqueId()).getUserMoney();
-            playerMoney.addMoney(duel.getRequest().getCoins() * 2);
+            playerMoney.addMoney(duel.getConfiguration().getCoins() * 2);
 
             duel.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
             duel.sendMessage(StringDefaults.PREFIX + "§c§l" + player.getName() + " §ehat das Duell gewonnen.");
             duel.sendMessage(" ");
             duel.sendMessage(StringDefaults.PREFIX + "§6§lGewinn§8: ");
-            if (duel.getRequest().getCoins() > 0)
-                duel.sendMessage("  §8● §eMünzen§8: §a§l" + Util.formatNumber((duel.getRequest().getCoins() * 2)) + "$");
+            if (duel.getConfiguration().getCoins() > 0)
+                duel.sendMessage("  §8● §eMünzen§8: §a§l" + Util.formatNumber((duel.getConfiguration().getCoins() * 2)) + "$");
             duel.sendMessage(" ");
             duel.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
             player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
@@ -356,13 +410,202 @@ public class DuelManager {
                 if (this.manager.getDuelCache().containsKey(player.getUniqueId())) {
                     Duel duel = this.manager.getDuel(player);
 
-                    if (duel.getRequest().getGoldenAppleOption() == 1) {
+                    if (duel.getConfiguration().getGoldenAppleOption() == 1) {
                         player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu kannst keine Goldenen Äpfel benutzen.");
                         event.setCancelled(true);
                         player.setItemInHand(itemStack);
                     }
                 }
             }
+        }
+
+        @EventHandler
+        public void onInventoryClick(InventoryClickEvent event) {
+            Player player = (Player) event.getWhoClicked();
+            Inventory inventory = event.getInventory();
+            int slot = event.getRawSlot();
+            ItemStack itemStack = event.getCurrentItem();
+
+            if (inventory == null || itemStack == null || itemStack.getType() == Material.AIR) return;
+
+            User user = this.manager.getPlugin().getUserManager().getUser(player.getUniqueId());
+            UserData data = user.getUserData();
+            if (inventory.getTitle().equalsIgnoreCase("§c§lDuelleinsatz")) {
+                event.setCancelled(true);
+
+                DuelConfiguration configuration = this.manager.getPlugin().getDuelManager().getConfigurations().get(player);
+                if (configuration == null) {
+                    player.closeInventory();
+                    return;
+                }
+
+                if (slot == 11) {
+                    configuration.switchArmorOption();
+                    DuelInventory.openDeploymentInventory(player, configuration);
+                    return;
+                }
+
+                if (slot == 13) {
+                    new VirtualAnvil(player, "Einsatz: ") {
+                        @Override
+                        public void onConfirm(String text) {
+                            if (text == null) {
+                                player.sendMessage(StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
+                                player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
+                                return;
+                            }
+
+                            String coinString = text.startsWith("Einsatz: ") ? text.substring(9) : text;
+
+                            long coins;
+                            try {
+                                coins = Long.parseLong(coinString);
+                            } catch (NumberFormatException ex) {
+                                player.sendMessage(StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
+                                return;
+                            }
+
+                            setConfirmedSuccessfully(true);
+                            configuration.setCoins(coins);
+                            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> DuelInventory.openDeploymentInventory(player, configuration), 1L);
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            if (!isConfirmedSuccessfully())
+                                Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> DuelInventory.openDeploymentInventory(player, configuration), 1L);
+                        }
+                    };
+                    return;
+                }
+
+                if (slot == 18) {
+                    DuelInventory.openRequestInventory(player, true, configuration);
+                    return;
+                }
+
+            }
+
+            if (inventory.getTitle().equalsIgnoreCase("§c§lDuelleinstellungen")) {
+                event.setCancelled(true);
+
+                DuelConfiguration configuration = this.manager.getPlugin().getDuelManager().getConfigurations().get(player);
+                if (configuration == null) {
+                    player.closeInventory();
+                    return;
+                }
+
+                if (slot == 11) {
+                    configuration.switchGoldenAppleOption();
+                    DuelInventory.openSettingsInventory(player, configuration);
+                    return;
+                }
+
+                if (slot == 13) {
+                    configuration.switchPotionLimitation();
+                    DuelInventory.openSettingsInventory(player, configuration);
+                    return;
+                }
+
+                if (slot == 15) {
+                    configuration.switchDebuffOption();
+                    DuelInventory.openSettingsInventory(player, configuration);
+                    return;
+                }
+
+
+                if (slot == 18) {
+                    DuelInventory.openRequestInventory(player, true, configuration);
+                    return;
+                }
+
+            }
+
+            if (inventory.getTitle().equalsIgnoreCase("§c§lDuell")) {
+                event.setCancelled(true);
+
+                DuelConfiguration configuration = this.manager.getPlugin().getDuelManager().getConfigurations().get(player);
+                if (configuration == null) {
+                    player.closeInventory();
+                    return;
+                }
+
+                if (slot == 11) {
+                    configuration.switchCategory();
+                    DuelInventory.openRequestInventory(player, true, configuration);
+                    return;
+                }
+
+                if (slot == 13) {
+                    DuelInventory.openSettingsInventory(player, configuration);
+                }
+
+                if (slot == 15) {
+                    DuelInventory.openDeploymentInventory(player, configuration);
+                }
+
+                if (slot == 31) {
+                    player.closeInventory();
+                    player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
+                    player.sendMessage(" ");
+                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§eDie Konfiguration wurde gespeichert.");
+                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§eFordere jetzt deinen Gegner heraus:");
+                    new JSONMessage(StringDefaults.DUEL_PREFIX + "§6/duell invite <Spieler> §7§o[Klick]").tooltip("§6Spieler herausfordern").suggestCommand("/duell invite ").send(player);
+                    player.sendMessage(" ");
+                    player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
+                }
+
+            }
+
+            if (inventory.getTitle().equalsIgnoreCase("§c§lDuell annehmen")) {
+                event.setCancelled(true);
+
+                DuelRequest request = this.manager.getDuelRequest(player);
+
+                if (request == null) {
+                    player.closeInventory();
+                    return;
+                }
+
+                if (slot == 30) {
+                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§eDu hast die Duellanfrage abgelehnt.");
+                    request.getPlayer().sendMessage(StringDefaults.DUEL_PREFIX + "§eDer Spieler §7" + player.getName() + " §ehat die Duellanfrage abgelehnt.");
+                    Main.getInstance().getDuelManager().removeDuelRequest(player, request);
+                    player.closeInventory();
+                }
+
+                if (slot == 32) {
+                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§eDu hast die Duellanfrage angenommen.");
+                    request.getPlayer().sendMessage(StringDefaults.DUEL_PREFIX + "§eDer Spieler §7" + player.getName() + " §ehat die Duellanfrage angenommen.");
+
+                    request.getConfiguration().getPlayers().add(player);
+                    Main.getInstance().getDuelManager().getRequests().remove(player);
+                    Main.getInstance().getDuelManager().getConfigurations().remove(request.getPlayer());
+                    Main.getInstance().getDuelManager().createDuel(request.getConfiguration(), request.getPlayer(), player);
+                    player.closeInventory();
+                }
+
+            }
+
+
+        }
+
+        @EventHandler
+        public void onCommandPreProcess(PlayerCommandPreprocessEvent event) {
+            Player player = event.getPlayer();
+            String fullCmd = event.getMessage().substring(1);
+            String cmd = fullCmd.split(" ")[0];
+
+            if (this.manager.getDuelCache().containsKey(player.getUniqueId())) {
+                for (String allowed : this.allowedDuelCommands) {
+                    if (!cmd.startsWith(allowed)) {
+                        event.setCancelled(true);
+                        player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDieser Befehl ist im Duell nicht ausführbar.");
+                        return;
+                    }
+                }
+            }
+
         }
     }
 
