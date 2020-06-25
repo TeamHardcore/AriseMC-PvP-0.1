@@ -8,14 +8,14 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.NumberFormat;
-import java.util.Comparator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Util {
 
@@ -87,6 +87,76 @@ public class Util {
         }
     }
 
+    public static boolean isInventoryEmpty(Inventory inventory) {
+        for (ItemStack itemStack : inventory.getContents())
+            if (itemStack != null)
+                return false;
+        return true;
+    }
+
+    public static int getAvailableItems(Inventory inv, ItemStack item) {
+        int counted = 0;
+        for (ItemStack content : inv.getContents()) {
+            if (content != null && content.getType() != Material.AIR &&
+                    content.getType() == item.getType() && content.getDurability() == item.getDurability()) {
+                counted += content.getAmount();
+            }
+        }
+        return counted;
+    }
+
+    public static boolean hasEnoughItems(Inventory inv, ItemStack item, int amount) {
+        return (getAvailableItems(inv, item) >= amount);
+    }
+
+    public static boolean removeItems(Inventory inv, ItemStack item, int amount) {
+        if (!hasEnoughItems(inv, item, amount)) {
+            return false;
+        }
+        int toRemove = amount;
+
+        HashMap<Integer, ItemStack> slots = new HashMap<>();
+
+        for (int slot = 0; slot < inv.getSize(); slot++) {
+            ItemStack slotItem = inv.getItem(slot);
+            if (slotItem != null && slotItem.getType() != Material.AIR) {
+                if (slotItem.getType() == item.getType() && slotItem.getDurability() == item.getDurability()) {
+                    slots.put(slot, slotItem);
+                }
+            }
+        }
+        for (Map.Entry<Integer, ItemStack> entrySlots : slots.entrySet()) {
+            if ((entrySlots.getValue()).getAmount() <= toRemove) {
+                inv.setItem(entrySlots.getKey(), new ItemStack(Material.AIR));
+                toRemove -= (entrySlots.getValue()).getAmount();
+                continue;
+            }
+            ItemStack invItem = inv.getItem(entrySlots.getKey());
+            invItem.setAmount(invItem.getAmount() - toRemove);
+        }
+
+
+        return true;
+    }
+
+    public static void addItem(Player p, ItemStack item) {
+        if (p.getInventory().firstEmpty() == -1) {
+            p.getWorld().dropItemNaturally(p.getLocation(), item);
+        } else {
+            p.getInventory().addItem(item);
+        }
+    }
+
+    public static void addItems(Player p, List<ItemStack> items) {
+        for (ItemStack item : items)
+            addItem(p, item);
+    }
+
+    public static void addItems(Player p, ItemStack... items) {
+        for (ItemStack item : items) {
+            addItem(p, item);
+        }
+    }
 
     public static <K, V extends Comparable<V>> Map<K, V> sortMapByValues(Map<K, V> map) {
         Comparator<K> valueComp = Comparator.comparing(map::get);
