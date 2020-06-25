@@ -15,7 +15,7 @@ public class GamePhase extends AbstractDuelPhase {
     public GamePhase(Duel duel) {
         super(duel, 20, 20);
 
-        start(30);
+        start(300);
         duel.sendMessage(StringDefaults.DUEL_PREFIX + "§eDas Duell endet in §6§l5 Minuten§e.");
     }
 
@@ -57,10 +57,10 @@ public class GamePhase extends AbstractDuelPhase {
         if (getTime() == 0) {
             stop();
             this.getDuel().sendMessage(StringDefaults.DUEL_PREFIX + "§eDie Zeit ist abgelaufen.");
+            this.getDuel().sendMessage(StringDefaults.DUEL_PREFIX + "§cNiemand hat das Duell gewonnen.");
             this.getDuel().startPhase(new EndPhase(this.getDuel()));
         }
         setTime(getTime() - 1);
-        System.out.println(getTime());
     }
 
     @Override

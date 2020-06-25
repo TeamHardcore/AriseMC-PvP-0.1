@@ -41,7 +41,7 @@ public class StartPhase extends AbstractDuelPhase {
         }
 
         if (getTime() == 10 || getTime() == 8 || getTime() == 7 || getTime() == 6)
-            this.getDuel().sendMessage("Du wirst in " + (getTime() - 5) + " " + (getTime() - 5 == 1 ? "Sekunde" : "Sekunden") + " teleportiert.");
+            this.getDuel().sendMessage(StringDefaults.DUEL_PREFIX + "§eDu wirst in §7" + (getTime() - 5) + " §e" + (getTime() - 5 == 1 ? "Sekunde" : "Sekunden") + " teleportiert.");
 
         setTime(getTime() - 1);
     }
