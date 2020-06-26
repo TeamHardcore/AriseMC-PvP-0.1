@@ -9,9 +9,12 @@ package de.teamhardcore.pvp.listeners.player;
 
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.PlayerScoreboard;
+import de.teamhardcore.pvp.model.Warp;
 import de.teamhardcore.pvp.model.gambling.crates.base.BaseCrate;
 import de.teamhardcore.pvp.utils.ItemBuilder;
 import de.teamhardcore.pvp.utils.SkullCreator;
+import de.teamhardcore.pvp.utils.StringDefaults;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,6 +44,27 @@ public class PlayerJoin implements Listener {
 
         this.plugin.getScoreboardManager().setScoreboard(player, PlayerScoreboard.ScoreboardType.DEFAULT);
         this.plugin.getScoreboardManager().updateAllScoreboards(true, true);
+
+        if (!player.hasPlayedBefore()) {
+
+            Warp spawn = Main.getInstance().getWarpManager().getWarp("Spawn");
+
+            if (spawn != null)
+                player.teleport(spawn.getLocation());
+
+            Bukkit.getOnlinePlayers().forEach(target -> target.sendMessage(StringDefaults.NEWBIE_PREFIX + "§6" + player.getName() + " §7ist neu auf §6AriseMC§7."));
+            player.sendMessage(" ");
+            player.sendMessage(StringDefaults.PREFIX + "§7Willkommen auf §6AriseMC§7, §6" + player.getName() + "§7!");
+            player.sendMessage(StringDefaults.PREFIX + "§7Wenn du fragen hast, melde dich im Support.");
+            player.sendMessage(StringDefaults.PREFIX + "§7");
+            player.sendMessage(StringDefaults.PREFIX + "§7Unser Discord§8: §7discord.arisemc.de");
+            player.sendMessage(StringDefaults.PREFIX + "§7Unser Teamspeak§8: §6ts.arisemc.de");
+            player.sendMessage(StringDefaults.PREFIX + " ");
+            player.sendMessage(" ");
+            this.plugin.getKitManager().getKit("member").giveItems(player);
+        } else {
+            player.sendMessage(StringDefaults.PREFIX + "§7Willkommen zurück, §6" + player.getName() + "§7!");
+        }
 
         List<BaseCrate> crates = new ArrayList<>();
 

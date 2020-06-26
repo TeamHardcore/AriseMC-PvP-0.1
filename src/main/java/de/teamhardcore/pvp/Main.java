@@ -22,10 +22,7 @@ import de.teamhardcore.pvp.commands.help.CommandReport;
 import de.teamhardcore.pvp.commands.help.CommandSupport;
 import de.teamhardcore.pvp.commands.inventory.*;
 import de.teamhardcore.pvp.commands.player.*;
-import de.teamhardcore.pvp.commands.pvp.CommandClan;
-import de.teamhardcore.pvp.commands.pvp.CommandDuel;
-import de.teamhardcore.pvp.commands.pvp.CommandFix;
-import de.teamhardcore.pvp.commands.pvp.CommandStack;
+import de.teamhardcore.pvp.commands.pvp.*;
 import de.teamhardcore.pvp.commands.teleport.*;
 import de.teamhardcore.pvp.commands.warp.CommandHome;
 import de.teamhardcore.pvp.commands.warp.CommandSpawn;
@@ -62,7 +59,6 @@ public class Main extends JavaPlugin {
     private ScoreboardManager scoreboardManager;
     private RankingManager rankingManager;
     private ReportManager reportManager;
-    private LeagueManager leagueManager;
     private ChatManager chatManager;
     private CrateManager crateManager;
     private CombatManager combatManager;
@@ -75,6 +71,7 @@ public class Main extends JavaPlugin {
     private MarketManager marketManager;
     private DuelManager duelManager;
     private AchievementManager achievementManager;
+    private LootProtectionManager lootProtectionManager;
 
     private DatabaseManager databaseManager;
 
@@ -115,7 +112,6 @@ public class Main extends JavaPlugin {
         this.rankingManager = new RankingManager(this);
         this.reportManager = new ReportManager(this);
         this.chatManager = new ChatManager(this);
-        this.leagueManager = new LeagueManager(this);
         this.userManager = new UserManager(this);
         this.crateManager = new CrateManager(this);
         this.combatManager = new CombatManager(this);
@@ -126,6 +122,7 @@ public class Main extends JavaPlugin {
         this.marketManager = new MarketManager(this);
         this.duelManager = new DuelManager(this);
         this.achievementManager = new AchievementManager(this);
+        this.lootProtectionManager = new LootProtectionManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -145,6 +142,7 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new PlayerItemConsume(this), this);
         pm.registerEvents(new PlayerMove(this), this);
         pm.registerEvents(new EntityDamage(this), this);
+        pm.registerEvents(new PlayerPickupItem(this), this);
         pm.registerEvents(new AchievementReceive(this), this);
         pm.registerEvents(new AchievementTierReceive(this), this);
         pm.registerEvents(new CrateEvents(this), this);
@@ -194,6 +192,7 @@ public class Main extends JavaPlugin {
         getCommand("rename").setExecutor(new CommandRename());
         getCommand("relore").setExecutor(new CommandRelore());
         getCommand("crates").setExecutor(new CommandCrate());
+        getCommand("stats").setExecutor(new CommandStats());
     }
 
     public FileManager getFileManager() {
@@ -230,10 +229,6 @@ public class Main extends JavaPlugin {
 
     public UserManager getUserManager() {
         return userManager;
-    }
-
-    public LeagueManager getLeagueManager() {
-        return leagueManager;
     }
 
     public ChatManager getChatManager() {
@@ -278,6 +273,10 @@ public class Main extends JavaPlugin {
 
     public AchievementManager getAchievementManager() {
         return achievementManager;
+    }
+
+    public LootProtectionManager getLootProtectionManager() {
+        return lootProtectionManager;
     }
 
     public static Main getInstance() {

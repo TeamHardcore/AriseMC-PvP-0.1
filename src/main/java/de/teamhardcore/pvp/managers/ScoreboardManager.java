@@ -8,6 +8,7 @@
 package de.teamhardcore.pvp.managers;
 
 import de.teamhardcore.pvp.Main;
+import de.teamhardcore.pvp.model.EnumLeague;
 import de.teamhardcore.pvp.model.PlayerScoreboard;
 import de.teamhardcore.pvp.user.User;
 import de.teamhardcore.pvp.user.UserStats;
@@ -193,8 +194,8 @@ public class ScoreboardManager {
                 Team teamLeague = scoreboard.getTeam("League");
                 Team teamStats = scoreboard.getTeam("Stats");
                 teamMoney.setSuffix("§7" + Util.formatNumber(user.getMoney()) + "$");
-                teamLeague.setPrefix("§cUnplatziert §7");
-                teamLeague.setSuffix("[§60§7] ");
+                teamLeague.setPrefix("" + EnumLeague.getLeagueByTrophies(stats.getTrophies()) + " §7");
+                teamLeague.setSuffix("[§6" + Util.formatNumber(stats.getTrophies()) + "§7] ");
 
                 teamStats.setPrefix("§7" + stats.getKills() + " §aKills");
                 teamStats.setSuffix(" §8/ §7" + stats.getDeaths() + " §cTode");

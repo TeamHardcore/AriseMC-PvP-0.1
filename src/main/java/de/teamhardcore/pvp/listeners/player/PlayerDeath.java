@@ -15,10 +15,16 @@ import de.teamhardcore.pvp.model.clan.Clan;
 import de.teamhardcore.pvp.user.User;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.Util;
+import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerDeath implements Listener {
 
@@ -70,6 +76,22 @@ public class PlayerDeath implements Listener {
                             abstractAchievement.onEvent(event);
                     }
                 });
+
+                ArrayList<Item> drops = new ArrayList<>();
+                event.getDrops().stream().filter(itemStack -> itemStack != null && itemStack.getType() != Material.AIR).forEach(itemStack -> {
+                    ItemMeta itemMeta = itemStack.getItemMeta();
+
+                    List<String> lore = itemMeta.hasLore() ? itemMeta.getLore() : new ArrayList<>();
+
+                    lore.add(this.plugin.getLootProtectionManager().getRandomKey());
+                    itemMeta.setLore(lore);
+                    itemStack.setItemMeta(itemMeta);
+
+                    Item item = player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
+                    drops.add(item);
+                });
+                event.getDrops().clear();
+                this.plugin.getLootProtectionManager().createLootProtection(killer.getUniqueId(), drops);
             }
 
         } else {
