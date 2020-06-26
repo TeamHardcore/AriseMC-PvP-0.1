@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -91,7 +92,9 @@ public class RankingManager {
 
         if (type == RankingType.PVP) {
             inventory.getItem(1).addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
-            inventory.getItem(1).getItemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            ItemMeta itemMeta = inventory.getItem(1).getItemMeta();
+            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            inventory.getItem(1).setItemMeta(itemMeta);
 
             for (AbstractMap.SimpleEntry<UUID, Long> entry : this.pvpRanking) {
                 UUID uuid = entry.getKey();
@@ -114,7 +117,9 @@ public class RankingManager {
 
         if (type == RankingType.TROPHIES) {
             inventory.getItem(2).addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
-            inventory.getItem(2).getItemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            ItemMeta itemMeta = inventory.getItem(1).getItemMeta();
+            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            inventory.getItem(2).setItemMeta(itemMeta);
 
             for (AbstractMap.SimpleEntry<UUID, Long> entry : this.trophyRanking) {
                 UUID uuid = entry.getKey();
@@ -137,7 +142,9 @@ public class RankingManager {
 
         if (type == RankingType.CLAN) {
             inventory.getItem(4).addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
-            inventory.getItem(4).getItemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            ItemMeta itemMeta = inventory.getItem(1).getItemMeta();
+            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            inventory.getItem(1).setItemMeta(itemMeta);
 
             for (Clan clan : this.clanRanking) {
                 Material material = (counter > 2) ? Material.LEATHER_HELMET : ((counter > 1) ? Material.GOLD_HELMET : ((counter > 0) ? Material.IRON_HELMET : Material.DIAMOND_HELMET));
@@ -154,8 +161,10 @@ public class RankingManager {
         }
 
         if (type == RankingType.MONEY) {
-            inventory.getItem(2).addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
-            inventory.getItem(2).getItemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            inventory.getItem(6).addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
+            ItemMeta itemMeta = inventory.getItem(1).getItemMeta();
+            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            inventory.getItem(6).setItemMeta(itemMeta);
 
             for (AbstractMap.SimpleEntry<UUID, Long> entry : this.moneyRanking) {
                 UUID uuid = entry.getKey();
@@ -177,8 +186,10 @@ public class RankingManager {
         }
 
         if (type == RankingType.PLAYTIME) {
-            inventory.getItem(2).addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
-            inventory.getItem(2).getItemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            inventory.getItem(7).addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
+            ItemMeta itemMeta = inventory.getItem(1).getItemMeta();
+            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            inventory.getItem(7).setItemMeta(itemMeta);
 
             for (AbstractMap.SimpleEntry<UUID, Long> entry : this.playtimeRanking) {
                 UUID uuid = entry.getKey();
