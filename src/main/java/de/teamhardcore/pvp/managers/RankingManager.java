@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 public class RankingManager {
 
@@ -76,6 +77,15 @@ public class RankingManager {
 
     public void updateRankingInventory(Inventory inventory, RankingType type) {
         if (!inventory.getTitle().equals("§c§lRanking")) return;
+
+        for (int i = 11; i < 16; i++)
+            inventory.setItem(i, new ItemBuilder(Material.STAINED_GLASS_PANE).setDurability(7).setDisplayName(" ").build());
+        for (int i = 29; i < 42; i++)
+            inventory.setItem(i, new ItemBuilder(Material.STAINED_GLASS_PANE).setDurability(7).setDisplayName(" ").build());
+
+        for (int i = 0; i < 8; i++)
+            inventory.getItem(i).removeEnchantment(Enchantment.ARROW_DAMAGE);
+
 
         int counter = 0;
 
