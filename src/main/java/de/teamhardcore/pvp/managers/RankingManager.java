@@ -93,7 +93,7 @@ public class RankingManager {
         if (type == RankingType.PVP) {
             inventory.getItem(1).addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
             ItemMeta itemMeta = inventory.getItem(1).getItemMeta();
-            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
             inventory.getItem(1).setItemMeta(itemMeta);
 
             for (AbstractMap.SimpleEntry<UUID, Long> entry : this.pvpRanking) {
@@ -117,7 +117,7 @@ public class RankingManager {
 
         if (type == RankingType.TROPHIES) {
             inventory.getItem(2).addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
-            ItemMeta itemMeta = inventory.getItem(1).getItemMeta();
+            ItemMeta itemMeta = inventory.getItem(2).getItemMeta();
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             inventory.getItem(2).setItemMeta(itemMeta);
 
@@ -142,9 +142,9 @@ public class RankingManager {
 
         if (type == RankingType.CLAN) {
             inventory.getItem(4).addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
-            ItemMeta itemMeta = inventory.getItem(1).getItemMeta();
+            ItemMeta itemMeta = inventory.getItem(4).getItemMeta();
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            inventory.getItem(1).setItemMeta(itemMeta);
+            inventory.getItem(4).setItemMeta(itemMeta);
 
             for (Clan clan : this.clanRanking) {
                 Material material = (counter > 2) ? Material.LEATHER_HELMET : ((counter > 1) ? Material.GOLD_HELMET : ((counter > 0) ? Material.IRON_HELMET : Material.DIAMOND_HELMET));
@@ -162,7 +162,7 @@ public class RankingManager {
 
         if (type == RankingType.MONEY) {
             inventory.getItem(6).addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
-            ItemMeta itemMeta = inventory.getItem(1).getItemMeta();
+            ItemMeta itemMeta = inventory.getItem(6).getItemMeta();
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             inventory.getItem(6).setItemMeta(itemMeta);
 
@@ -187,7 +187,7 @@ public class RankingManager {
 
         if (type == RankingType.PLAYTIME) {
             inventory.getItem(7).addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
-            ItemMeta itemMeta = inventory.getItem(1).getItemMeta();
+            ItemMeta itemMeta = inventory.getItem(7).getItemMeta();
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             inventory.getItem(7).setItemMeta(itemMeta);
 
