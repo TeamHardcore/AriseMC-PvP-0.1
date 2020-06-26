@@ -7,8 +7,12 @@
 
 package de.teamhardcore.pvp.listeners.inventory;
 
+import com.google.gson.internal.$Gson$Preconditions;
 import de.teamhardcore.pvp.Main;
+import de.teamhardcore.pvp.commands.pvp.CommandClan;
+import de.teamhardcore.pvp.commands.pvp.CommandStats;
 import de.teamhardcore.pvp.inventories.*;
+import de.teamhardcore.pvp.managers.RankingManager;
 import de.teamhardcore.pvp.model.MarketItem;
 import de.teamhardcore.pvp.model.Report;
 import de.teamhardcore.pvp.model.Transaction;
@@ -37,13 +41,18 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class InventoryClick implements Listener {
@@ -931,5 +940,126 @@ public class InventoryClick implements Listener {
             }
 
         }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lRanking")) {
+            event.setCancelled(true);
+
+            if (event.getRawSlot() >= 1 && event.getRawSlot() <= 7 && itemStack.containsEnchantment(Enchantment.ARROW_DAMAGE)) {
+                player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
+                return;
+            }
+
+            if (slot == 1) {
+                player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
+                this.plugin.getRankingManager().updateRankingInventory(inventory, RankingManager.RankingType.PVP);
+                return;
+            }
+
+            if (slot == 2) {
+                player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
+                this.plugin.getRankingManager().updateRankingInventory(inventory, RankingManager.RankingType.TROPHIES);
+                return;
+            }
+
+            if (slot == 4) {
+                player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
+                this.plugin.getRankingManager().updateRankingInventory(inventory, RankingManager.RankingType.CLAN);
+                return;
+            }
+
+            if (slot == 6) {
+                player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
+                this.plugin.getRankingManager().updateRankingInventory(inventory, RankingManager.RankingType.MONEY);
+                return;
+            }
+
+            if (slot == 7) {
+                player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
+                this.plugin.getRankingManager().updateRankingInventory(inventory, RankingManager.RankingType.PLAYTIME);
+                return;
+            }
+
+            RankingManager.RankingType type = RankingManager.RankingType.PVP;
+
+            for (int i = 1; i <= 7; i++) {
+                ItemStack current = inventory.getItem(i);
+                if (current.containsEnchantment(Enchantment.ARROW_DAMAGE)) {
+                    switch (i) {
+                        case 1:
+                            type = RankingManager.RankingType.PVP;
+                            break;
+                        case 2:
+                            type = RankingManager.RankingType.TROPHIES;
+                            break;
+                        case 4:
+                            type = RankingManager.RankingType.CLAN;
+                            break;
+                        case 6:
+                            type = RankingManager.RankingType.MONEY;
+                            break;
+                        case 7:
+                            type = RankingManager.RankingType.PLAYTIME;
+                            break;
+                    }
+                }
+            }
+
+            if ((slot >= 29 && slot <= 33) || (slot >= 38 && slot <= 42)) {
+
+                if (type != RankingManager.RankingType.CLAN && !itemStack.isSimilar(RankingManager.notOccupiedItem)) {
+                    ItemMeta meta = itemStack.getItemMeta();
+                    int pos = Integer.parseInt(ChatColor.stripColor(meta.getDisplayName()).split(" ")[0].substring(1));
+
+                    AbstractMap.SimpleEntry<UUID, Long> posEntry = null;
+
+                    switch (type) {
+                        case PVP:
+                            posEntry = this.plugin.getRankingManager().getPvpRanking().get(pos - 1);
+                            break;
+                        case TROPHIES:
+                            posEntry = this.plugin.getRankingManager().getTrophyRanking().get(pos - 1);
+                            break;
+                        case MONEY:
+                            posEntry = this.plugin.getRankingManager().getMoneyRanking().get(pos - 1);
+                            break;
+                        case PLAYTIME:
+                            posEntry = this.plugin.getRankingManager().getPlaytimeRanking().get(pos - 1);
+                            break;
+                    }
+
+                    if (posEntry == null) {
+                        this.plugin.getRankingManager().updateRankingInventory(inventory, type);
+                        return;
+                    }
+
+                    event.getView().close();
+                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(posEntry.getKey());
+
+                    if (offlinePlayer == null || !offlinePlayer.hasPlayedBefore()) return;
+                    player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 1.0F, 1.0F);
+                    CommandStats.sendStats(player, offlinePlayer);
+                }
+
+
+                if (type == RankingManager.RankingType.CLAN && !itemStack.isSimilar(RankingManager.notOccupiedItem)) {
+                    ItemMeta meta = itemStack.getItemMeta();
+
+                    String clanName = ChatColor.stripColor(meta.getDisplayName().substring((event.getRawSlot() == 42) ? 18 : 17));
+
+                    Clan clan = this.plugin.getClanManager().getClan(clanName);
+
+                    if (clan == null) {
+                        this.plugin.getRankingManager().updateRankingInventory(inventory, type);
+                        return;
+                    }
+
+                    event.getView().close();
+                    CommandClan.sendStats(player, clan);
+                }
+
+            }
+
+        }
+
     }
 }

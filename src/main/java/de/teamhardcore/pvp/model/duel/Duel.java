@@ -54,6 +54,13 @@ public class Duel {
         } else
             this.map = Main.getInstance().getDuelManager().getAvailableMap(this.configuration.getCurrentCategory());
 
+        if (this.map == null) {
+            startPhase(new EndPhase(this));
+            sendMessage(StringDefaults.DUEL_PREFIX + "§cEin Fehler ist aufgetreten, bitte melden!");
+            sendMessage(StringDefaults.DUEL_PREFIX + "§cDas Duell wurde vorsichtshalber beendet.");
+            return;
+        }
+
         preparePlayers();
 
         sendMessage(StringDefaults.DUEL_PREFIX + "§aDas Duell beginnt in Kürze.");

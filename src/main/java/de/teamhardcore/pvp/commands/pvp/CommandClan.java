@@ -864,7 +864,7 @@ public class CommandClan implements CommandExecutor {
         player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCLAN §8§l§m*-*-*-*-*-*-*-*-*");
     }
 
-    private void sendStats(Player player, Clan clan) {
+    public static void sendStats(Player player, Clan clan) {
         List<ClanMember> members = new ArrayList<>();
         ClanMember owner = clan.getMemberList().getMembers(ClanRank.OWNER).get(0);
 

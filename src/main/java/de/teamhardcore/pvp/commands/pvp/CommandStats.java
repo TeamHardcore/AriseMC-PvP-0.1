@@ -65,7 +65,7 @@ public class CommandStats implements CommandExecutor {
         return true;
     }
 
-    private void sendStats(Player player, OfflinePlayer target) {
+    public static void sendStats(Player player, OfflinePlayer target) {
         User data = target.isOnline() ? Main.getInstance().getUserManager().getUser(target.getUniqueId()) : new User(target.getUniqueId());
         UserStats stats = data.getUserStats();
         UserMoney money = data.getUserMoney();

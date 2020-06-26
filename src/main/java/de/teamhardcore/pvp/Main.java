@@ -193,6 +193,7 @@ public class Main extends JavaPlugin {
         getCommand("relore").setExecutor(new CommandRelore());
         getCommand("crates").setExecutor(new CommandCrate());
         getCommand("stats").setExecutor(new CommandStats());
+        getCommand("ranking").setExecutor(new CommandRanking());
     }
 
     public FileManager getFileManager() {
