@@ -194,7 +194,7 @@ public class ScoreboardManager {
                 Team teamLeague = scoreboard.getTeam("League");
                 Team teamStats = scoreboard.getTeam("Stats");
                 teamMoney.setSuffix("§7" + Util.formatNumber(user.getMoney()) + "$");
-                teamLeague.setPrefix("" + EnumLeague.getLeagueByTrophies(stats.getTrophies()) + " §7");
+                teamLeague.setPrefix("" + EnumLeague.getLeagueByTrophies(stats.getTrophies()).getDisplayName() + " §7");
                 teamLeague.setSuffix("[§6" + Util.formatNumber(stats.getTrophies()) + "§7] ");
 
                 teamStats.setPrefix("§7" + stats.getKills() + " §aKills");

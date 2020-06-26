@@ -76,7 +76,7 @@ public class CommandStats implements CommandExecutor {
         player.sendMessage(" ");
         player.sendMessage("§c§lName§8: §7" + target.getName() + " §c§lRang§8: §7-");
         player.sendMessage("§c§lKills§8: §7" + stats.getKills() + " §c§lTode§8: §7" + stats.getDeaths() + " §c§lKD§8: §7" + stats.getKD());
-        player.sendMessage("§c§lLiga§8: §7" + EnumLeague.getLeagueByTrophies(stats.getTrophies()) + " §7[§6" + Util.formatNumber(stats.getTrophies()) + "§7]");
+        player.sendMessage("§c§lLiga§8: §7" + EnumLeague.getLeagueByTrophies(stats.getTrophies()).getDisplayName() + " §7[§6" + Util.formatNumber(stats.getTrophies()) + "§7]");
         player.sendMessage("§c§lKillstreak§8: §7" + stats.getKillStreak() + " §c§lKopfgeld§8: §7" + Util.formatNumber(stats.getKopfgeld()));
         if (clan != null)
             player.sendMessage("§c§lClan§8: §7" + clan.getNameColor() + clan.getName());
