@@ -9,6 +9,7 @@ package de.teamhardcore.pvp.managers;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.gambling.crates.CrateOpening;
 import de.teamhardcore.pvp.model.gambling.crates.addons.DivineCrate;
+import de.teamhardcore.pvp.model.gambling.crates.addons.FirstTieredCrate;
 import de.teamhardcore.pvp.model.gambling.crates.addons.TestCrate;
 import de.teamhardcore.pvp.model.gambling.crates.base.BaseCrate;
 import de.teamhardcore.pvp.user.UserData;
@@ -32,6 +33,8 @@ public class CrateManager {
         put(testCrate.getName(), new BaseCrate(testCrate));
         DivineCrate divineCrate = new DivineCrate();
         put(divineCrate.getName(), new BaseCrate(divineCrate));
+        FirstTieredCrate firstTieredCrate = new FirstTieredCrate();
+        put(firstTieredCrate.getName(), new BaseCrate(firstTieredCrate));
     }};
     private final Map<Player, CrateOpening> playersInCrateOpening;
 

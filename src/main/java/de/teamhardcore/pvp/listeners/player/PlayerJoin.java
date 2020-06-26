@@ -68,10 +68,10 @@ public class PlayerJoin implements Listener {
 
         List<BaseCrate> crates = new ArrayList<>();
 
-        for (int i = 0; i < 14; i++) {
-            if (new Random().nextInt(2) == 1) {
-                crates.add(this.plugin.getCrateManager().getCrate("TestCrate"));
-            } else crates.add(this.plugin.getCrateManager().getCrate("DivineCrate"));
+        for (int i = 0; i < 3; i++) {
+            crates.add(this.plugin.getCrateManager().getCrate("TestCrate"));
+            crates.add(this.plugin.getCrateManager().getCrate("DivineCrate"));
+            crates.add(this.plugin.getCrateManager().getCrate("FirstTieredCrate"));
         }
 
         for (BaseCrate crate : crates)

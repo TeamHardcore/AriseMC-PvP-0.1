@@ -26,7 +26,7 @@ import java.util.Locale;
 public class BaseCrate extends FileBase {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm 'Uhr'", Locale.GERMAN);
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###.###");
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###.##");
 
     private final CrateAddon addon;
 
@@ -224,7 +224,9 @@ public class BaseCrate extends FileBase {
 
         List<String> lore = new ArrayList<>();
         lore.add("");
-        lore.add("§8● §7Wert§8: " + this.addon.getValue().getDisplayName());
+        lore.add("§8● §7Crate Rarität§8: " + this.addon.getValue().getDisplayName());
+        lore.add("§8● §7Items in der Crate§8: §e" + this.addon.getCrateContent().size());
+        lore.add("§8● §7Items pro Öffnung§8: §e1");
         lore.add(" ");
         lore.add("§eLinksklicke§8, §eum die Crate zu öffnen");
         lore.add("§eRechtsklicke§8, §eum den Inhalt anzusehen");
