@@ -75,13 +75,13 @@ public class CommandStats implements CommandExecutor {
         player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lSTATS §8§l§m*-*-*-*-*-*-*-*-*");
         player.sendMessage(" ");
         player.sendMessage(StringDefaults.PREFIX + "§c§lName§8: §7" + target.getName() + " §c§lRang§8: §7-");
-        player.sendMessage(StringDefaults.PREFIX +"§c§lKills§8: §7" + stats.getKills() + " §c§lTode§8: §7" + stats.getDeaths() + " §c§lKD§8: §7" + stats.getKD());
-        player.sendMessage(StringDefaults.PREFIX +"§c§lLiga§8: §7" + EnumLeague.getLeagueByTrophies(stats.getTrophies()).getDisplayName() + " §7[§6" + Util.formatNumber(stats.getTrophies()) + "§7]");
-        player.sendMessage(StringDefaults.PREFIX +"§c§lKillstreak§8: §7" + stats.getKillStreak() + " §c§lKopfgeld§8: §7" + Util.formatNumber(stats.getKopfgeld()));
+        player.sendMessage(StringDefaults.PREFIX + "§c§lKills§8: §7" + stats.getKills() + " §c§lTode§8: §7" + stats.getDeaths() + " §c§lKD§8: §7" + stats.getKD());
+        player.sendMessage(StringDefaults.PREFIX + "§c§lLiga§8: §7" + EnumLeague.getLeagueByTrophies(stats.getTrophies()).getDisplayName() + " §7[§6" + Util.formatNumber(stats.getTrophies()) + "§7]");
+        player.sendMessage(StringDefaults.PREFIX + "§c§lKillstreak§8: §7" + stats.getKillStreak() + " §c§lKopfgeld§8: §7" + Util.formatNumber(stats.getKopfgeld()) + "$");
         if (clan != null)
-            player.sendMessage(StringDefaults.PREFIX +"§c§lClan§8: §7" + clan.getNameColor() + clan.getName());
-        player.sendMessage(StringDefaults.PREFIX +"§c§lGeld§8: §7" + Util.formatNumber(money.getMoney()));
-        player.sendMessage(StringDefaults.PREFIX +"§c§lSpielzeit§8: §7" + TimeUtil.timeToString(stats.getPlaytime()));
+            player.sendMessage(StringDefaults.PREFIX + "§c§lClan§8: §7" + clan.getNameColor() + clan.getName());
+        player.sendMessage(StringDefaults.PREFIX + "§c§lGeld§8: §7" + Util.formatNumber(money.getMoney()) + "$");
+        player.sendMessage(StringDefaults.PREFIX + "§c§lSpielzeit§8: §7" + TimeUtil.timeToString(stats.getPlaytime()));
         player.sendMessage(" ");
         player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lSTATS §8§l§m*-*-*-*-*-*-*-*-*");
 
