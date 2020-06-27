@@ -7,6 +7,7 @@ depend:
   - ProtocolLib
   - WorldGuard
   - WorldEdit
+  - HolographicDisplays
 
 commands:
   fix:
@@ -105,3 +106,4 @@ commands:
   crates:
   stats:
   ranking:
+  fakeentity:
