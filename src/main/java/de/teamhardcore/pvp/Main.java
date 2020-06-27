@@ -7,6 +7,8 @@
 
 package de.teamhardcore.pvp;
 
+import de.howaner.FakeMobs.FakeMobsPlugin;
+import de.teamhardcore.pvp.commands.entity.CommandFakeEntity;
 import de.teamhardcore.pvp.commands.inventory.CommandCrate;
 import de.teamhardcore.pvp.commands.abuse.CommandBan;
 import de.teamhardcore.pvp.commands.abuse.CommandKick;
@@ -72,6 +74,7 @@ public class Main extends JavaPlugin {
     private DuelManager duelManager;
     private AchievementManager achievementManager;
     private LootProtectionManager lootProtectionManager;
+    private FakeEntityManager fakeEntityManager;
 
     private DatabaseManager databaseManager;
 
@@ -82,11 +85,13 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        this.fakeEntityManager.onDisable();
+        FakeMobsPlugin.onDisable(this);
     }
 
     @Override
     public void onEnable() {
+        FakeMobsPlugin.onEnable(this);
         registerAll();
         VirtualAnvil.onEnable();
     }
@@ -123,6 +128,8 @@ public class Main extends JavaPlugin {
         this.duelManager = new DuelManager(this);
         this.achievementManager = new AchievementManager(this);
         this.lootProtectionManager = new LootProtectionManager(this);
+        this.fakeEntityManager = new FakeEntityManager(this);
+        this.fakeEntityManager.loadAllCustomEntities();
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -146,6 +153,7 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new AchievementReceive(this), this);
         pm.registerEvents(new AchievementTierReceive(this), this);
         pm.registerEvents(new CrateEvents(this), this);
+        pm.registerEvents(new PlayerInteractFakeMob(this), this);
 
         getCommand("fix").setExecutor(new CommandFix());
         getCommand("stack").setExecutor(new CommandStack());
@@ -194,6 +202,7 @@ public class Main extends JavaPlugin {
         getCommand("crates").setExecutor(new CommandCrate());
         getCommand("stats").setExecutor(new CommandStats());
         getCommand("ranking").setExecutor(new CommandRanking());
+        getCommand("fakeentity").setExecutor(new CommandFakeEntity());
     }
 
     public FileManager getFileManager() {
@@ -278,6 +287,10 @@ public class Main extends JavaPlugin {
 
     public LootProtectionManager getLootProtectionManager() {
         return lootProtectionManager;
+    }
+
+    public FakeEntityManager getFakeEntityManager() {
+        return fakeEntityManager;
     }
 
     public static Main getInstance() {
