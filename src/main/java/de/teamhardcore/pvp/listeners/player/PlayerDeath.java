@@ -11,6 +11,9 @@ import de.teamhardcore.pvp.model.achievements.AchievementGroups;
 import de.teamhardcore.pvp.model.achievements.annotations.AchievementListener;
 import de.teamhardcore.pvp.model.achievements.type.Category;
 import de.teamhardcore.pvp.model.achievements.type.Type;
+import de.teamhardcore.pvp.model.arena.Arena;
+import de.teamhardcore.pvp.model.arena.ArenaOptionBase;
+import de.teamhardcore.pvp.model.arena.ArenaOptionImpl;
 import de.teamhardcore.pvp.model.clan.Clan;
 import de.teamhardcore.pvp.user.User;
 import de.teamhardcore.pvp.utils.StringDefaults;
@@ -55,6 +58,18 @@ public class PlayerDeath implements Listener {
             if (!Util.isInventoryEmpty(player.getInventory())) {
                 user.getUserStats().addDeaths(1);
 
+                Arena arena = this.plugin.getArenaManager().getArenaByLocation(killer.getLocation());
+                if (arena == null) {
+                    System.out.println("arena is null");
+                    return;
+                }
+
+                for (ArenaOptionImpl option : arena.getOptions()) {
+                    option.executeOnKill(killer);
+                    System.out.println("execute options");
+                }
+
+
                 if (this.plugin.getClanManager().hasClan(player.getUniqueId())) {
                     Clan clan = this.plugin.getClanManager().getClan(player.getUniqueId());
                     clan.setDeaths(clan.getDeaths() + 1);
@@ -92,8 +107,8 @@ public class PlayerDeath implements Listener {
                 });
                 event.getDrops().clear();
                 this.plugin.getLootProtectionManager().createLootProtection(killer.getUniqueId(), drops);
+                return;
             }
-
         } else {
             player.sendMessage(StringDefaults.PREFIX + "§eDu bist gestorben.");
             user.getUserStats().addDeaths(1);

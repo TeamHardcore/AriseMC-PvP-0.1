@@ -9,11 +9,17 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
+import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -155,6 +161,25 @@ public class Util {
     public static void addItems(Player p, ItemStack... items) {
         for (ItemStack item : items) {
             addItem(p, item);
+        }
+    }
+
+    public static void playBlockSound(Block block) {
+        try {
+            for (Sound sound : Sound.values()) {
+                Field f = CraftSound.class.getDeclaredField("sounds");
+                f.setAccessible(true);
+
+                String[] sounds = (String[]) f.get(null);
+                Method getBlock = CraftBlock.class.getDeclaredMethod("getNMSBlock");
+                getBlock.setAccessible(true);
+                Object nmsBlockObject = getBlock.invoke(block);
+
+                if (((net.minecraft.server.v1_8_R3.Block) nmsBlockObject).stepSound.getBreakSound().equals(sounds[sound.ordinal()])) {
+                    block.getWorld().playSound(block.getLocation(), sound, 1, 1);
+                }
+            }
+        } catch (Exception ignored) {
         }
     }
 

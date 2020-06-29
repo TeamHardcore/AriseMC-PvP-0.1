@@ -106,6 +106,8 @@ public class CommandDuel implements CommandExecutor {
                 player.sendMessage(StringDefaults.DUEL_PREFIX + "§cVerwendung§8: §7/duel admin create category <Name>");
                 player.sendMessage(StringDefaults.DUEL_PREFIX + "§cVerwendung§8: §7/duel admin delete arena <Name>");
                 player.sendMessage(StringDefaults.DUEL_PREFIX + "§cVerwendung§8: §7/duel admin delete category <Category>");
+                player.sendMessage(StringDefaults.DUEL_PREFIX + "§cVerwendung§8: §7/duel admin location add <Arena>");
+                player.sendMessage(StringDefaults.DUEL_PREFIX + "§cVerwendung§8: §7/duel admin location remove <Arena>");
                 player.sendMessage(StringDefaults.DUEL_PREFIX + "§cVerwendung§8: §7/duel admin tp <Name>");
                 player.sendMessage(StringDefaults.DUEL_PREFIX + "§cVerwendung§8: §7/duel admin list");
                 player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
