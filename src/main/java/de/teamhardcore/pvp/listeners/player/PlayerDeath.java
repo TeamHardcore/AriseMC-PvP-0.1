@@ -59,15 +59,11 @@ public class PlayerDeath implements Listener {
                 user.getUserStats().addDeaths(1);
 
                 Arena arena = this.plugin.getArenaManager().getArenaByLocation(killer.getLocation());
-                if (arena == null) {
-                    System.out.println("arena is null");
+                if (arena == null)
                     return;
-                }
 
-                for (ArenaOptionImpl option : arena.getOptions()) {
+                for (ArenaOptionImpl option : arena.getOptions())
                     option.executeOnKill(killer);
-                    System.out.println("execute options");
-                }
 
 
                 if (this.plugin.getClanManager().hasClan(player.getUniqueId())) {
@@ -80,8 +76,12 @@ public class PlayerDeath implements Listener {
 
                 if (this.plugin.getClanManager().hasClan(killer.getUniqueId())) {
                     Clan clan = this.plugin.getClanManager().getClan(killer.getUniqueId());
-                    clan.setDeaths(clan.getDeaths() + 1);
-                    clan.addMoney(1);
+                    clan.setKills(clan.getKills() + 1);
+
+                    double coinsToAdd = (clan.getCoinBoost() == 0 ? 1 : clan.getCoinBoost() * 1);
+                    clan.addMoney((long) coinsToAdd);
+                    clan.setCoinBoost(0.0D);
+                    clan.getMemberList().sendMessageToMembers("§6" + killer.getName() + " §7hat §e§l" + ((long) coinsToAdd) + " " + (coinsToAdd == 1 ? "Coin" : "Coins") + " §7gesammelt!");
                 }
 
                 AchievementGroups.$().getGroup(Category.COMABT).getAchievements().forEach(abstractAchievement -> {
@@ -107,7 +107,6 @@ public class PlayerDeath implements Listener {
                 });
                 event.getDrops().clear();
                 this.plugin.getLootProtectionManager().createLootProtection(killer.getUniqueId(), drops);
-                return;
             }
         } else {
             player.sendMessage(StringDefaults.PREFIX + "§eDu bist gestorben.");

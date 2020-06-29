@@ -19,6 +19,8 @@ public class Clan extends TimedDatabaseUpdate {
     private final ClanMemberList memberList = new ClanMemberList(this);
     private final ClanChest clanChest;
 
+    private double coinBoost;
+
     private final String name;
     private Location base;
 
@@ -78,6 +80,15 @@ public class Clan extends TimedDatabaseUpdate {
 
     public ClanMemberList getMemberList() {
         return memberList;
+    }
+
+    public void setCoinBoost(double coinBoost) {
+        this.coinBoost = coinBoost;
+        setUpdate(true);
+    }
+
+    public double getCoinBoost() {
+        return coinBoost;
     }
 
     public String getName() {

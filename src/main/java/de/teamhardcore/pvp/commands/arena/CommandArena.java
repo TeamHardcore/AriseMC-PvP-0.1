@@ -204,6 +204,11 @@ public class CommandArena implements CommandExecutor {
                     String[] params = new String[0];
                     Class<?> optionClass = Main.getInstance().getArenaManager().getOptionClass(option);
 
+                    if (args.length > 4) {
+                        params = new String[args.length - 4];
+                        System.arraycopy(args, 4, params, 0, args.length - 4);
+                    }
+
                     if (optionClass == null) {
                         player.sendMessage(StringDefaults.PREFIX + "§cFehler bei der Verarbeitung der Option.");
                         return true;

@@ -6,6 +6,12 @@
 
 package de.teamhardcore.pvp.model.clan;
 
+import de.teamhardcore.pvp.utils.StringDefaults;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +56,22 @@ public class ClanMemberList {
         List<ClanMember> members = new ArrayList<>();
         this.members.values().stream().filter(member -> member.getRank().equals(rank)).forEach(members::add);
         return members;
+    }
+
+    public void sendMessageToMembers(String message, Player player) {
+        for (ClanMember members : clan.getMemberList().getMembers().values()) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(members.getUuid());
+            if (offlinePlayer == null || !offlinePlayer.isOnline() || offlinePlayer == player) continue;
+            offlinePlayer.getPlayer().sendMessage(StringDefaults.CLAN_PREFIX + message);
+        }
+    }
+
+    public void sendMessageToMembers(String message) {
+        for (ClanMember members : clan.getMemberList().getMembers().values()) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(members.getUuid());
+            if (offlinePlayer == null || !offlinePlayer.isOnline()) continue;
+            offlinePlayer.getPlayer().sendMessage(StringDefaults.CLAN_PREFIX + message);
+        }
     }
 
     public Clan getClan() {
