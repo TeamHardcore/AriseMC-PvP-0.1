@@ -11,6 +11,7 @@ public class FileManager {
     private final SpawnerFile spawnerFile;
     private final DuelFile duelFile;
     private final FakeEntityFile fakeEntityFile;
+    private final ArenaFile arenaFile;
 
     public FileManager(Main plugin) {
         this.plugin = plugin;
@@ -19,6 +20,11 @@ public class FileManager {
         this.spawnerFile = new SpawnerFile();
         this.duelFile = new DuelFile();
         this.fakeEntityFile = new FakeEntityFile();
+        this.arenaFile = new ArenaFile();
+    }
+
+    public ArenaFile getArenaFile() {
+        return arenaFile;
     }
 
     public FakeEntityFile getFakeEntityFile() {

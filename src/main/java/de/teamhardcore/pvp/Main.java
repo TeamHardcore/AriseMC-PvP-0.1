@@ -8,6 +8,7 @@
 package de.teamhardcore.pvp;
 
 import de.howaner.FakeMobs.FakeMobsPlugin;
+import de.teamhardcore.pvp.commands.arena.CommandArena;
 import de.teamhardcore.pvp.commands.entity.CommandFakeEntity;
 import de.teamhardcore.pvp.commands.inventory.CommandCrate;
 import de.teamhardcore.pvp.commands.abuse.CommandBan;
@@ -75,6 +76,7 @@ public class Main extends JavaPlugin {
     private AchievementManager achievementManager;
     private LootProtectionManager lootProtectionManager;
     private FakeEntityManager fakeEntityManager;
+    private ArenaManager arenaManager;
 
     private DatabaseManager databaseManager;
 
@@ -85,6 +87,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        this.arenaManager.onDisable();
         this.fakeEntityManager.onDisable();
         FakeMobsPlugin.onDisable(this);
     }
@@ -130,6 +133,8 @@ public class Main extends JavaPlugin {
         this.lootProtectionManager = new LootProtectionManager(this);
         this.fakeEntityManager = new FakeEntityManager(this);
         this.fakeEntityManager.loadAllCustomEntities();
+        this.arenaManager = new ArenaManager(this);
+        this.arenaManager.loadArenas();
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -203,6 +208,7 @@ public class Main extends JavaPlugin {
         getCommand("stats").setExecutor(new CommandStats());
         getCommand("ranking").setExecutor(new CommandRanking());
         getCommand("fakeentity").setExecutor(new CommandFakeEntity());
+        getCommand("arena").setExecutor(new CommandArena());
     }
 
     public FileManager getFileManager() {
@@ -291,6 +297,10 @@ public class Main extends JavaPlugin {
 
     public FakeEntityManager getFakeEntityManager() {
         return fakeEntityManager;
+    }
+
+    public ArenaManager getArenaManager() {
+        return arenaManager;
     }
 
     public static Main getInstance() {

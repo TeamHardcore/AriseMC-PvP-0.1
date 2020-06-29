@@ -165,7 +165,8 @@ public class FakeEntity {
 
     public FakeEntityOptionImpl findEntityOption(FakeEntityOptionBase option) {
         for (FakeEntityOptionImpl options : this.entityOptions) {
-            if (options.getCategory().equalsIgnoreCase(option.getCategory()) && options.getOptionName().equalsIgnoreCase(option.getOptionName()))
+            if (options.getCategory().equalsIgnoreCase(option.getCategory())
+                    && options.getOptionName().equalsIgnoreCase(option.getOptionName()))
                 return options;
         }
         return null;

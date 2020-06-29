@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class ClanShopInventory {
         for (int i = 0; i < inventory.getSize(); i++) {
             inventory.setItem(i, new ItemBuilder(Material.STAINED_GLASS_PANE).setDurability(7).setDisplayName(" ").build());
         }
+
 
       /*  inventory.setItem(20, new ItemBuilder(Material.PAINTING).setDisplayName("§6§lClan Designs").build());
         inventory.setItem(22, new ItemBuilder(Material.ENDER_CHEST).setDisplayName("§6§lClan Upgrades").build());
@@ -79,8 +81,6 @@ public class ClanShopInventory {
         inventory.setItem(4, new ItemBuilder(Material.DIAMOND_HELMET).setDisplayName("§6§lLevel").setLore(lore).build());
         lore.clear();
 
-        //###########################
-
         int clanSlotLevel = clan.getUpgradeLevel(StringDefaults.SLOT_UPGRADE);
         int maxSlotLevel = EnumUpgrade.getUpgrades(StringDefaults.SLOT_UPGRADE);
         EnumUpgrade nextSlot = EnumUpgrade.getNextUpgrade(clanSlotLevel, StringDefaults.SLOT_UPGRADE);
@@ -119,9 +119,6 @@ public class ClanShopInventory {
         lore.clear();
 
 
-        //###########################
-
-
         int clanWarpLevel = clan.getUpgradeLevel(StringDefaults.WARP_UPGRADE);
         int maxWarpLevel = EnumUpgrade.getUpgrades(StringDefaults.WARP_UPGRADE);
         EnumUpgrade nextWarp = EnumUpgrade.getNextUpgrade(clanWarpLevel, StringDefaults.WARP_UPGRADE);
@@ -158,8 +155,6 @@ public class ClanShopInventory {
 
         inventory.setItem(22, new ItemBuilder(Material.WORKBENCH).setDisplayName("§6§lWarps").setLore(lore).build());
         lore.clear();
-
-        //###########################
 
         int clanChestLevel = clan.getUpgradeLevel(StringDefaults.CHEST_UPGRADE);
         int maxChestLevel = EnumUpgrade.getUpgrades(StringDefaults.CHEST_UPGRADE);
