@@ -78,8 +78,8 @@ public class ArenaOptionImpl extends ArenaOptionBase {
         String optionName = optionSpl[1];
         String[] params = new String[0];
 
-        if (optionSpl.length > 3)
-            params = optionSpl[3].split("###");
+        if (optionSpl.length > 2)
+            params = optionSpl[2].split("###");
 
         ArenaOptionBase option = Main.getInstance().getArenaManager().getOption(category, optionName);
 

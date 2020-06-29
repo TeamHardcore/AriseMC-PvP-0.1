@@ -10,6 +10,7 @@ import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.arena.Arena;
 import de.teamhardcore.pvp.model.arena.ArenaOptionBase;
 import de.teamhardcore.pvp.model.arena.ArenaSelection;
+import de.teamhardcore.pvp.model.arena.options.ArenaClanCoinBonusOption;
 import de.teamhardcore.pvp.model.arena.options.ArenaClanOption;
 import de.teamhardcore.pvp.model.arena.options.ArenaPlayerOption;
 import org.bukkit.Location;
@@ -40,6 +41,7 @@ public class ArenaManager {
     private void initArenaOptions() {
         this.options.put(new ArenaOptionBase("general", "clan"), ArenaClanOption.class);
         this.options.put(new ArenaOptionBase("general", "player"), ArenaPlayerOption.class);
+        this.options.put(new ArenaOptionBase("bonus", "clancoins"), ArenaClanCoinBonusOption.class);
     }
 
     public void loadArenas() {
