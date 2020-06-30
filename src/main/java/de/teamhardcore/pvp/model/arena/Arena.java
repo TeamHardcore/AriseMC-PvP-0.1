@@ -62,6 +62,7 @@ public class Arena {
 
         ArenaOptionImpl clanOption = findArenaOption(Main.getInstance().getArenaManager().getOption("general", "clan"));
         ArenaOptionImpl playerOption = findArenaOption(Main.getInstance().getArenaManager().getOption("general", "player"));
+        ArenaOptionImpl clanCoinBoostOption = findArenaOption(Main.getInstance().getArenaManager().getOption("bonus", "clancoins"));
 
         if (clanOption != null && hasArenaOption(clanOption)) {
             if (this.arenaStatistics.getClanStatistic() == null || this.arenaStatistics.getClanStatistic()[0] == null || this.arenaStatistics.getClanStatistic()[1] == null
@@ -90,6 +91,11 @@ public class Arena {
                     this.hologram.appendTextLine("§7Gefährlichster Spieler§8: §c" + offlinePlayer.getName() + " §7(§6" + Util.formatNumber(playerKills) + " " + (playerKills == 1 ? "Kill" : "Kills") + "§7)");
                 }
             }
+        }
+
+        if (clanCoinBoostOption != null && hasArenaOption(clanCoinBoostOption)) {
+            this.hologram.appendTextLine(" §a§l");
+            this.hologram.appendTextLine("§6§lBONUS§8: §e+" + clanCoinBoostOption.getParams()[0] + "% Clan Coins");
         }
     }
 

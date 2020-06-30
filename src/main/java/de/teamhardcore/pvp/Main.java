@@ -209,6 +209,7 @@ public class Main extends JavaPlugin {
         getCommand("ranking").setExecutor(new CommandRanking());
         getCommand("fakeentity").setExecutor(new CommandFakeEntity());
         getCommand("arena").setExecutor(new CommandArena());
+        getCommand("liga").setExecutor(new CommandLeague());
     }
 
     public FileManager getFileManager() {
