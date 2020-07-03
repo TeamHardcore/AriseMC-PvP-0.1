@@ -110,6 +110,7 @@ public class CoinFlip {
                         }
                     }
 
+
                     closeInventories();
                     cancelTask();
                     return;
