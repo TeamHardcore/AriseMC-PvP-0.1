@@ -25,12 +25,12 @@ public class CommandCoinFlip implements CommandExecutor {
 
         if (args.length == 0) {
             if (Main.getInstance().getCoinFlipManager().getOpenCoinFlip(player) != null) {
-                player.sendMessage(StringDefaults.PREFIX + "§cDu hast bereits einen Coinflip geöffnet.");
+                player.sendMessage(StringDefaults.COINFLIP_PREFIX + "§cDu hast bereits einen Coinflip geöffnet.");
                 return true;
             }
 
             Main.getInstance().getCoinFlipManager().addCoinFlip(player, 0);
-            player.sendMessage(StringDefaults.PREFIX + "§eDu hast einen Coinflip geöffnet.");
+            player.sendMessage(StringDefaults.COINFLIP_PREFIX + "§6Du hast einen Coinflip geöffnet.");
             return true;
         }
 
@@ -43,20 +43,20 @@ public class CommandCoinFlip implements CommandExecutor {
             }
 
             if (target == player) {
-                player.sendMessage(StringDefaults.PREFIX + "§cDu kannst deinem eigenen Coinflip nicht beitreten.");
+                player.sendMessage(StringDefaults.COINFLIP_PREFIX + "§cDu kannst deinem eigenen Coinflip nicht beitreten.");
                 return true;
             }
 
             CoinFlip coinFlip = Main.getInstance().getCoinFlipManager().getOpenCoinFlip(target);
 
             if (coinFlip == null) {
-                player.sendMessage(StringDefaults.PREFIX + "§cDieser Spieler hat keinen Coinflip geöffnet.");
+                player.sendMessage(StringDefaults.COINFLIP_PREFIX + "§cDieser Spieler hat keinen Coinflip geöffnet.");
                 return true;
             }
 
             Main.getInstance().getCoinFlipManager().startCoinFlip(coinFlip, player);
-            coinFlip.getEntries().get(0).sendMessage(StringDefaults.PREFIX + "§6Du befindest dich mit §e" + player.getName() + " §6in einem Coinflip.");
-            player.sendMessage(StringDefaults.PREFIX + "§6Du befindest dich mit §e" + coinFlip.getEntries().get(0).getName() + " §6in einem CoinFlip.");
+            coinFlip.getEntries().get(0).sendMessage(StringDefaults.COINFLIP_PREFIX + "§6Du befindest dich mit §e" + player.getName() + " §6in einem Coinflip.");
+            player.sendMessage(StringDefaults.COINFLIP_PREFIX + "§6Du befindest dich mit §e" + coinFlip.getEntries().get(0).getName() + " §6in einem CoinFlip.");
 
             return true;
         }

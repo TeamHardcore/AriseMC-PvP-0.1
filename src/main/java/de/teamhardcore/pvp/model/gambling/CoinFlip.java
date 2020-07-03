@@ -18,6 +18,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -41,21 +42,24 @@ public class CoinFlip {
         this.entries.add(firstEntry);
         this.entryPrice = entryPrice;
 
-        registerInventory();
+        register();
     }
 
-    private void registerInventory() {
-        this.inventory = Bukkit.createInventory(null, 9 * 6, "§c§lCoinflip");
+    private void register() {
+        this.middle = new ItemBuilder(Material.STAINED_GLASS).setDisplayName(" ").setDurability(6).build();
+
+        this.inventory = Bukkit.createInventory(null, 9 * 3, "§c§lCoinflip");
         this.inventory.setItem(10, new ItemBuilder(Material.STAINED_GLASS_PANE).setDurability(5).setDisplayName(" ").build());
         this.inventory.setItem(16, new ItemBuilder(Material.STAINED_GLASS_PANE).setDurability(6).setDisplayName(" ").build());
+        this.inventory.setItem(13, this.middle);
     }
 
     public void startCoinFlip(Player secondEntry) {
         if (this.gameTask != null) return;
         this.entries.add(secondEntry);
 
-        this.inventory.setItem(9, new ItemBuilder(Material.SKULL_ITEM).setSkullOwner(this.entries.get(0).getName()).setDisplayName("§a§l" + this.entries.get(0).getName()).build());
-        this.inventory.setItem(17, new ItemBuilder(Material.SKULL_ITEM).setSkullOwner(this.entries.get(1).getName()).setDisplayName("§d§l" + this.entries.get(1).getName()).build());
+        this.inventory.setItem(9, new ItemBuilder(Material.SKULL_ITEM).setDurability(3).setSkullOwner(this.entries.get(0).getName()).setDisplayName("§a§l" + this.entries.get(0).getName()).build());
+        this.inventory.setItem(17, new ItemBuilder(Material.SKULL_ITEM).setDurability(3).setSkullOwner(this.entries.get(1).getName()).setDisplayName("§d§l" + this.entries.get(1).getName()).build());
 
         for (Player entry : this.entries) entry.openInventory(this.inventory);
 
@@ -68,29 +72,28 @@ public class CoinFlip {
         this.gameTask = new BukkitRunnable() {
 
             int count = 0;
+            int newTime = 0;
 
             @Override
             public void run() {
-
-                int newTime = 0;
-
-                if (this.count == 20) {
-                    newTime = 2;
-                } else if (this.count == 30) {
-                    newTime = 4;
-                } else if (this.count == 35) {
-                    newTime = 8;
-                }
-
                 if (this.count == 20 || this.count == 30 || this.count == 35) {
                     if (CoinFlip.this.gameTask != null) {
                         CoinFlip.this.gameTask.cancel();
                         CoinFlip.this.gameTask = null;
                     }
+
+                    if (this.count == 20) {
+                        newTime = 2;
+                    } else if (this.count == 30) {
+                        newTime = 4;
+                    } else if (this.count == 35) {
+                        newTime = 8;
+                    }
+
                     CoinFlip.this.gameTask = Main.getInstance().getServer().getScheduler().runTaskTimer(Main.getInstance(), this, 0L, newTime);
                 }
 
-                if (CoinFlip.this.inventory.getItem(13).getDurability() == winnerDurability && this.count >= 38) {
+                if (CoinFlip.this.inventory.getItem(13) != null && CoinFlip.this.inventory.getItem(13).getDurability() == winnerDurability && this.count >= 38) {
                     UserMoney userMoney = Main.getInstance().getUserManager().getUser(winner.getUniqueId()).getUserMoney();
                     userMoney.addMoney(winningPrice);
 
@@ -99,36 +102,31 @@ public class CoinFlip {
                         Player opposite = CoinFlip.this.entries.get((i == 0) ? 1 : 0);
 
                         if (winner == self) {
-                            self.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCoinflip §8§l§m*-*-*-*-*-*-*-*-*");
-                            self.sendMessage("");
-                            self.sendMessage(StringDefaults.PREFIX + "§a§lDu hast gegen §7§l" + opposite.getName() + " §a§lgewonnen!");
-                            self.sendMessage(StringDefaults.PREFIX + "§a§lDein Gewinn: §6§l" + Util.formatNumber(winningPrice) + "$");
-                            self.sendMessage("");
-                            self.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCoinflip §8§l§m*-*-*-*-*-*-*-*-*");
+                            self.sendMessage(StringDefaults.COINFLIP_PREFIX + "§6Du hast gegen §e" + opposite.getName() + " §6gewonnen!");
                             self.playSound(self.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
                         } else {
-                            self.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCoinflip §8§l§m*-*-*-*-*-*-*-*-*");
-                            self.sendMessage("");
-                            self.sendMessage(" §8§l►§7§l► §c§lDu hast gegen §7§l" + opposite.getName() + " §c§lverloren.");
-                            self.sendMessage(" §8§l►§7§l► §c§lDein Verlust: §6§l" + Util.formatNumber(CoinFlip.this.entryPrice) + "$");
-                            self.sendMessage("");
-                            self.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lCoinflip §8§l§m*-*-*-*-*-*-*-*-*");
+                            self.sendMessage(StringDefaults.COINFLIP_PREFIX + "§6Du hast gegen §e" + opposite.getName() + " §6verloren!");
                             self.playSound(self.getLocation(), Sound.VILLAGER_NO, 1.0F, 1.0F);
                         }
                     }
 
-                    for (HumanEntity viewer : inventory.getViewers())
-                        viewer.closeInventory();
-
-                    cancel();
+                    closeInventories();
+                    cancelTask();
                     return;
                 }
 
+                CoinFlip.this.changeItemColor();
                 CoinFlip.this.inventory.setItem(13, CoinFlip.this.middle);
-                CoinFlip.this.changeColorItem();
                 count++;
             }
-        }.runTaskTimer(Main.getInstance(), 20L, 20L);
+        }.runTaskTimer(Main.getInstance(), 1L, 1L);
+    }
+
+    public void closeInventories() {
+        this.entries.forEach(player -> {
+            if (player.getOpenInventory().getTopInventory().equals(this.inventory))
+                player.closeInventory();
+        });
     }
 
     public void cancelTask() {
@@ -138,12 +136,8 @@ public class CoinFlip {
         this.gameTask = null;
     }
 
-    private void changeColorItem() {
-        if (this.middle == null)
-            this.middle = new ItemBuilder(Material.WOOL).setDurability(5).build();
-        if (this.middle.getDurability() == 5)
-            this.middle = new ItemBuilder(Material.WOOL).setDurability(6).build();
-        else this.middle = new ItemBuilder(Material.WOOL).setDurability(5).build();
+    private void changeItemColor() {
+        this.middle.setDurability((this.middle.getDurability() == 5 ? (short) 6 : (short) 5));
     }
 
     public BukkitTask getGameTask() {

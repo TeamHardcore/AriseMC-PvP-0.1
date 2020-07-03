@@ -7,19 +7,12 @@
 
 package de.teamhardcore.pvp;
 
+import de.howaner.FakeMobs.FakeMobsPlugin;
 import de.realmeze.impl.MezeMain;
-import de.howaner.FakeMobs.FakeMobsPlugin;
-import de.teamhardcore.pvp.commands.arena.CommandArena;
-import de.teamhardcore.pvp.commands.entity.CommandFakeEntity;
-import de.teamhardcore.pvp
-import de.howaner.FakeMobs.FakeMobsPlugin;
-import de.teamhardcore.pvp.commands.arena.CommandArena;
-import de.teamhardcore.pvp.commands.entity.CommandFakeEntity;
-import de.teamhardcore.pvp.commands.gambling.CommandCoinFlip;
-import de.teamhardcore.pvp.commands.inventory.CommandCrate;
 import de.teamhardcore.pvp.commands.abuse.CommandBan;
 import de.teamhardcore.pvp.commands.abuse.CommandKick;
 import de.teamhardcore.pvp.commands.abuse.CommandMute;
+import de.teamhardcore.pvp.commands.arena.CommandArena;
 import de.teamhardcore.pvp.commands.chat.CommandBroadcast;
 import de.teamhardcore.pvp.commands.chat.CommandCommandSpy;
 import de.teamhardcore.pvp.commands.chat.CommandGlobalmute;
@@ -27,6 +20,8 @@ import de.teamhardcore.pvp.commands.chat.CommandMsg;
 import de.teamhardcore.pvp.commands.dev.CommandDebug;
 import de.teamhardcore.pvp.commands.dev.CommandRelore;
 import de.teamhardcore.pvp.commands.dev.CommandRename;
+import de.teamhardcore.pvp.commands.entity.CommandFakeEntity;
+import de.teamhardcore.pvp.commands.gambling.CommandCoinFlip;
 import de.teamhardcore.pvp.commands.help.CommandReport;
 import de.teamhardcore.pvp.commands.help.CommandSupport;
 import de.teamhardcore.pvp.commands.inventory.*;
@@ -40,12 +35,11 @@ import de.teamhardcore.pvp.commands.warp.CommandWarp;
 import de.teamhardcore.pvp.commands.world.CommandNear;
 import de.teamhardcore.pvp.commands.world.CommandSpawner;
 import de.teamhardcore.pvp.database.DatabaseManager;
-import de.teamhardcore.pvp.listeners.custom.MobStackEvents;
-import de.teamhardcore.pvp.managers.DuelManager;
-import de.teamhardcore.pvp.listeners.custom.AchievementReceive;
-import de.teamhardcore.pvp.listeners.custom.AchievementTierReceive;
 import de.teamhardcore.pvp.listeners.block.BlockBreak;
 import de.teamhardcore.pvp.listeners.block.BlockPlace;
+import de.teamhardcore.pvp.listeners.custom.AchievementReceive;
+import de.teamhardcore.pvp.listeners.custom.AchievementTierReceive;
+import de.teamhardcore.pvp.listeners.custom.MobStackEvents;
 import de.teamhardcore.pvp.listeners.entity.EntityDamage;
 import de.teamhardcore.pvp.listeners.inventory.CrateEvents;
 import de.teamhardcore.pvp.listeners.inventory.InventoryClick;
