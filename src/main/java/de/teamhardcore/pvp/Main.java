@@ -7,10 +7,7 @@
 
 package de.teamhardcore.pvp;
 
-import de.howaner.FakeMobs.FakeMobsPlugin;
-import de.teamhardcore.pvp.commands.arena.CommandArena;
-import de.teamhardcore.pvp.commands.entity.CommandFakeEntity;
-import de.teamhardcore.pvp.commands.gambling.CommandCoinFlip;
+import de.realmeze.impl.MezeMain;
 import de.teamhardcore.pvp.commands.inventory.CommandCrate;
 import de.teamhardcore.pvp.commands.abuse.CommandBan;
 import de.teamhardcore.pvp.commands.abuse.CommandKick;
@@ -26,8 +23,10 @@ import de.teamhardcore.pvp.commands.help.CommandReport;
 import de.teamhardcore.pvp.commands.help.CommandSupport;
 import de.teamhardcore.pvp.commands.inventory.*;
 import de.teamhardcore.pvp.commands.player.*;
-import de.teamhardcore.pvp.commands.pvp.*;
-import de.teamhardcore.pvp.commands.rewards.CommandReward;
+import de.teamhardcore.pvp.commands.pvp.CommandClan;
+import de.teamhardcore.pvp.commands.pvp.CommandDuel;
+import de.teamhardcore.pvp.commands.pvp.CommandFix;
+import de.teamhardcore.pvp.commands.pvp.CommandStack;
 import de.teamhardcore.pvp.commands.teleport.*;
 import de.teamhardcore.pvp.commands.warp.CommandHome;
 import de.teamhardcore.pvp.commands.warp.CommandSpawn;
@@ -35,7 +34,6 @@ import de.teamhardcore.pvp.commands.warp.CommandWarp;
 import de.teamhardcore.pvp.commands.world.CommandNear;
 import de.teamhardcore.pvp.commands.world.CommandSpawner;
 import de.teamhardcore.pvp.database.DatabaseManager;
-import de.teamhardcore.pvp.listeners.custom.MobStackEvents;
 import de.teamhardcore.pvp.managers.DuelManager;
 import de.teamhardcore.pvp.listeners.custom.AchievementReceive;
 import de.teamhardcore.pvp.listeners.custom.AchievementTierReceive;
@@ -65,6 +63,7 @@ public class Main extends JavaPlugin {
     private ScoreboardManager scoreboardManager;
     private RankingManager rankingManager;
     private ReportManager reportManager;
+    private LeagueManager leagueManager;
     private ChatManager chatManager;
     private CrateManager crateManager;
     private CombatManager combatManager;
@@ -77,10 +76,6 @@ public class Main extends JavaPlugin {
     private MarketManager marketManager;
     private DuelManager duelManager;
     private AchievementManager achievementManager;
-    private LootProtectionManager lootProtectionManager;
-    private FakeEntityManager fakeEntityManager;
-    private ArenaManager arenaManager;
-    private CoinFlipManager coinFlipManager;
 
     private DatabaseManager databaseManager;
 
@@ -91,19 +86,17 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.arenaManager.onDisable();
-        this.fakeEntityManager.onDisable();
-        FakeMobsPlugin.onDisable(this);
+
     }
 
     @Override
     public void onEnable() {
-        FakeMobsPlugin.onEnable(this);
         registerAll();
         VirtualAnvil.onEnable();
     }
 
     private void registerAll() {
+        new MezeMain(this);
         this.fileManager = new FileManager(this);
 
     /*    this.databaseManager = new DatabaseManager(this);
@@ -124,6 +117,7 @@ public class Main extends JavaPlugin {
         this.rankingManager = new RankingManager(this);
         this.reportManager = new ReportManager(this);
         this.chatManager = new ChatManager(this);
+        this.leagueManager = new LeagueManager(this);
         this.userManager = new UserManager(this);
         this.crateManager = new CrateManager(this);
         this.combatManager = new CombatManager(this);
@@ -134,12 +128,6 @@ public class Main extends JavaPlugin {
         this.marketManager = new MarketManager(this);
         this.duelManager = new DuelManager(this);
         this.achievementManager = new AchievementManager(this);
-        this.lootProtectionManager = new LootProtectionManager(this);
-        this.fakeEntityManager = new FakeEntityManager(this);
-        this.fakeEntityManager.loadAllCustomEntities();
-        this.arenaManager = new ArenaManager(this);
-        this.arenaManager.loadArenas();
-        this.coinFlipManager = new CoinFlipManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -159,12 +147,9 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new PlayerItemConsume(this), this);
         pm.registerEvents(new PlayerMove(this), this);
         pm.registerEvents(new EntityDamage(this), this);
-        pm.registerEvents(new PlayerPickupItem(this), this);
         pm.registerEvents(new AchievementReceive(this), this);
         pm.registerEvents(new AchievementTierReceive(this), this);
         pm.registerEvents(new CrateEvents(this), this);
-        pm.registerEvents(new PlayerInteractFakeMob(this), this);
-        pm.registerEvents(new MobStackEvents(this), this);
 
         getCommand("fix").setExecutor(new CommandFix());
         getCommand("stack").setExecutor(new CommandStack());
@@ -211,13 +196,6 @@ public class Main extends JavaPlugin {
         getCommand("rename").setExecutor(new CommandRename());
         getCommand("relore").setExecutor(new CommandRelore());
         getCommand("crates").setExecutor(new CommandCrate());
-        getCommand("stats").setExecutor(new CommandStats());
-        getCommand("ranking").setExecutor(new CommandRanking());
-        getCommand("fakeentity").setExecutor(new CommandFakeEntity());
-        getCommand("arena").setExecutor(new CommandArena());
-        getCommand("liga").setExecutor(new CommandLeague());
-        getCommand("reward").setExecutor(new CommandReward());
-        getCommand("coinflip").setExecutor(new CommandCoinFlip());
     }
 
     public FileManager getFileManager() {
@@ -254,6 +232,10 @@ public class Main extends JavaPlugin {
 
     public UserManager getUserManager() {
         return userManager;
+    }
+
+    public LeagueManager getLeagueManager() {
+        return leagueManager;
     }
 
     public ChatManager getChatManager() {
@@ -298,22 +280,6 @@ public class Main extends JavaPlugin {
 
     public AchievementManager getAchievementManager() {
         return achievementManager;
-    }
-
-    public LootProtectionManager getLootProtectionManager() {
-        return lootProtectionManager;
-    }
-
-    public FakeEntityManager getFakeEntityManager() {
-        return fakeEntityManager;
-    }
-
-    public ArenaManager getArenaManager() {
-        return arenaManager;
-    }
-
-    public CoinFlipManager getCoinFlipManager() {
-        return coinFlipManager;
     }
 
     public static Main getInstance() {
