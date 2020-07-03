@@ -9,6 +9,9 @@ package de.teamhardcore.pvp.managers;
 
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.user.User;
+import de.teamhardcore.pvp.user.UserData;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +25,16 @@ public class UserManager {
 
     public UserManager(Main plugin) {
         this.plugin = plugin;
+        startCheckStateTask();
+    }
+
+    private void startCheckStateTask() {
+        Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> {
+            for (Player all : Bukkit.getOnlinePlayers()) {
+                UserData userData = Main.getInstance().getUserManager().getUser(all.getUniqueId()).getUserData();
+                userData.checkRewardState();
+            }
+        }, 20L, 20L);
     }
 
     public void addToCache(UUID uuid) {

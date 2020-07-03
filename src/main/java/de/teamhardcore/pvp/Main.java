@@ -10,6 +10,7 @@ package de.teamhardcore.pvp;
 import de.howaner.FakeMobs.FakeMobsPlugin;
 import de.teamhardcore.pvp.commands.arena.CommandArena;
 import de.teamhardcore.pvp.commands.entity.CommandFakeEntity;
+import de.teamhardcore.pvp.commands.gambling.CommandCoinFlip;
 import de.teamhardcore.pvp.commands.inventory.CommandCrate;
 import de.teamhardcore.pvp.commands.abuse.CommandBan;
 import de.teamhardcore.pvp.commands.abuse.CommandKick;
@@ -26,6 +27,7 @@ import de.teamhardcore.pvp.commands.help.CommandSupport;
 import de.teamhardcore.pvp.commands.inventory.*;
 import de.teamhardcore.pvp.commands.player.*;
 import de.teamhardcore.pvp.commands.pvp.*;
+import de.teamhardcore.pvp.commands.rewards.CommandReward;
 import de.teamhardcore.pvp.commands.teleport.*;
 import de.teamhardcore.pvp.commands.warp.CommandHome;
 import de.teamhardcore.pvp.commands.warp.CommandSpawn;
@@ -33,6 +35,7 @@ import de.teamhardcore.pvp.commands.warp.CommandWarp;
 import de.teamhardcore.pvp.commands.world.CommandNear;
 import de.teamhardcore.pvp.commands.world.CommandSpawner;
 import de.teamhardcore.pvp.database.DatabaseManager;
+import de.teamhardcore.pvp.listeners.custom.MobStackEvents;
 import de.teamhardcore.pvp.managers.DuelManager;
 import de.teamhardcore.pvp.listeners.custom.AchievementReceive;
 import de.teamhardcore.pvp.listeners.custom.AchievementTierReceive;
@@ -77,6 +80,7 @@ public class Main extends JavaPlugin {
     private LootProtectionManager lootProtectionManager;
     private FakeEntityManager fakeEntityManager;
     private ArenaManager arenaManager;
+    private CoinFlipManager coinFlipManager;
 
     private DatabaseManager databaseManager;
 
@@ -135,6 +139,7 @@ public class Main extends JavaPlugin {
         this.fakeEntityManager.loadAllCustomEntities();
         this.arenaManager = new ArenaManager(this);
         this.arenaManager.loadArenas();
+        this.coinFlipManager = new CoinFlipManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -159,6 +164,7 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new AchievementTierReceive(this), this);
         pm.registerEvents(new CrateEvents(this), this);
         pm.registerEvents(new PlayerInteractFakeMob(this), this);
+        pm.registerEvents(new MobStackEvents(this), this);
 
         getCommand("fix").setExecutor(new CommandFix());
         getCommand("stack").setExecutor(new CommandStack());
@@ -210,6 +216,8 @@ public class Main extends JavaPlugin {
         getCommand("fakeentity").setExecutor(new CommandFakeEntity());
         getCommand("arena").setExecutor(new CommandArena());
         getCommand("liga").setExecutor(new CommandLeague());
+        getCommand("reward").setExecutor(new CommandReward());
+        getCommand("coinflip").setExecutor(new CommandCoinFlip());
     }
 
     public FileManager getFileManager() {
@@ -302,6 +310,10 @@ public class Main extends JavaPlugin {
 
     public ArenaManager getArenaManager() {
         return arenaManager;
+    }
+
+    public CoinFlipManager getCoinFlipManager() {
+        return coinFlipManager;
     }
 
     public static Main getInstance() {
