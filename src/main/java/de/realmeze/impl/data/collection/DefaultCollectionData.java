@@ -18,6 +18,7 @@ public class DefaultCollectionData implements ICollectionData {
         this.playerData = playerData;
     }
 
+
     @Override
     public ArrayList<ICollectionMilestone> getMilestones() {
         return this.milestones;
