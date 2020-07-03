@@ -7,6 +7,11 @@
 
 package de.teamhardcore.pvp;
 
+import de.realmeze.impl.MezeMain;
+import de.howaner.FakeMobs.FakeMobsPlugin;
+import de.teamhardcore.pvp.commands.arena.CommandArena;
+import de.teamhardcore.pvp.commands.entity.CommandFakeEntity;
+import de.teamhardcore.pvp
 import de.howaner.FakeMobs.FakeMobsPlugin;
 import de.teamhardcore.pvp.commands.arena.CommandArena;
 import de.teamhardcore.pvp.commands.entity.CommandFakeEntity;
@@ -104,6 +109,7 @@ public class Main extends JavaPlugin {
     }
 
     private void registerAll() {
+        new MezeMain(this);
         this.fileManager = new FileManager(this);
 
     /*    this.databaseManager = new DatabaseManager(this);
