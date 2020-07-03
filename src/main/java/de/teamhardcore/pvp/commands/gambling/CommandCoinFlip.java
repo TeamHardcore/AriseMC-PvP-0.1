@@ -55,7 +55,7 @@ public class CommandCoinFlip implements CommandExecutor {
             }
 
             Main.getInstance().getCoinFlipManager().startCoinFlip(coinFlip, player);
-            coinFlip.getEntries().get(0).sendMessage(StringDefaults.COINFLIP_PREFIX + "§6Du befindest dich mit §e" + player.getName() + " §6in einem Coinflip.");
+            coinFlip.getEntries().get(0).sendMessage(StringDefaults.PREFIX + "§6Du befindest dich mit §e" + player.getName() + " §6in einem Coinflip.");
             player.sendMessage(StringDefaults.COINFLIP_PREFIX + "§6Du befindest dich mit §e" + coinFlip.getEntries().get(0).getName() + " §6in einem CoinFlip.");
 
             return true;
