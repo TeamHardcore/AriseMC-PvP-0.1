@@ -8,12 +8,14 @@ package de.teamhardcore.pvp.user;
 
 import de.teamhardcore.pvp.database.TimedDatabaseUpdate;
 
+import java.math.BigDecimal;
+
 public class UserStats extends TimedDatabaseUpdate {
 
     private User user;
 
-    private int kills, deaths, trophies;
-    private long timeCreated, playtime;
+    private int kills, deaths, trophies, killStreak;
+    private long timeCreated, playtime, kopfgeld;
 
     public UserStats(User user) {
         this(user, true, true);
@@ -27,8 +29,10 @@ public class UserStats extends TimedDatabaseUpdate {
 
         this.kills = 0;
         this.deaths = 0;
-        this.trophies = 0;
+        this.trophies = 1572;
         this.playtime = 0L;
+        this.killStreak = 0;
+        this.kopfgeld = 0;
 
         this.timeCreated = System.currentTimeMillis();
 
@@ -43,6 +47,14 @@ public class UserStats extends TimedDatabaseUpdate {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    private void calculateNewPlaytime() {
+        long currentTime = System.currentTimeMillis();
+        long diff = currentTime - this.timeCreated;
+        this.playtime = this.playtime + diff;
+        this.timeCreated = currentTime;
+        setUpdate(true);
     }
 
     public void setKills(int kills) {
@@ -78,11 +90,31 @@ public class UserStats extends TimedDatabaseUpdate {
         setUpdate(true);
     }
 
-    public void getNewPlaytime() {
-        long currentTime = System.currentTimeMillis();
-        long diff = currentTime - this.timeCreated;
-        this.playtime = this.playtime + diff;
-        this.timeCreated = currentTime;
+    public double getKD() {
+        if (this.kills <= 0)
+            return 0.0D;
+        if (this.deaths <= 0)
+            return getKills();
+        BigDecimal dec = new BigDecimal(this.kills / this.deaths);
+        dec = dec.setScale(2, 4);
+        return dec.doubleValue();
+    }
+
+    public int getKillStreak() {
+        return killStreak;
+    }
+
+    public long getKopfgeld() {
+        return kopfgeld;
+    }
+
+    public void setKillStreak(int streak) {
+        this.killStreak = streak;
+        setUpdate(true);
+    }
+
+    public void setKopfgeld(long kopfgeld) {
+        this.kopfgeld = kopfgeld;
         setUpdate(true);
     }
 

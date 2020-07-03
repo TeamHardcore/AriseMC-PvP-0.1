@@ -7,6 +7,7 @@ depend:
   - ProtocolLib
   - WorldGuard
   - WorldEdit
+  - HolographicDisplays
 
 commands:
   fix:
@@ -103,3 +104,16 @@ commands:
   rename:
   relore:
   crates:
+  stats:
+  ranking:
+  fakeentity:
+  arena:
+  liga:
+  reward:
+    aliases:
+      - rewards
+      - belohnung
+      - belohnungen
+  coinflip:
+    aliases:
+      - cf

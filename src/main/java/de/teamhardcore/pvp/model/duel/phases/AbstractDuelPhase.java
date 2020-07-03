@@ -30,7 +30,6 @@ public abstract class AbstractDuelPhase implements Runnable {
     }
 
     public void stop() {
-        setTime(0);
         if (!isCurrentlyRunning()) return;
         this.task.cancel();
         this.task = null;

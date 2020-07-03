@@ -13,10 +13,14 @@ import de.teamhardcore.pvp.model.extras.EnumChatColor;
 import de.teamhardcore.pvp.model.extras.EnumCommand;
 import de.teamhardcore.pvp.model.extras.EnumPerk;
 import de.teamhardcore.pvp.model.gambling.crates.base.BaseCrate;
+import de.teamhardcore.pvp.utils.StringDefaults;
 import org.bukkit.entity.EntityType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class UserData {
@@ -30,6 +34,15 @@ public class UserData {
     private Set<EnumCommand> unlockedCommands;
     private Set<EnumChatColor> unlockedChatColors;
     private Set<String> claimedUniqueKits;
+
+    private boolean dailyReward;
+    private boolean weeklyReward;
+    private boolean monthlyReward;
+    private boolean voteReward;
+
+    private long dailyRewardTime;
+    private long weeklyRewardTime;
+    private long monthlyRewardTime;
 
     private List<BaseCrate> ownedCrates;
 
@@ -395,6 +408,84 @@ public class UserData {
         this.ownedCrates.remove(index);
         saveData((this.user.getPlayer() != null));
     }
+
+    public void setDailyReward(boolean dailyReward) {
+        this.dailyReward = dailyReward;
+        this.dailyRewardTime = System.currentTimeMillis();
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public boolean hasDailyReward() {
+        return dailyReward;
+    }
+
+    public void setWeeklyReward(boolean weeklyReward) {
+        this.weeklyReward = weeklyReward;
+        this.weeklyRewardTime = System.currentTimeMillis();
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public boolean hasWeeklyReward() {
+        return weeklyReward;
+    }
+
+    public void setMonthlyReward(boolean monthlyReward) {
+        this.monthlyReward = monthlyReward;
+        this.monthlyRewardTime = System.currentTimeMillis();
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public boolean hasMonthlyReward() {
+        return monthlyReward;
+    }
+
+    public void setVoteReward(boolean voteReward) {
+        this.voteReward = voteReward;
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public boolean hasVoteReward() {
+        return voteReward;
+    }
+
+    public void checkRewardState() {
+        /*if (this.voteReward && getRemainingVoteCount() == 2) {
+            setVoteReward(false);
+        }*/
+        if (!this.dailyReward) {
+            LocalDate dateNow = LocalDate.now();
+            LocalDate dateLastReward = LocalDateTime.ofInstant(Instant.ofEpochMilli(this.dailyRewardTime), TimeZone.getDefault().toZoneId()).toLocalDate();
+            if (dateNow.isAfter(dateLastReward)) {
+                setDailyReward(true);
+                if (this.user.getPlayer() != null)
+                    this.user.getPlayer().sendMessage(StringDefaults.REWARDS_PREFIX + "§6Deine §eTägliche Belohnung §6ist wieder verfügbar.");
+            }
+        }
+
+        if (!this.weeklyReward) {
+            LocalDate dateNow = LocalDate.now();
+            LocalDate dateLastReward = LocalDateTime.ofInstant(Instant.ofEpochMilli(this.weeklyRewardTime), TimeZone.getDefault().toZoneId()).toLocalDate();
+            if (dateNow.isAfter(dateLastReward)) {
+                setWeeklyReward(true);
+                if (this.user.getPlayer() != null)
+                    this.user.getPlayer().sendMessage(StringDefaults.REWARDS_PREFIX + "§6Deine §eWöchentliche Belohnung §6ist wieder verfügbar.");
+            }
+        }
+
+        if (!this.monthlyReward) {
+            LocalDate dateNow = LocalDate.now();
+            LocalDate dateLastReward = LocalDateTime.ofInstant(Instant.ofEpochMilli(this.monthlyRewardTime), TimeZone.getDefault().toZoneId()).toLocalDate();
+            if (dateNow.isAfter(dateLastReward)) {
+                setMonthlyReward(true);
+                if (this.user.getPlayer() != null)
+                    this.user.getPlayer().sendMessage(StringDefaults.REWARDS_PREFIX + "§6Deine §eMonatliche Belohnung §6ist wieder verfügbar.");
+            }
+        }
+    }
+
+    /*
+    todo: save reward data
+     */
 
     private JSONArray saveCrateData() {
         JSONArray array = new JSONArray();

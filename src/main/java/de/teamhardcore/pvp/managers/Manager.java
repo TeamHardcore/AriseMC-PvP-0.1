@@ -24,6 +24,7 @@ public class Manager {
     private final HashMap<Player, TPDelay> teleportDelays = new HashMap<>();
     private final HashMap<Player, Location> lastPositions = new HashMap<>();
     private final HashMap<Player, Long> healCooldown = new HashMap<>();
+    private final HashMap<Player, Long> goldenAppleCooldown = new HashMap<>();
     private final HashMap<EnumPerk, Set<Player>> perkEffects = new HashMap<>();
     private final HashMap<UUID, SpyMode> commandSpyModeCache = new HashMap<>();
     private final HashMap<UUID, SpyMode> messageSpyModeCache = new HashMap<>();
@@ -111,6 +112,10 @@ public class Manager {
                 player.addPotionEffect(effect);
             }
         }
+    }
+
+    public HashMap<Player, Long> getGoldenAppleCooldown() {
+        return goldenAppleCooldown;
     }
 
     public HashMap<Player, Long> getTeleportCooldowns() {

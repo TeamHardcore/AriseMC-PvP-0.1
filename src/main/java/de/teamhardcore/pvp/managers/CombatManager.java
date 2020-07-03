@@ -11,10 +11,7 @@ import de.teamhardcore.pvp.utils.StringDefaults;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -126,6 +123,11 @@ public class CombatManager {
 
             Player player = (Player) event.getEntity();
 
+            if (event.getDamager().getType().equals(EntityType.SNOWBALL) || event.getDamager().getType().equals(EntityType.FISHING_HOOK)) {
+                event.setCancelled(true);
+                return;
+            }
+
             if (event.getDamager() instanceof Player) {
                 Player damager = (Player) event.getDamager();
 
@@ -157,6 +159,7 @@ public class CombatManager {
                 if (!(pro.getShooter() instanceof Player)) {
                     return;
                 }
+
                 Player damager = (Player) pro.getShooter();
 
                 if (Main.getInstance().getDuelManager().getDuelCache().containsKey(damager.getUniqueId()) || Main.getInstance().getDuelManager().getDuelCache().containsKey(player.getUniqueId())) {

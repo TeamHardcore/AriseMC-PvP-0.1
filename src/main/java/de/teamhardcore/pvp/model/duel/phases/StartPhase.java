@@ -41,14 +41,17 @@ public class StartPhase extends AbstractDuelPhase {
         }
 
         if (getTime() == 10 || getTime() == 8 || getTime() == 7 || getTime() == 6)
-            this.getDuel().sendMessage("Du wirst in " + (getTime() - 5) + " " + (getTime() - 5 == 1 ? "Sekunde" : "Sekunden") + " teleportiert.");
+            this.getDuel().sendMessage(StringDefaults.DUEL_PREFIX + "§eDu wirst in §7" + (getTime() - 5) + " §e" + (getTime() - 5 == 1 ? "Sekunde" : "Sekunden") + " teleportiert.");
 
         setTime(getTime() - 1);
     }
 
     private void teleportPlayers() {
         if (this.getDuel().getMap().getLocations().isEmpty() || this.getDuel().getMap().getLocations().size() < 2) {
-            System.out.println("map doesn't contains two locations");
+            stop();
+            this.getDuel().startPhase(new EndPhase(this.getDuel()));
+            this.getDuel().sendMessage(StringDefaults.DUEL_PREFIX + "§cEin Fehler ist aufgetreten, bitte melden!");
+            this.getDuel().sendMessage(StringDefaults.DUEL_PREFIX + "§cDas Duell wurde vorsichtshalber beendet.");
             return;
         }
 

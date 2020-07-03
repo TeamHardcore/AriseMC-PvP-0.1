@@ -7,8 +7,12 @@
 
 package de.teamhardcore.pvp.listeners.inventory;
 
+import com.google.gson.internal.$Gson$Preconditions;
 import de.teamhardcore.pvp.Main;
+import de.teamhardcore.pvp.commands.pvp.CommandClan;
+import de.teamhardcore.pvp.commands.pvp.CommandStats;
 import de.teamhardcore.pvp.inventories.*;
+import de.teamhardcore.pvp.managers.RankingManager;
 import de.teamhardcore.pvp.model.MarketItem;
 import de.teamhardcore.pvp.model.Report;
 import de.teamhardcore.pvp.model.Transaction;
@@ -37,13 +41,18 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class InventoryClick implements Listener {
@@ -327,6 +336,58 @@ public class InventoryClick implements Listener {
             if (slot == 27) {
                 player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
                 this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openMainInventory(player), 1L);
+            }
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lBelohnungen")) {
+            event.setCancelled(true);
+
+            if (slot == 11) {
+                if (!data.hasDailyReward()) {
+                    player.sendMessage(StringDefaults.REWARDS_PREFIX + "§cDu hast die Tägliche Belohnung bereits abgeholt.");
+                    player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
+                    return;
+                }
+                data.setDailyReward(true);
+                player.sendMessage(StringDefaults.REWARDS_PREFIX + "§6Du hast die §eTägliche Belohnung §6abgeholt.");
+                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                giveRandomReward(EnumRewardType.DAILY, player);
+            }
+
+            if (slot == 12) {
+                if (!data.hasWeeklyReward()) {
+                    player.sendMessage(StringDefaults.REWARDS_PREFIX + "§cDu hast die Wöchentliche Belohnung bereits abgeholt.");
+                    player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
+                    return;
+                }
+                data.setWeeklyReward(true);
+                player.sendMessage(StringDefaults.REWARDS_PREFIX + "§6Du hast die §eWöchentliche Belohnung §6abgeholt.");
+                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                giveRandomReward(EnumRewardType.WEEKLY, player);
+            }
+
+            if (slot == 13) {
+                if (!data.hasMonthlyReward()) {
+                    player.sendMessage(StringDefaults.REWARDS_PREFIX + "§cDu hast die Monatliche Belohnung bereits abgeholt.");
+                    player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
+                    return;
+                }
+                data.setMonthlyReward(true);
+                player.sendMessage(StringDefaults.REWARDS_PREFIX + "§6Du hast die §eMonatliche Belohnung §6abgeholt.");
+                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                giveRandomReward(EnumRewardType.MONTHLY, player);
+            }
+
+            if (slot == 15) {
+                if (!data.hasVoteReward()) {
+                    player.sendMessage(StringDefaults.REWARDS_PREFIX + "§cDu hast die Vote Belohnung bereits abgeholt.");
+                    player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
+                    return;
+                }
+                data.setVoteReward(true);
+                player.sendMessage(StringDefaults.REWARDS_PREFIX + "§6Du hast die §eVote Belohnung §6abgeholt.");
+                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                giveRandomReward(EnumRewardType.VOTE, player);
             }
         }
 
@@ -932,204 +993,138 @@ public class InventoryClick implements Listener {
 
         }
 
-        if (inventory.getTitle().equalsIgnoreCase("§c§lDuelleinsatz")) {
+        if (inventory.getTitle().equalsIgnoreCase("§c§lRanking")) {
             event.setCancelled(true);
 
-            DuelRequest request = this.plugin.getDuelManager().getRequests().get(player);
-            if (request == null) {
-                player.closeInventory();
+            if (event.getRawSlot() >= 1 && event.getRawSlot() <= 7 && itemStack.containsEnchantment(Enchantment.ARROW_DAMAGE)) {
+                player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
                 return;
             }
 
-            if (slot == 11) {
-                request.switchArmorOption();
-                DuelInventory.openDeploymentInventory(player, request);
+            if (slot == 1) {
+                player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
+                this.plugin.getRankingManager().updateRankingInventory(inventory, RankingManager.RankingType.PVP);
                 return;
             }
 
-            if (slot == 13) {
-                new VirtualAnvil(player, "Einsatz: ") {
-                    @Override
-                    public void onConfirm(String text) {
-                        if (text == null) {
-                            player.sendMessage(StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
-                            player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
-                            return;
-                        }
+            if (slot == 2) {
+                player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
+                this.plugin.getRankingManager().updateRankingInventory(inventory, RankingManager.RankingType.TROPHIES);
+                return;
+            }
 
-                        String coinString = text.startsWith("Einsatz: ") ? text.substring(9) : text;
+            if (slot == 4) {
+                player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
+                this.plugin.getRankingManager().updateRankingInventory(inventory, RankingManager.RankingType.CLAN);
+                return;
+            }
 
-                        long coins;
-                        try {
-                            coins = Long.parseLong(coinString);
-                        } catch (NumberFormatException ex) {
-                            player.sendMessage(StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
-                            return;
-                        }
+            if (slot == 6) {
+                player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
+                this.plugin.getRankingManager().updateRankingInventory(inventory, RankingManager.RankingType.MONEY);
+                return;
+            }
 
-                        setConfirmedSuccessfully(true);
-                        request.setCoins(coins);
-                        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> DuelInventory.openDeploymentInventory(player, request), 1L);
+            if (slot == 7) {
+                player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 1.0F);
+                this.plugin.getRankingManager().updateRankingInventory(inventory, RankingManager.RankingType.PLAYTIME);
+                return;
+            }
+
+            RankingManager.RankingType type = RankingManager.RankingType.PVP;
+
+            for (int i = 1; i <= 7; i++) {
+                ItemStack current = inventory.getItem(i);
+                if (current.containsEnchantment(Enchantment.ARROW_DAMAGE)) {
+                    switch (i) {
+                        case 1:
+                            type = RankingManager.RankingType.PVP;
+                            break;
+                        case 2:
+                            type = RankingManager.RankingType.TROPHIES;
+                            break;
+                        case 4:
+                            type = RankingManager.RankingType.CLAN;
+                            break;
+                        case 6:
+                            type = RankingManager.RankingType.MONEY;
+                            break;
+                        case 7:
+                            type = RankingManager.RankingType.PLAYTIME;
+                            break;
+                    }
+                }
+            }
+
+            if ((slot >= 29 && slot <= 33) || (slot >= 38 && slot <= 42)) {
+
+                if (type != RankingManager.RankingType.CLAN && !itemStack.isSimilar(RankingManager.notOccupiedItem)) {
+                    ItemMeta meta = itemStack.getItemMeta();
+                    int pos = Integer.parseInt(ChatColor.stripColor(meta.getDisplayName()).split(" ")[0].substring(1));
+
+                    AbstractMap.SimpleEntry<UUID, Long> posEntry = null;
+
+                    switch (type) {
+                        case PVP:
+                            posEntry = this.plugin.getRankingManager().getPvpRanking().get(pos - 1);
+                            break;
+                        case TROPHIES:
+                            posEntry = this.plugin.getRankingManager().getTrophyRanking().get(pos - 1);
+                            break;
+                        case MONEY:
+                            posEntry = this.plugin.getRankingManager().getMoneyRanking().get(pos - 1);
+                            break;
+                        case PLAYTIME:
+                            posEntry = this.plugin.getRankingManager().getPlaytimeRanking().get(pos - 1);
+                            break;
                     }
 
-                    @Override
-                    public void onCancel() {
-                        if (!isConfirmedSuccessfully())
-                            Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> DuelInventory.openDeploymentInventory(player, request), 1L);
-                    }
-                };
-                return;
-            }
-
-            if (slot == 18) {
-                DuelInventory.openRequestInventory(player, true, request);
-                return;
-            }
-
-        }
-
-        if (inventory.getTitle().equalsIgnoreCase("§c§lDuelleinstellungen")) {
-            event.setCancelled(true);
-
-            DuelRequest request = this.plugin.getDuelManager().getRequests().get(player);
-            if (request == null) {
-                player.closeInventory();
-                return;
-            }
-
-            if (slot == 11) {
-                request.switchGoldenAppleOption();
-                DuelInventory.openSettingsInventory(player, request);
-                return;
-            }
-
-            if (slot == 13) {
-                request.switchPotionLimitation();
-                DuelInventory.openSettingsInventory(player, request);
-                return;
-            }
-
-            if (slot == 15) {
-                request.switchDebuffOption();
-                DuelInventory.openSettingsInventory(player, request);
-                return;
-            }
-
-
-            if (slot == 18) {
-                DuelInventory.openRequestInventory(player, true, request);
-                return;
-            }
-
-        }
-
-        if (inventory.getTitle().equalsIgnoreCase("§c§lDuell")) {
-            event.setCancelled(true);
-
-            DuelRequest request = this.plugin.getDuelManager().getRequests().get(player);
-            if (request == null) {
-                player.closeInventory();
-                return;
-            }
-
-            if (slot == 11) {
-                request.switchCategory();
-                DuelInventory.openRequestInventory(player, true, request);
-                return;
-            }
-
-            if (slot == 13) {
-                DuelInventory.openSettingsInventory(player, request);
-            }
-
-            if (slot == 15) {
-                DuelInventory.openDeploymentInventory(player, request);
-            }
-
-            if (slot == 31) {
-                player.closeInventory();
-                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
-                player.sendMessage(" ");
-                player.sendMessage(StringDefaults.PREFIX + "§eDie Konfiguration wurde gespeichert.");
-                player.sendMessage(StringDefaults.PREFIX + "§eFordere jetzt deinen Gegner heraus:");
-                new JSONMessage(StringDefaults.PREFIX + "§6/duell invite <Spieler> §7§o[Klick]").tooltip("§6Spieler herausfordern").suggestCommand("/duell invite ").send(player);
-                player.sendMessage(" ");
-                player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lDUELL §8§l§m*-*-*-*-*-*-*-*-*");
-            }
-
-        }
-
-    /*    if (inventory.getTitle().equalsIgnoreCase("§c§lDuell erstellen")) {
-            event.setCancelled(true);
-
-            DuelConfiguration configuration = this.plugin.getDuelManager().getConfigurationCache().get(player.getUniqueId());
-
-            if (configuration == null) {
-                player.closeInventory();
-                player.sendMessage(StringDefaults.DUEL_PREFIX + "§cEin Fehler ist aufgetreten, bitte versuche es erneut.");
-                return;
-            }
-
-            if (slot == 20) {
-                configuration.getSettings().updateMaxHealStacks();
-                DuelInventory.openDuelRequestInventory(player, true, configuration);
-            }
-
-            if (slot == 22) {
-                configuration.getSettings().setUseGoldenApple(!configuration.getSettings().canUseGoldenApple());
-                DuelInventory.openDuelRequestInventory(player, true, configuration);
-            }
-
-            if (slot == 24) {
-                new VirtualAnvil(player, "Einsatz: ") {
-                    @Override
-                    public void onConfirm(String text) {
-                        if (text == null) {
-                            player.sendMessage("§c§lDUELL " + StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
-                            player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
-                            return;
-                        }
-
-                        String coinString = text.startsWith("Einsatz: ") ? text.substring(9) : text;
-
-                        long coins;
-                        try {
-                            coins = Long.parseLong(coinString);
-                        } catch (NumberFormatException ex) {
-                            player.sendMessage("§c§lDUELL " + StringDefaults.DUEL_PREFIX + "§cBitte gebe einen gültigen Betrag an.");
-                            return;
-                        }
-
-                        setConfirmedSuccessfully(true);
-                        configuration.getDeployment().setCoins(coins);
-                        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> DuelInventory.openDuelRequestInventory(player, true, configuration),
-                                1L);
+                    if (posEntry == null) {
+                        this.plugin.getRankingManager().updateRankingInventory(inventory, type);
+                        return;
                     }
 
-                    @Override
-                    public void onCancel() {
-                        if (!isConfirmedSuccessfully())
-                            Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> DuelInventory.openDuelRequestInventory(player, true, configuration), 1L);
-                    }
-                };
-            }
+                    event.getView().close();
+                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(posEntry.getKey());
 
-            if (slot == 40) {
-                if (user.getUserMoney().getMoney() < configuration.getDeployment().getCoins()) {
-                    player.sendMessage(StringDefaults.DUEL_PREFIX + "§cDu hast nicht genug Münzen um für diesen Wetteinsatz.");
-                    player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
-                    return;
+                    if (offlinePlayer == null || !offlinePlayer.hasPlayedBefore()) return;
+                    player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 1.0F, 1.0F);
+                    CommandStats.sendStats(player, offlinePlayer);
                 }
 
-                user.getUserMoney().removeMoney(configuration.getDeployment().getCoins());
 
-                player.closeInventory();
-                player.sendMessage(StringDefaults.DUEL_PREFIX + "§eDu hast eine Duell-Konfiguration erstellt.");
-                new JSONMessage(StringDefaults.DUEL_PREFIX + "§eVerwende §7/duell invite <Spieler> §7§o[Klick]").suggestCommand("/duel invite ").send(player);
+                if (type == RankingManager.RankingType.CLAN && !itemStack.isSimilar(RankingManager.notOccupiedItem)) {
+                    ItemMeta meta = itemStack.getItemMeta();
 
-                Main.getInstance().getDuelManager().getConfigurationCache().put(player.getUniqueId(), configuration);
+                    String clanName = ChatColor.stripColor(meta.getDisplayName().substring((event.getRawSlot() == 42) ? 18 : 17));
+
+                    Clan clan = this.plugin.getClanManager().getClan(clanName);
+
+                    if (clan == null) {
+                        this.plugin.getRankingManager().updateRankingInventory(inventory, type);
+                        return;
+                    }
+
+                    event.getView().close();
+                    CommandClan.sendStats(player, clan);
+                }
+
             }
+
         }
-    }*/
     }
+
+    private void giveRandomReward(EnumRewardType rewardType, Player player) {
+
+    }
+
+
+    private enum EnumRewardType {
+        DAILY,
+        WEEKLY,
+        MONTHLY,
+        VOTE,
+        ;
+    }
+
 }
