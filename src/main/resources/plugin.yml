@@ -108,3 +108,12 @@ commands:
   ranking:
   fakeentity:
   arena:
+  liga:
+  reward:
+    aliases:
+      - rewards
+      - belohnung
+      - belohnungen
+  coinflip:
+    aliases:
+      - cf

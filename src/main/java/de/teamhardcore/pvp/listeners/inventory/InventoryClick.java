@@ -339,6 +339,58 @@ public class InventoryClick implements Listener {
             }
         }
 
+        if (inventory.getTitle().equalsIgnoreCase("§c§lBelohnungen")) {
+            event.setCancelled(true);
+
+            if (slot == 11) {
+                if (!data.hasDailyReward()) {
+                    player.sendMessage(StringDefaults.REWARDS_PREFIX + "§cDu hast die Tägliche Belohnung bereits abgeholt.");
+                    player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
+                    return;
+                }
+                data.setDailyReward(true);
+                player.sendMessage(StringDefaults.REWARDS_PREFIX + "§6Du hast die §eTägliche Belohnung §6abgeholt.");
+                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                giveRandomReward(EnumRewardType.DAILY, player);
+            }
+
+            if (slot == 12) {
+                if (!data.hasWeeklyReward()) {
+                    player.sendMessage(StringDefaults.REWARDS_PREFIX + "§cDu hast die Wöchentliche Belohnung bereits abgeholt.");
+                    player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
+                    return;
+                }
+                data.setWeeklyReward(true);
+                player.sendMessage(StringDefaults.REWARDS_PREFIX + "§6Du hast die §eWöchentliche Belohnung §6abgeholt.");
+                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                giveRandomReward(EnumRewardType.WEEKLY, player);
+            }
+
+            if (slot == 13) {
+                if (!data.hasMonthlyReward()) {
+                    player.sendMessage(StringDefaults.REWARDS_PREFIX + "§cDu hast die Monatliche Belohnung bereits abgeholt.");
+                    player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
+                    return;
+                }
+                data.setMonthlyReward(true);
+                player.sendMessage(StringDefaults.REWARDS_PREFIX + "§6Du hast die §eMonatliche Belohnung §6abgeholt.");
+                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                giveRandomReward(EnumRewardType.MONTHLY, player);
+            }
+
+            if (slot == 15) {
+                if (!data.hasVoteReward()) {
+                    player.sendMessage(StringDefaults.REWARDS_PREFIX + "§cDu hast die Vote Belohnung bereits abgeholt.");
+                    player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
+                    return;
+                }
+                data.setVoteReward(true);
+                player.sendMessage(StringDefaults.REWARDS_PREFIX + "§6Du hast die §eVote Belohnung §6abgeholt.");
+                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                giveRandomReward(EnumRewardType.VOTE, player);
+            }
+        }
+
         if (inventory.getTitle().equalsIgnoreCase("§c§lErfolge")) {
             event.setCancelled(true);
 
@@ -1060,6 +1112,19 @@ public class InventoryClick implements Listener {
             }
 
         }
+    }
+
+    private void giveRandomReward(EnumRewardType rewardType, Player player) {
 
     }
+
+
+    private enum EnumRewardType {
+        DAILY,
+        WEEKLY,
+        MONTHLY,
+        VOTE,
+        ;
+    }
+
 }
