@@ -1,11 +1,11 @@
-package de.realmeze.impl.milestones;
+package de.realmeze.impl.milestone;
 
 import de.realmeze.api.collection.collection.ICollectionMilestone;
 
-public class MiningMilestone implements ICollectionMilestone {
+public class DefaultMilestone implements ICollectionMilestone {
     private int amount;
 
-    public MiningMilestone(int amount){
+    public DefaultMilestone(int amount){
         this.amount = amount;
     }
 

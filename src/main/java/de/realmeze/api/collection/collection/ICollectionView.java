@@ -1,5 +1,9 @@
 package de.realmeze.api.collection.collection;
 
-public interface ICollectionView {
+import de.realmeze.api.item.IItem;
 
+public interface ICollectionView {
+    String getDisplayName();
+    String getDescription();
+    IItem getDisplayItem();
 }

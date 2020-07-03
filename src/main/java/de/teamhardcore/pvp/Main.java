@@ -7,6 +7,7 @@
 
 package de.teamhardcore.pvp;
 
+import de.realmeze.impl.MezeMain;
 import de.teamhardcore.pvp.commands.inventory.CommandCrate;
 import de.teamhardcore.pvp.commands.abuse.CommandBan;
 import de.teamhardcore.pvp.commands.abuse.CommandKick;
@@ -95,6 +96,7 @@ public class Main extends JavaPlugin {
     }
 
     private void registerAll() {
+        new MezeMain(this);
         this.fileManager = new FileManager(this);
 
     /*    this.databaseManager = new DatabaseManager(this);

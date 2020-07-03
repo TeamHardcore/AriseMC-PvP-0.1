@@ -1,17 +1,18 @@
 package de.realmeze.impl.item;
 
 import de.realmeze.api.item.IItem;
+import de.realmeze.api.item.IItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-public class AriseBaseItemBuilder implements IItem {
+public class ItemBuilder implements IItemBuilder {
 
     private final ItemStack itemStack = new ItemStack(Material.AIR);
 
-    public AriseBaseItemBuilder(){
+    public ItemBuilder(){
     }
 
     @Override
@@ -30,19 +31,19 @@ public class AriseBaseItemBuilder implements IItem {
     }
 
     @Override
-    public IItem setItemMeta(ItemMeta itemMeta) {
+    public IItemBuilder setItemMeta(ItemMeta itemMeta) {
         this.itemStack.setItemMeta(itemMeta);
         return this;
     }
 
     @Override
-    public IItem setMaterial(Material material) {
+    public IItemBuilder setMaterial(Material material) {
         this.itemStack.setType(material);
         return this;
     }
 
     @Override
-    public IItem setLore(int line, String lore) {
+    public IItemBuilder setLore(int line, String lore) {
         ItemMeta im = this.getItemMeta();
         List<String> oldLore = im.getLore();
         oldLore.set(line, lore);
@@ -51,7 +52,7 @@ public class AriseBaseItemBuilder implements IItem {
     }
 
     @Override
-    public IItem setName(String name) {
+    public IItemBuilder setName(String name) {
         ItemMeta im = this.itemStack.getItemMeta();
         im.setDisplayName(name);
         this.itemStack.setItemMeta(im);
@@ -59,15 +60,19 @@ public class AriseBaseItemBuilder implements IItem {
     }
 
     @Override
-    public IItem setAmount(int amount) {
+    public IItemBuilder setAmount(int amount) {
         this.itemStack.setAmount(amount);
         return this;
     }
 
     @Override
-    public IItem setDurability(short durability) {
+    public IItemBuilder setDurability(short durability) {
         this.itemStack.setDurability(durability);
         return this;
+    }
+
+    public CollectionItem buildCollectionItem(){
+        return new CollectionItem(getVanillaItemStack());
     }
 
 }
