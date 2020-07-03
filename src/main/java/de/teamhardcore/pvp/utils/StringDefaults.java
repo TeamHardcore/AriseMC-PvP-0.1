@@ -15,6 +15,7 @@ public class StringDefaults {
     public final static String SPY_PREFIX = "§c§lSPY " + PREFIX;
     public static final String NEWBIE_PREFIX = "§a§lNEU " + PREFIX;
     public static final String REWARDS_PREFIX = "§c§lREWARD " + PREFIX;
+    public static final String COINFLIP_PREFIX = "§c§lCF " + PREFIX;
 
     public final static String SLOT_UPGRADE = "slot";
     public final static String WARP_UPGRADE = "warp";
