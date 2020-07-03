@@ -10,11 +10,11 @@ import de.realmeze.impl.view.DefaultCollectionView;
 
 public class DefaultCollection implements ICollection {
 
-    private CollectionType collectionType;
-    private DefaultCollectionView collectionView;
-    private CollectionItem collectionItem;
-    private DefaultCollectionData collectionData;
-    private IIdentifier collectionId;
+    private final CollectionType collectionType;
+    private final DefaultCollectionView collectionView;
+    private final CollectionItem collectionItem;
+    private final DefaultCollectionData collectionData;
+    private final IIdentifier collectionId;
 
     public DefaultCollection(CollectionType collectionType, DefaultCollectionView collectionView,
                              CollectionItem collectionItem, DefaultCollectionData collectionData, CollectionId collectionId) {

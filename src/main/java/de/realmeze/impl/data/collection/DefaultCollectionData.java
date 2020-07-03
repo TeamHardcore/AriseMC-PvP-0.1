@@ -10,13 +10,14 @@ import java.util.HashMap;
 
 public class DefaultCollectionData implements ICollectionData {
 
-    private ArrayList<ICollectionMilestone> milestones;
-    private HashMap<Player, ? extends DefaultPlayerCollectionData> playerData;
+    private final ArrayList<ICollectionMilestone> milestones;
+    private final HashMap<Player, ? extends DefaultPlayerCollectionData> playerData;
 
     public DefaultCollectionData(ArrayList<ICollectionMilestone> milestones, HashMap<Player, DefaultPlayerCollectionData> playerData) {
         this.milestones = milestones;
         this.playerData = playerData;
     }
+
 
     @Override
     public ArrayList<ICollectionMilestone> getMilestones() {
