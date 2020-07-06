@@ -72,9 +72,9 @@ public class CommandKick implements CommandExecutor {
             }
 
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < args.length; ++i) {
-                sb.append(args[i]).append(" ");
-            }
+            for (String arg : args)
+                sb.append(arg).append(" ");
+
             String reason = sb.length() == 0 ? "-" : sb.substring(0, sb.length() - 1);
 
             Bukkit.getOnlinePlayers().forEach(players -> {

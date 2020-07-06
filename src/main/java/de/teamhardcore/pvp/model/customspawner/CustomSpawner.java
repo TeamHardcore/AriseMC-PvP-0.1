@@ -15,8 +15,8 @@ import java.util.UUID;
 
 public class CustomSpawner {
 
-    private String randomID;
-    private UUID owner;
+    private final String randomID;
+    private final UUID owner;
     private EnumSpawnerType type;
     private Location location;
 

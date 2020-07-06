@@ -24,6 +24,7 @@ public class CommandLeague implements CommandExecutor {
         Player player = (Player) cs;
         UserStats stats = Main.getInstance().getUserManager().getUser(player.getUniqueId()).getUserStats();
         EnumLeague currentLeague = EnumLeague.getLeagueByTrophies(stats.getTrophies());
+        EnumLeague nextLeague = EnumLeague.getNextLeague(stats.getTrophies());
 
         player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lLIGA §8§l§m*-*-*-*-*-*-*-*-*");
         player.sendMessage(" §f§lAlle verfügbaren Ligen:");
@@ -34,6 +35,8 @@ public class CommandLeague implements CommandExecutor {
         player.sendMessage(" §8■ §r" + EnumLeague.PLATINUM.getDisplayName() + " §7(§6" + EnumLeague.PLATINUM.getTrophies() + " Trophäen§7)");
         player.sendMessage("");
         player.sendMessage(" §6Deine momentane Liga: " + currentLeague.getDisplayName() + " §7(§6" + Util.formatNumber(stats.getTrophies()) + " Trophäen§7)");
+        if (nextLeague != null)
+            player.sendMessage(" §6Nächste Liga: " + nextLeague.getDisplayName() + " §7(§6Noch " + Util.formatNumber(nextLeague.getTrophies() - stats.getTrophies()) + " Trophäen§7)");
         player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lLIGA §8§l§m*-*-*-*-*-*-*-*-*");
 
         return true;

@@ -288,6 +288,7 @@ public class InventoryClick implements Listener {
             targetUser.getUserMarket().addTotalSale(item.getPrice());
 
             this.plugin.getMarketManager().removeOffer(owner, item);
+            this.plugin.getMarketManager().removeItemFromMarket(item);
 
             if (target != null && target.isOnline()) {
                 target.sendMessage(StringDefaults.PREFIX + "§eEin Item von dir wurde aus dem Auktionshaus gekauft.");
@@ -1117,7 +1118,6 @@ public class InventoryClick implements Listener {
     private void giveRandomReward(EnumRewardType rewardType, Player player) {
 
     }
-
 
     private enum EnumRewardType {
         DAILY,

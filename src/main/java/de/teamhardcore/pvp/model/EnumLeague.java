@@ -30,6 +30,18 @@ public enum EnumLeague {
         return displayName;
     }
 
+    public static EnumLeague getNextLeague(int trophies) {
+        EnumLeague chosen = null;
+
+        for (EnumLeague league : values()) {
+            if (league.getTrophies() >= trophies)
+                if (chosen == null || chosen.getTrophies() > league.getTrophies())
+                    chosen = league;
+        }
+
+        return chosen;
+    }
+
     public static EnumLeague getLeagueByTrophies(int trophies) {
         EnumLeague chosen = null;
 

@@ -117,3 +117,7 @@ commands:
   coinflip:
     aliases:
       - cf
+  punishment:
+  trade:
+    aliases:
+      - handel
