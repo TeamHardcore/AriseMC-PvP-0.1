@@ -11,8 +11,8 @@ public abstract class AsyncTimedUpdate implements Handler {
 
     private boolean update;
     private boolean forceUpdate;
-    private long updateDelay;
-    private String handlerName;
+    private final long updateDelay;
+    private final String handlerName;
     private HandlerGroup group;
 
     public AsyncTimedUpdate(String handlerName, long updateDelay, boolean update) {

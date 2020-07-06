@@ -17,12 +17,12 @@ public class User {
     private final UUID uuid;
     private final Player player;
 
-    private UserMoney userMoney;
-    private UserData userData;
-    private UserStats userStats;
-    private UserMarket userMarket;
-    private UserHomes userHomes;
-    private UserAchievements userAchievements;
+    private final UserMoney userMoney;
+    private final UserData userData;
+    private final UserStats userStats;
+    private final UserMarket userMarket;
+    private final UserHomes userHomes;
+    private final UserAchievements userAchievements;
 
     private int homeLimit;
 
@@ -47,7 +47,6 @@ public class User {
 
         if (this.player.isOp() || this.player.hasPermission("*")) {
             this.homeLimit = -1;
-            return;
         }
     }
 
