@@ -1,8 +1,11 @@
 package de.realmeze.api.collection.event;
 
-import org.bukkit.event.Event;
+import de.realmeze.api.collection.collection.ICollection;
+
+import java.util.ArrayList;
 
 public interface ICollectionEvent {
-    boolean execute();
-    void countToCollection();
+    void execute();
+    void awardCollections();
+    ArrayList<ICollection> getCollections();
 }

@@ -5,7 +5,9 @@ import de.realmeze.api.item.IItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.MaterialData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemBuilder implements IItemBuilder {
@@ -36,6 +38,12 @@ public class ItemBuilder implements IItemBuilder {
         return this;
     }
 
+    public IItemBuilder setFishType(int i){
+        short s = (short) i;
+        this.getVanillaItemStack().setDurability(s);
+        return this;
+    }
+
     @Override
     public IItemBuilder setMaterial(Material material) {
         this.itemStack.setType(material);
@@ -45,8 +53,14 @@ public class ItemBuilder implements IItemBuilder {
     @Override
     public IItemBuilder setLore(int line, String lore) {
         ItemMeta im = this.getItemMeta();
-        List<String> oldLore = im.getLore();
-        oldLore.set(line, lore);
+        if(im.getLore() != null){
+            List<String> oldLore = im.getLore();
+            oldLore.set(line, lore);
+        } else {
+            List<String> realLore = new ArrayList<>();
+            realLore.add(lore);
+            im.setLore(realLore);
+        }
         this.setItemMeta(im);
         return this;
     }

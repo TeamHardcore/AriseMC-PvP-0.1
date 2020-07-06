@@ -9,4 +9,5 @@ public interface ICollectionGroup {
     ArrayList<ICollection> getCollections();
     ICollectionGroupView getView();
     IIdentifier getIdentifier();
+    void add(ICollection collection);
 }

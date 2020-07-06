@@ -9,5 +9,6 @@ public interface ICollection {
     ICollectable getCollectable();
     ICollectionType getType();
     ICollectionData getData();
+    String[] drops();
 
 }

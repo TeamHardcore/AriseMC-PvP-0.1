@@ -13,5 +13,6 @@ public interface IItemBuilder extends IItem {
     IItemBuilder setName(String name);
     IItemBuilder setAmount(int amount);
     IItemBuilder setDurability(short durability);
+    IItemBuilder setFishType(int i);
     CollectionItem buildCollectionItem();
 }

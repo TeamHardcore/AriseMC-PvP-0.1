@@ -117,3 +117,4 @@ commands:
   coinflip:
     aliases:
       - cf
+  collection:
