@@ -13,11 +13,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Manager {
 
     private final Main plugin;
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
     private final HashMap<Player, Long> teleportCooldowns = new HashMap<>();
     private final HashMap<Player, TPRequest> teleportRequests = new HashMap<>();
@@ -45,9 +48,9 @@ public class Manager {
     }
 
     private void startTabListTask() {
-        this.plugin.getServer().getScheduler().runTaskTimer(this.plugin, () -> Bukkit.getOnlinePlayers().forEach(players -> {
-            Util.sendHeaderFooter(players, "\n " + StringDefaults.SERVER_NAME + " \n§a\n §7Es befinden sich §6" + Bukkit.getOnlinePlayers().size() * new Random().nextInt(256) + " Spieler §7auf dem Server \n", "\n§7Unsere Website§8: §6www.arisemc.de\n§7Unser TeamSpeak§8: §6ts.arisemc.de");
-        }), 20L, 20L);
+        this.plugin.getServer().getScheduler().runTaskTimer(this.plugin, () -> Bukkit.getOnlinePlayers().forEach(players -> Util.sendHeaderFooter(players,
+                "\n " + StringDefaults.SERVER_NAME + " \n§a\n §7Es befinden sich §6" + this.plugin.getUserManager().getOnlinePlayers() + " Spieler §7auf dem Server \n",
+                "\n§7Unsere Website§8: §6www.arisemc.de\n§7Unser TeamSpeak§8: §6ts.arisemc.de\n\n" + dateTimeFormatter.format(LocalDateTime.now()))), 20L, 20L);
     }
 
     private void startAutoMessages() {

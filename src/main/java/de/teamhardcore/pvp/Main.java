@@ -26,6 +26,7 @@ import de.teamhardcore.pvp.commands.help.CommandReport;
 import de.teamhardcore.pvp.commands.help.CommandSupport;
 import de.teamhardcore.pvp.commands.inventory.*;
 import de.teamhardcore.pvp.commands.player.*;
+import de.teamhardcore.pvp.commands.punishment.CommandPunishment;
 import de.teamhardcore.pvp.commands.pvp.*;
 import de.teamhardcore.pvp.commands.rewards.CommandReward;
 import de.teamhardcore.pvp.commands.teleport.*;
@@ -80,6 +81,8 @@ public class Main extends JavaPlugin {
     private FakeEntityManager fakeEntityManager;
     private ArenaManager arenaManager;
     private CoinFlipManager coinFlipManager;
+    private PunishmentManager punishmentManager;
+    private TradeManager tradeManager;
 
     private DatabaseManager databaseManager;
 
@@ -91,8 +94,12 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         this.arenaManager.onDisable();
+        this.tradeManager.onDisable();
+        this.rankingManager.onDisable();
+        this.crateManager.stopAllOpenings();
         this.fakeEntityManager.onDisable();
         FakeMobsPlugin.onDisable(this);
+        //  this.databaseManager.onDisable();
     }
 
     @Override
@@ -140,6 +147,8 @@ public class Main extends JavaPlugin {
         this.arenaManager = new ArenaManager(this);
         this.arenaManager.loadArenas();
         this.coinFlipManager = new CoinFlipManager(this);
+        this.punishmentManager = new PunishmentManager(this);
+        this.tradeManager = new TradeManager(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -218,6 +227,8 @@ public class Main extends JavaPlugin {
         getCommand("liga").setExecutor(new CommandLeague());
         getCommand("reward").setExecutor(new CommandReward());
         getCommand("coinflip").setExecutor(new CommandCoinFlip());
+        getCommand("punishment").setExecutor(new CommandPunishment());
+        getCommand("trade").setExecutor(new CommandTrade());
     }
 
     public FileManager getFileManager() {
@@ -314,6 +325,14 @@ public class Main extends JavaPlugin {
 
     public CoinFlipManager getCoinFlipManager() {
         return coinFlipManager;
+    }
+
+    public PunishmentManager getPunishmentManager() {
+        return punishmentManager;
+    }
+
+    public TradeManager getTradeManager() {
+        return tradeManager;
     }
 
     public static Main getInstance() {

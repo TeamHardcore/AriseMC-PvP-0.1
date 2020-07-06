@@ -13,16 +13,23 @@ import org.bukkit.entity.Player;
 
 public enum EnumSpawnerType {
 
-    PIG("Schwein", EntityType.PIG, Material.MONSTER_EGG, 90, 0, false),
-    CHICKEN("Huhn", EntityType.CHICKEN, Material.MONSTER_EGG, 93, 0, false),
-    COW("Kuh", EntityType.COW, Material.MONSTER_EGG, 92, 0, false),
+    SPIDER("Spinne", EntityType.SPIDER, Material.MONSTER_EGG, 52, 0, false),
     SKELETON("Skelett", EntityType.SKELETON, Material.MONSTER_EGG, 51, 0, false),
-    ZOMBIE("Zombie", EntityType.ZOMBIE, Material.MONSTER_EGG, 54, 250000, true),
-    BLAZE("Blaze", EntityType.BLAZE, Material.MONSTER_EGG, 61, 250000, true),
-    SPIDER("Spinne", EntityType.SPIDER, Material.MONSTER_EGG, 52, 250000, true),
-    CREEPER("Creeper", EntityType.CREEPER, Material.MONSTER_EGG, 50, 250000, true),
-    PIG_ZOMBIE("Zombie Pigman", EntityType.PIG_ZOMBIE, Material.MONSTER_EGG, 57, 250000, true),
-    WITCH("Hexe", EntityType.WITCH, Material.MONSTER_EGG, 66, 250000, true);
+    CHICKEN("Huhn", EntityType.CHICKEN, Material.MONSTER_EGG, 93, 0, false),
+    PIG("Schwein", EntityType.PIG, Material.MONSTER_EGG, 90, 0, false),
+    VILLAGER("Dorfbewohner", EntityType.VILLAGER, Material.MONSTER_EGG, 120, 0, false),
+    SHEEP("Schaf", EntityType.SHEEP, Material.MONSTER_EGG, 91, 0, false),
+    RABBIT("Hase", EntityType.RABBIT, Material.MONSTER_EGG, 101, 0, false),
+    ZOMBIE("Zombie", EntityType.ZOMBIE, Material.MONSTER_EGG, 54, 0, false),
+
+    COW("Kuh", EntityType.COW, Material.MONSTER_EGG, 92, 25000, true),
+    MUSHROOM_COW("Pilzkuh", EntityType.MUSHROOM_COW, Material.MONSTER_EGG, 96, 100000, true),
+    PIG_ZOMBIE("Zombie Pigman", EntityType.PIG_ZOMBIE, Material.MONSTER_EGG, 57, 200000, true),
+    SLIME("Schleim", EntityType.SLIME, Material.MONSTER_EGG, 55, 280000, true),
+    BLAZE("Blaze", EntityType.BLAZE, Material.MONSTER_EGG, 61, 350000, true),
+    CREEPER("Creeper", EntityType.CREEPER, Material.MONSTER_EGG, 50, 450000, true),
+    MAGMA_CUBE("Magmaschleim", EntityType.MAGMA_CUBE, Material.MONSTER_EGG, 62, 550000, true),
+    WITCH("Hexe", EntityType.WITCH, Material.MONSTER_EGG, 66, 600000, true);
 
     private final String name;
     private final EntityType type;

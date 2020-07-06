@@ -50,7 +50,7 @@ public class PlayerItemConsume implements Listener {
             event.setCancelled(true);
             Util.removeItems(player.getInventory(), player.getItemInHand(), 1);
             player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 120 * 20, 0, true, true));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 10 * 20, 1, true, true));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 10 * 20, 3, true, true));
             player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 300 * 20, 0, true, true));
             this.plugin.getManager().getGoldenAppleCooldown().put(player, System.currentTimeMillis() + 120000L);
             System.out.println("put " + player.getName() + " in hashmap");

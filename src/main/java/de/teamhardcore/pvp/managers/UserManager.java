@@ -37,6 +37,16 @@ public class UserManager {
         }, 20L, 20L);
     }
 
+    public int getOnlinePlayers() {
+        int onlinePlayers = 0;
+
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            if (!this.plugin.getManager().getPlayersInVanish().contains(all))
+                onlinePlayers++;
+        }
+        return onlinePlayers;
+    }
+
     public void addToCache(UUID uuid) {
         if (this.users.containsKey(uuid)) return;
         this.users.put(uuid, new User(uuid));

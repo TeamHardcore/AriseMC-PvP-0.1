@@ -42,7 +42,7 @@ public class CommandMarkt implements CommandExecutor {
                 long coins;
                 try {
                     coins = Long.parseLong(args[0]);
-                    if (coins <= 500)
+                    if (coins < 500)
                         throw new NumberFormatException();
                 } catch (NumberFormatException ex) {
                     player.sendMessage(StringDefaults.PREFIX + "§cDer Preis muss mindestens §7500 Münzen §cbetragen.");
@@ -52,7 +52,7 @@ public class CommandMarkt implements CommandExecutor {
                 UserMarket userMarket = Main.getInstance().getUserManager().getUser(player.getUniqueId()).getUserMarket();
 
                 if (userMarket.getItems().size() >= 5) {
-                    player.sendMessage(StringDefaults.PREFIX + "§cDu hast bereits 5 Auktionen erstellt.");
+                    player.sendMessage(StringDefaults.PREFIX + "§cDu hast bereits 5 Items im Markt.");
                     return true;
                 }
 

@@ -55,6 +55,10 @@ public class CrateManager {
         this.playersInCrateOpening = new HashMap<>();
     }
 
+    public void onDisable() {
+        stopAllOpenings();
+    }
+
     public void openCrateInventory(Player player, int page) {
         Inventory inventory = Bukkit.createInventory(null, 9 * 6, "§c§lCrates");
 

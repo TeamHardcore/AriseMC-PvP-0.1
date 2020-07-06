@@ -59,6 +59,10 @@ public class RankingManager {
         }, 1L, 30L, TimeUnit.SECONDS);
     }
 
+    public void onDisable() {
+        this.service.shutdownNow();
+    }
+
     public void openRankingInventory(Player player, RankingType type) {
         Inventory inventory = Bukkit.createInventory(null, 9 * 6, "§c§lRanking");
         for (int i = 0; i < inventory.getSize(); i++)

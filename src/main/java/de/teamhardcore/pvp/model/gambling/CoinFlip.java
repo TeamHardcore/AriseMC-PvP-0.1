@@ -51,7 +51,7 @@ public class CoinFlip {
         this.inventory = Bukkit.createInventory(null, 9 * 3, "§c§lCoinflip");
         this.inventory.setItem(10, new ItemBuilder(Material.STAINED_GLASS_PANE).setDurability(5).setDisplayName(" ").build());
         this.inventory.setItem(16, new ItemBuilder(Material.STAINED_GLASS_PANE).setDurability(6).setDisplayName(" ").build());
-        this.inventory.setItem(13, this.middle);
+        this.inventory.setItem(13, new ItemBuilder(Material.STAINED_GLASS_PANE).setDurability(11).setDisplayName(" ").build());
     }
 
     public void startCoinFlip(Player secondEntry) {
@@ -97,29 +97,40 @@ public class CoinFlip {
                     UserMoney userMoney = Main.getInstance().getUserManager().getUser(winner.getUniqueId()).getUserMoney();
                     userMoney.addMoney(winningPrice);
 
-                    for (int i = 0; i < CoinFlip.this.entries.size(); i++) {
-                        Player self = CoinFlip.this.entries.get(i);
-                        Player opposite = CoinFlip.this.entries.get((i == 0) ? 1 : 0);
-
-                        if (winner == self) {
-                            self.sendMessage(StringDefaults.COINFLIP_PREFIX + "§6Du hast gegen §e" + opposite.getName() + " §6gewonnen!");
-                            self.playSound(self.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
-                        } else {
-                            self.sendMessage(StringDefaults.COINFLIP_PREFIX + "§6Du hast gegen §e" + opposite.getName() + " §6verloren!");
-                            self.playSound(self.getLocation(), Sound.VILLAGER_NO, 1.0F, 1.0F);
-                        }
-                    }
-
-                    closeInventories();
                     cancelTask();
+
+                    new BukkitRunnable() {
+
+                        @Override
+                        public void run() {
+                            for (int i = 0; i < CoinFlip.this.entries.size(); i++) {
+                                Player self = CoinFlip.this.entries.get(i);
+                                Player opposite = CoinFlip.this.entries.get((i == 0) ? 1 : 0);
+
+                                if (winner == self) {
+                                    self.sendMessage(StringDefaults.COINFLIP_PREFIX + "§6Du hast gegen §e" + opposite.getName() + " §6gewonnen!");
+                                    self.playSound(self.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
+                                } else {
+                                    self.sendMessage(StringDefaults.COINFLIP_PREFIX + "§6Du hast gegen §e" + opposite.getName() + " §6verloren!");
+                                    self.playSound(self.getLocation(), Sound.VILLAGER_NO, 1.0F, 1.0F);
+                                }
+                            }
+
+                            closeInventories();
+                        }
+                    }.runTaskLater(Main.getInstance(), 6L);
                     return;
                 }
 
                 CoinFlip.this.changeItemColor();
                 CoinFlip.this.inventory.setItem(13, CoinFlip.this.middle);
+                CoinFlip.this.entries.forEach(player -> {
+                    player.updateInventory();
+                    player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+                });
                 count++;
             }
-        }.runTaskTimer(Main.getInstance(), 1L, 1L);
+        }.runTaskTimer(Main.getInstance(), 0L, 2L);
     }
 
     public void closeInventories() {

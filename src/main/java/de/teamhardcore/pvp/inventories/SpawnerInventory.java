@@ -24,10 +24,10 @@ import java.util.List;
 
 public class SpawnerInventory {
 
-    private static final Integer[] slots = new Integer[]{10, 11, 12, 13, 14, 15, 16, 21, 22, 23};
+    private static final Integer[] slots = new Integer[]{11, 12, 13, 14, 15, 21, 22, 23, 40, 46, 47, 48, 49, 50, 51, 52};
 
     public static void openInventory(Player player, CustomSpawner spawner) {
-        Inventory inventory = Bukkit.createInventory(null, 9 * 4, "§c§lWähle einen Spawner");
+        Inventory inventory = Bukkit.createInventory(null, 9 * 6, "§c§lWähle einen Spawner");
 
         for (int i = 0; i < inventory.getSize(); i++)
             inventory.setItem(i, new ItemBuilder(Material.STAINED_GLASS_PANE).setDisplayName(" ").setDurability(7).build());

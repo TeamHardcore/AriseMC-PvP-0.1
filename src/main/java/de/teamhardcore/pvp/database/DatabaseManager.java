@@ -119,6 +119,12 @@ public class DatabaseManager {
         }
     }
 
+    public void onDisable() {
+        this.service.shutdown();
+        HandlerGroups.stopAll();
+        closeHikrari();
+    }
+
     public ResultSet executeQuery(PreparedStatement statement) {
         try {
             return statement.executeQuery();
