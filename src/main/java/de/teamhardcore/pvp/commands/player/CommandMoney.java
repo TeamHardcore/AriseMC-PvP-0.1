@@ -53,7 +53,7 @@ public class CommandMoney implements CommandExecutor {
 
                 User user = Main.getInstance().getUserManager().getUser(target.getUniqueId());
 
-                player.sendMessage(StringDefaults.PREFIX + "§e" + target.getName() + "'s Münzen§8: §7" + user.getMoney() + "$");
+                player.sendMessage(StringDefaults.PREFIX + "§e" + target.getName() + "'s Münzen§8: §7" + Util.formatNumber(user.getMoney()) + "$");
                 return true;
             }
 
@@ -107,13 +107,13 @@ public class CommandMoney implements CommandExecutor {
 
                     if (args[0].equalsIgnoreCase("add")) {
                         user.addMoney(amount);
-                        player.sendMessage(StringDefaults.PREFIX + "§eDu hast dem Geld von §7" + name + " " + amount + "$ §ehinzugefügt.");
+                        player.sendMessage(StringDefaults.PREFIX + "§eDu hast dem Geld von §7" + name + " " + Util.formatNumber(amount) + "$ §ehinzugefügt.");
                     } else if (args[0].equalsIgnoreCase("remove")) {
                         user.removeMoney(amount);
-                        player.sendMessage(StringDefaults.PREFIX + "§eDu hast dem Geld von §7" + name + " " + amount + "$ §eentfernt.");
+                        player.sendMessage(StringDefaults.PREFIX + "§eDu hast dem Geld von §7" + name + " " + Util.formatNumber(amount) + "$ §eentfernt.");
                     } else {
                         user.setMoney(amount);
-                        player.sendMessage(StringDefaults.PREFIX + "§eDas Geld von §7" + name + " §ewurde auf " + amount + "$ §egesetzt.");
+                        player.sendMessage(StringDefaults.PREFIX + "§eDas Geld von §7" + name + " §ewurde auf " + Util.formatNumber(amount) + "$ §egesetzt.");
                     }
                 });
                 return true;
@@ -124,18 +124,18 @@ public class CommandMoney implements CommandExecutor {
             if (args[0].equalsIgnoreCase("add")) {
                 user.addMoney(amount);
                 if (target != player)
-                    player.sendMessage(StringDefaults.PREFIX + "§eDu hast dem Geld von §7" + target.getName() + " " + amount + "$ §ehinzugefügt.");
-                target.sendMessage(StringDefaults.PREFIX + "§eDeinem Geld wurden §7" + amount + "$ §ehinzugefügt.");
+                    player.sendMessage(StringDefaults.PREFIX + "§eDu hast dem Geld von §7" + target.getName() + " " + Util.formatNumber(amount) + "$ §ehinzugefügt.");
+                target.sendMessage(StringDefaults.PREFIX + "§eDeinem Geld wurden §7" + Util.formatNumber(amount) + "$ §ehinzugefügt.");
             } else if (args[0].equalsIgnoreCase("remove")) {
                 user.removeMoney(amount);
                 if (target != player)
-                    player.sendMessage(StringDefaults.PREFIX + "§eDu hast dem Geld von §7" + target.getName() + " " + amount + "$ §eentfernt.");
-                target.sendMessage(StringDefaults.PREFIX + "§eDeinem Geld wurden §7" + amount + "$ §eentfernt.");
+                    player.sendMessage(StringDefaults.PREFIX + "§eDu hast dem Geld von §7" + target.getName() + " " + Util.formatNumber(amount) + "$ §eentfernt.");
+                target.sendMessage(StringDefaults.PREFIX + "§eDeinem Geld wurden §7" + Util.formatNumber(amount) + "$ §eentfernt.");
             } else {
                 user.setMoney(amount);
                 if (target != player)
-                    player.sendMessage(StringDefaults.PREFIX + "§eDas Geld von §7" + target.getName() + " §ewurde auf " + amount + "$ §egesetzt.");
-                target.sendMessage(StringDefaults.PREFIX + "§eDein Geld wurde auf §7" + amount + "$ §egesetzt.");
+                    player.sendMessage(StringDefaults.PREFIX + "§eDas Geld von §7" + target.getName() + " §ewurde auf " + Util.formatNumber(amount) + "$ §egesetzt.");
+                target.sendMessage(StringDefaults.PREFIX + "§eDein Geld wurde auf §7" + Util.formatNumber(amount) + "$ §egesetzt.");
             }
         }
 
@@ -157,7 +157,6 @@ public class CommandMoney implements CommandExecutor {
                 player.sendMessage(StringDefaults.PREFIX + "§cDu kannst dir selber kein Geld senden.");
                 return true;
             }
-
 
             long amount;
 
@@ -185,8 +184,8 @@ public class CommandMoney implements CommandExecutor {
             tUser.addMoney(amount);
 
 
-            player.sendMessage(StringDefaults.PREFIX + "§eDu hast §7" + target.getName() + " §eerfolgreich §7" + amount + "$ §egesendet.");
-            target.sendMessage(StringDefaults.PREFIX + "§eDu hast §7" + amount + "$ §evon §7" + player.getName() + " §eerhalten.");
+            player.sendMessage(StringDefaults.PREFIX + "§eDu hast §7" + target.getName() + " §eerfolgreich §7" + Util.formatNumber(amount) + "$ §egesendet.");
+            target.sendMessage(StringDefaults.PREFIX + "§eDu hast §7" + Util.formatNumber(amount) + "$ §evon §7" + player.getName() + " §eerhalten.");
         }
 
 
