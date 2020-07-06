@@ -162,7 +162,7 @@ public class CommandMoney implements CommandExecutor {
             long amount;
 
             try {
-                amount = Long.parseLong(args[2]);
+                amount = Long.parseLong(args[1]);
             } catch (NumberFormatException ex) {
                 player.sendMessage(StringDefaults.PREFIX + "§cBitte gebe einen richtigen Wert an.");
                 return true;
