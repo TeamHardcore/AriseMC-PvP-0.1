@@ -7,17 +7,23 @@ import de.teamhardcore.pvp.model.teleport.TPDelay;
 import de.teamhardcore.pvp.model.teleport.TPRequest;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.Util;
+import gnu.trove.TCollections;
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Manager {
+
+    public static final int ADDRESS_LIMIT = 3;
 
     private final Main plugin;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
@@ -35,6 +41,8 @@ public class Manager {
     private final ArrayList<Player> playersInEnderchest = new ArrayList<>();
     private final ArrayList<Player> playersInInvsee = new ArrayList<>();
     private final ArrayList<Player> playersInVanish = new ArrayList<>();
+
+    private final TObjectIntMap<InetAddress> addresses = TCollections.synchronizedMap(new TObjectIntHashMap<>());
 
     public Manager(Main plugin) {
         this.plugin = plugin;
@@ -159,6 +167,10 @@ public class Manager {
 
     public HashMap<UUID, SpyMode> getMessageSpyModeCache() {
         return messageSpyModeCache;
+    }
+
+    public TObjectIntMap<InetAddress> getAddresses() {
+        return addresses;
     }
 
     public Main getPlugin() {
