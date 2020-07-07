@@ -25,6 +25,8 @@ public class Manager {
 
     public static final int ADDRESS_LIMIT = 3;
 
+    private boolean maintenance;
+
     private final Main plugin;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 

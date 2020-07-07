@@ -127,3 +127,7 @@ commands:
       - freunde
       - frieden
       - friede
+  maintenance:
+    aliases:
+      - wartungsarbeiten
+      - wartungen

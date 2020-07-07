@@ -19,6 +19,7 @@ public class StringDefaults {
     public static final String PUNISHMENT_PREFIX = "§c§lPUNISHMENT " + PREFIX;
     public static final String TRADE_PREFIX = "§c§lTRADE " + PREFIX;
     public static final String FRIEND_PREFIX = "§b§lFRIEND " + PREFIX;
+    public static final String MAINTENANCE_PREFIX = "§c§lMAINTENANCE " + PREFIX;
 
     public final static String SLOT_UPGRADE = "slot";
     public final static String WARP_UPGRADE = "warp";

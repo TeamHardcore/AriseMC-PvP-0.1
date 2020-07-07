@@ -12,6 +12,7 @@ public class FileManager {
     private final DuelFile duelFile;
     private final FakeEntityFile fakeEntityFile;
     private final ArenaFile arenaFile;
+    private final MaintenanceFile maintenanceFile;
 
     public FileManager(Main plugin) {
         this.plugin = plugin;
@@ -21,6 +22,7 @@ public class FileManager {
         this.duelFile = new DuelFile();
         this.fakeEntityFile = new FakeEntityFile();
         this.arenaFile = new ArenaFile();
+        this.maintenanceFile = new MaintenanceFile();
     }
 
     public ArenaFile getArenaFile() {
@@ -45,6 +47,10 @@ public class FileManager {
 
     public WarpFile getWarpFile() {
         return warpFile;
+    }
+
+    public MaintenanceFile getMaintenanceFile() {
+        return maintenanceFile;
     }
 
     public Main getPlugin() {

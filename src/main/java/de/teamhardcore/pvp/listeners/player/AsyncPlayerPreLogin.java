@@ -9,7 +9,9 @@ package de.teamhardcore.pvp.listeners.player;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.abuse.Abuse;
 import de.teamhardcore.pvp.model.abuse.AbuseType;
+import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.TimeUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -23,6 +25,16 @@ public class AsyncPlayerPreLogin implements Listener {
     @EventHandler
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
         List<Abuse> abuses = Main.getInstance().getAbuseManager().getAbuses(event.getUniqueId());
+
+        if (Main.getInstance().getFileManager().getMaintenanceFile().isMaintenance()) {
+            if (!Main.getInstance().getFileManager().getMaintenanceFile().getPlayers().contains(event.getUniqueId().toString())) {
+                if (Bukkit.getOfflinePlayer(event.getUniqueId()) != null && Bukkit.getOfflinePlayer(event.getUniqueId()).isOp())
+                    return;
+                Bukkit.broadcastMessage(StringDefaults.MAINTENANCE_PREFIX + "§7" + event.getName() + " §chat versucht den Server zu betreten.");
+                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "§cDu kannst den Server im Moment nicht betreten. Bitte versuche es später erneut.");
+                return;
+            }
+        }
 
         if (abuses != null) {
             for (Abuse abuse : abuses) {
