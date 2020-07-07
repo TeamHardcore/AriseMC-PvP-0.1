@@ -64,6 +64,7 @@ public class CommandFriend implements CommandExecutor {
                         player.sendMessage(StringDefaults.FRIEND_PREFIX + "§cDu hast die Freundschaft mit §7" + offlinePlayer.getName() + " §caufgelöst.");
                         return;
                     }
+
                     player.sendMessage(StringDefaults.FRIEND_PREFIX + "§cDu kannst offline Spielern keine Freundschaftsanfrage senden.");
                 });
                 return true;
@@ -79,12 +80,12 @@ public class CommandFriend implements CommandExecutor {
                 return true;
             }
 
-            if (userData.getFriends().size() >= 8) {
+            if (userData.getFriends().size() >= 10) {
                 player.sendMessage(StringDefaults.FRIEND_PREFIX + "§cDu hast bereits die maximale Anzahl an Freunden erreicht.");
                 return true;
             }
 
-            if (targetData.getFriends().size() >= 8) {
+            if (targetData.getFriends().size() >= 10) {
                 player.sendMessage(StringDefaults.FRIEND_PREFIX + "§7" + target.getName() + " §chat bereits die maximale Anzahl an Freunden erreicht.");
                 return true;
             }
@@ -102,7 +103,6 @@ public class CommandFriend implements CommandExecutor {
             player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
             return true;
         }
-
 
         Player target = Bukkit.getPlayer(args[1]);
 

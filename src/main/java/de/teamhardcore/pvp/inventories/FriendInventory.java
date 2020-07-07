@@ -26,7 +26,7 @@ public class FriendInventory {
     private final static List<Integer> CLEAR_SLOTS = new ArrayList<>();
 
     static {
-        CLEAR_SLOTS.addAll(Arrays.asList(20, 21, 22, 23, 24, 29, 30, 31, 32, 33));
+        CLEAR_SLOTS.addAll(Arrays.asList(11, 12, 13, 14, 15, 20, 21, 22, 23, 24));
     }
 
     public static void openFriendInventory(Player player, int state) {
