@@ -37,7 +37,7 @@ public class CommandFriend implements CommandExecutor {
 
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("list")) {
-                player.sendMessage("todo");
+                FriendInventory.openFriendInventory(player, 0);
                 return true;
             }
 
