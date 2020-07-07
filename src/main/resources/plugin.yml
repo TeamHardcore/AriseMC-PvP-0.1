@@ -121,3 +121,9 @@ commands:
   trade:
     aliases:
       - handel
+  friend:
+    aliases:
+      - friends
+      - freunde
+      - frieden
+      - friede

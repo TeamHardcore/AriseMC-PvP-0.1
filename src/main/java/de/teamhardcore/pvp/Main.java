@@ -229,6 +229,7 @@ public class Main extends JavaPlugin {
         getCommand("coinflip").setExecutor(new CommandCoinFlip());
         getCommand("punishment").setExecutor(new CommandPunishment());
         getCommand("trade").setExecutor(new CommandTrade());
+        getCommand("friend").setExecutor(new CommandFriend());
     }
 
     public FileManager getFileManager() {
