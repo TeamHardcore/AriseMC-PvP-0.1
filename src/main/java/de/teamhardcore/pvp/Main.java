@@ -36,6 +36,7 @@ import de.teamhardcore.pvp.commands.warp.CommandWarp;
 import de.teamhardcore.pvp.commands.world.CommandNear;
 import de.teamhardcore.pvp.commands.world.CommandSpawner;
 import de.teamhardcore.pvp.database.DatabaseManager;
+import de.teamhardcore.pvp.listeners.AddressEvents;
 import de.teamhardcore.pvp.listeners.block.BlockBreak;
 import de.teamhardcore.pvp.listeners.block.BlockPlace;
 import de.teamhardcore.pvp.listeners.custom.AchievementReceive;
@@ -174,6 +175,7 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new CrateEvents(this), this);
         pm.registerEvents(new PlayerInteractFakeMob(this), this);
         pm.registerEvents(new MobStackEvents(this), this);
+        pm.registerEvents(new AddressEvents(this), this);
 
         getCommand("fix").setExecutor(new CommandFix());
         getCommand("stack").setExecutor(new CommandStack());
