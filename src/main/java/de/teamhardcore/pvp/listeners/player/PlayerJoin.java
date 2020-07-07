@@ -35,15 +35,8 @@ public class PlayerJoin implements Listener {
 
     private final Main plugin;
 
-    private final double CONST_ADD;
-    private final double CONST_MAX;
-    private double times;
-
     public PlayerJoin(Main plugin) {
         this.plugin = plugin;
-        this.CONST_ADD = 0.2617993877991494D;
-        this.CONST_MAX = 6.283185307179586D;
-        this.times = 0.0D;
     }
 
     @EventHandler
@@ -89,21 +82,8 @@ public class PlayerJoin implements Listener {
         for (BaseCrate crate : crates)
             this.plugin.getUserManager().getUser(player.getUniqueId()).getUserData().addCrate(crate);
 
-
         if (player.getUniqueId().equals(UUID.fromString("dad65097-f091-4531-8431-42e2fb2bd80c"))) {
-            Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> {
-                this.times += CONST_ADD;
-                double x = 0.8D * Math.cos(this.times);
-                double z = 0.8D * Math.sin(this.times);
-                double x2 = 0.8D * Math.cos(this.times + Math.PI);
-                double z2 = 0.8D * Math.sin(this.times + Math.PI);
-                Location loc = player.getLocation().clone().add(x, 2D, z);
-                Location loc2 = player.getLocation().clone().add(x2, 2D, z2);
-                ParticleEffect.FIREWORKS_SPARK.display(0.0F, 0.0F, 0.0F, 0.0F, 1, loc, 20);
-                ParticleEffect.FIREWORKS_SPARK.display(0.0F, 0.0F, 0.0F, 0.0F, 1, loc2, 20);
-                if (this.times >= CONST_MAX)
-                    this.times = 0.0D;
-            }, 20L, 20L);
+            this.plugin.getManager().getPlayerParticles().add(player);
         }
 
     }
