@@ -38,6 +38,11 @@ public class CommandMaintenance implements CommandExecutor {
 
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("on")) {
+                if (Main.getInstance().getFileManager().getMaintenanceFile().isMaintenance()) {
+                    player.sendMessage(StringDefaults.MAINTENANCE_PREFIX + "§cDer Wartungsmodus ist bereits aktiviert.");
+                    return true;
+                }
+
                 Main.getInstance().getFileManager().getMaintenanceFile().setMaintenance(true);
                 Bukkit.getOnlinePlayers().forEach(target -> {
                     if (!Main.getInstance().getFileManager().getMaintenanceFile().getPlayers().contains(target.getUniqueId().toString()) && !target.isOp()) {
