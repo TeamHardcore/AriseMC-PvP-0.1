@@ -9,6 +9,7 @@ package de.teamhardcore.pvp;
 
 import de.howaner.FakeMobs.FakeMobsPlugin;
 import de.realmeze.impl.MezeMain;
+import de.teamhardcore.pvp.commands.CommandMaintenance;
 import de.teamhardcore.pvp.commands.abuse.CommandBan;
 import de.teamhardcore.pvp.commands.abuse.CommandKick;
 import de.teamhardcore.pvp.commands.abuse.CommandMute;
@@ -232,6 +233,7 @@ public class Main extends JavaPlugin {
         getCommand("punishment").setExecutor(new CommandPunishment());
         getCommand("trade").setExecutor(new CommandTrade());
         getCommand("friend").setExecutor(new CommandFriend());
+        getCommand("maintenance").setExecutor(new CommandMaintenance());
     }
 
     public FileManager getFileManager() {
