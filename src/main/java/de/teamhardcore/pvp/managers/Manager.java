@@ -7,6 +7,7 @@ import de.teamhardcore.pvp.model.teleport.TPDelay;
 import de.teamhardcore.pvp.model.teleport.TPRequest;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.Util;
+import de.teamhardcore.pvp.utils.particle.ParticleEffect;
 import gnu.trove.TCollections;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
@@ -25,8 +26,6 @@ public class Manager {
 
     public static final int ADDRESS_LIMIT = 3;
 
-    private boolean maintenance;
-
     private final Main plugin;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
@@ -40,6 +39,7 @@ public class Manager {
     private final HashMap<UUID, SpyMode> commandSpyModeCache = new HashMap<>();
     private final HashMap<UUID, SpyMode> messageSpyModeCache = new HashMap<>();
 
+    private final ArrayList<Player> playerParticles = new ArrayList<>();
     private final ArrayList<Player> playersInEnderchest = new ArrayList<>();
     private final ArrayList<Player> playersInInvsee = new ArrayList<>();
     private final ArrayList<Player> playersInVanish = new ArrayList<>();
@@ -55,6 +55,30 @@ public class Manager {
         startTabListTask();
         startPerkUpdater();
         startAutoMessages();
+        startParticleTask();
+    }
+
+    private void startParticleTask() {
+        new BukkitRunnable() {
+            private double times = 0.0D;
+
+            @Override
+            public void run() {
+                for (Player player : getPlayerParticles()) {
+                    this.times += 0.2617993877991494D;
+                    double x = 0.8D * Math.cos(this.times);
+                    double z = 0.8D * Math.sin(this.times);
+                    double x2 = 0.8D * Math.cos(this.times + Math.PI);
+                    double z2 = 0.8D * Math.sin(this.times + Math.PI);
+                    Location loc = player.getLocation().clone().add(x, 2D, z);
+                    Location loc2 = player.getLocation().clone().add(x2, 2D, z2);
+                    ParticleEffect.FIREWORKS_SPARK.display(0.0F, 0.0F, 0.0F, 0.0F, 1, loc, 20);
+                    ParticleEffect.FIREWORKS_SPARK.display(0.0F, 0.0F, 0.0F, 0.0F, 1, loc2, 20);
+                    if (this.times >= 6.283185307179586D)
+                        this.times = 0.0D;
+                }
+            }
+        }.runTaskTimer(this.plugin, 20L, 20L);
     }
 
     private void startTabListTask() {
@@ -169,6 +193,10 @@ public class Manager {
 
     public HashMap<UUID, SpyMode> getMessageSpyModeCache() {
         return messageSpyModeCache;
+    }
+
+    public ArrayList<Player> getPlayerParticles() {
+        return playerParticles;
     }
 
     public TObjectIntMap<InetAddress> getAddresses() {
