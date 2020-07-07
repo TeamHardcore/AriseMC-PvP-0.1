@@ -83,6 +83,8 @@ public class CommandStats implements CommandExecutor {
         player.sendMessage(StringDefaults.PREFIX + "§c§lGeld§8: §7" + Util.formatNumber(money.getMoney()) + "$");
         player.sendMessage(StringDefaults.PREFIX + "§c§lSpielzeit§8: §7" + TimeUtil.timeToString(stats.getPlaytime()));
         player.sendMessage(" ");
+        player.sendMessage(StringDefaults.PREFIX + "§c§lBeigetreten am§8: §7" + TimeUtil.timeToString(target.getFirstPlayed()));
+        player.sendMessage(" ");
         player.sendMessage("§8§l§m*-*-*-*-*-*-*-*-*§r §c§lSTATS §8§l§m*-*-*-*-*-*-*-*-*");
 
 

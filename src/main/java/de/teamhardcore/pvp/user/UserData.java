@@ -27,13 +27,14 @@ public class UserData {
 
     private final User user;
 
-    private Set<UUID> friends;
     private Set<EntityType> spawnerTypes;
     private Set<EnumPerk> unlockedPerks;
     private Set<EnumPerk> activatedPerks;
     private Set<EnumCommand> unlockedCommands;
     private Set<EnumChatColor> unlockedChatColors;
     private Set<String> claimedUniqueKits;
+    private List<UUID> friends;
+    private List<UUID> friendRequests;
 
     private boolean dailyReward;
     private boolean weeklyReward;
@@ -59,7 +60,8 @@ public class UserData {
     public UserData(User user, boolean async) {
         this.user = user;
 
-        this.friends = new HashSet<>();
+        this.friends = new ArrayList<>();
+        this.friendRequests = new ArrayList<>();
         this.spawnerTypes = new HashSet<>();
         this.unlockedPerks = new HashSet<>();
         this.activatedPerks = new HashSet<>();
@@ -108,8 +110,25 @@ public class UserData {
         return array;
     }
 
-    public Set<UUID> getFriends() {
+    public List<UUID> getFriends() {
         return friends;
+    }
+
+    public void addFriendRequest(UUID uuid) {
+    //    if (this.user.getUuid().equals(uuid)) return;
+        if (this.friends.contains(uuid)) return;
+        if (this.friendRequests.contains(uuid)) return;
+        this.friendRequests.add(uuid);
+    }
+
+    public void removeFriendRequest(UUID uuid) {
+        if (this.user.getUuid().equals(uuid)) return;
+        if (!this.friendRequests.contains(uuid)) return;
+        this.friendRequests.remove(uuid);
+    }
+
+    public List<UUID> getFriendRequests() {
+        return friendRequests;
     }
 
     private void loadSpawnerTypes(String json) {

@@ -7,12 +7,12 @@
 
 package de.teamhardcore.pvp.listeners.inventory;
 
-import com.google.gson.internal.$Gson$Preconditions;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.commands.pvp.CommandClan;
 import de.teamhardcore.pvp.commands.pvp.CommandStats;
 import de.teamhardcore.pvp.inventories.*;
 import de.teamhardcore.pvp.managers.RankingManager;
+import de.teamhardcore.pvp.user.Callback;
 import de.teamhardcore.pvp.model.MarketItem;
 import de.teamhardcore.pvp.model.Report;
 import de.teamhardcore.pvp.model.Transaction;
@@ -25,7 +25,6 @@ import de.teamhardcore.pvp.model.clan.shop.upgrades.requirements.AbstractRequire
 import de.teamhardcore.pvp.model.clan.shop.upgrades.requirements.RequirementType;
 import de.teamhardcore.pvp.model.customspawner.CustomSpawner;
 import de.teamhardcore.pvp.model.customspawner.EnumSpawnerType;
-import de.teamhardcore.pvp.model.duel.request.DuelRequest;
 import de.teamhardcore.pvp.model.extras.EnumChatColor;
 import de.teamhardcore.pvp.model.extras.EnumCommand;
 import de.teamhardcore.pvp.model.extras.EnumPerk;
@@ -33,10 +32,7 @@ import de.teamhardcore.pvp.model.kits.Kit;
 import de.teamhardcore.pvp.user.User;
 import de.teamhardcore.pvp.user.UserData;
 import de.teamhardcore.pvp.user.UserMarket;
-import de.teamhardcore.pvp.utils.JSONMessage;
-import de.teamhardcore.pvp.utils.StringDefaults;
-import de.teamhardcore.pvp.utils.Util;
-import de.teamhardcore.pvp.utils.VirtualAnvil;
+import de.teamhardcore.pvp.utils.*;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
@@ -51,8 +47,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class InventoryClick implements Listener {
@@ -338,6 +332,122 @@ public class InventoryClick implements Listener {
                 player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
                 this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openMainInventory(player), 1L);
             }
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lFreunde")) {
+            event.setCancelled(true);
+
+            if (event.getRawSlot() == 11) {
+                FriendInventory.openFriendInventory(player, 1);
+                player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+            }
+
+            if (event.getRawSlot() == 15) {
+                FriendInventory.openFriendInventory(player, 2);
+                player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+            }
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lFreundschaftsanfragen")) {
+            event.setCancelled(true);
+
+            if (event.getRawSlot() != 36) {
+                if (itemStack.getType() == Material.STAINED_GLASS_PANE) return;
+                String name = ChatColor.stripColor(itemStack.getItemMeta().getDisplayName());
+
+                Callback<OfflinePlayer> task = offlinePlayer -> Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
+                    UserData offlineUserData = (offlinePlayer.isOnline() ? this.plugin.getUserManager().getUser(offlinePlayer.getUniqueId()).getUserData() : new User(offlinePlayer.getUniqueId()).getUserData());
+                    if (!user.getUserData().getFriendRequests().contains(offlinePlayer.getUniqueId())) {
+                        player.sendMessage(StringDefaults.FRIEND_PREFIX + "§7" + offlinePlayer.getName() + " §chat dir keine Freundschaftsanfrage gesendet.");
+                        return;
+                    }
+
+                    boolean accept = event.isLeftClick();
+                    user.getUserData().getFriendRequests().remove(offlinePlayer.getUniqueId());
+
+                    if (accept) {
+                        offlineUserData.addFriend(player.getUniqueId());
+                        user.getUserData().addFriend(offlinePlayer.getUniqueId());
+                        player.sendMessage(StringDefaults.FRIEND_PREFIX + "§eDu hast die Freundschaftsanfrage von §7" + offlinePlayer.getName() + " §eangenommen.");
+                        if (offlinePlayer.isOnline())
+                            offlinePlayer.getPlayer().sendMessage(StringDefaults.FRIEND_PREFIX + "§7" + player.getName() + " §ehat deine Freundschaftsanfrage angenommen.");
+                    } else {
+                        player.sendMessage(StringDefaults.FRIEND_PREFIX + "§eDu hast die Freundschaftsanfrage von §7" + offlinePlayer.getName() + " §eabgelehnt.");
+                        if (offlinePlayer.isOnline())
+                            offlinePlayer.getPlayer().sendMessage(StringDefaults.FRIEND_PREFIX + "§7" + player.getName() + " §ehat deine Freundschaftsanfrage abgelehnt.");
+                    }
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                    if (offlinePlayer.isOnline())
+                        offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+
+                    FriendInventory.openFriendInventory(player, 2);
+                });
+
+                UUIDFetcher.getUUID(name, uuid -> {
+                    if (uuid == null) {
+                        player.sendMessage(StringDefaults.PREFIX + "§cDer Spieler konnte nicht gefunden werden.");
+                        return;
+                    }
+
+                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+                    if (!offlinePlayer.hasPlayedBefore()) {
+                        player.sendMessage(StringDefaults.PREFIX + "§cDer Spieler konnte nicht gefunden werden.");
+                        return;
+                    }
+                    task.accept(offlinePlayer);
+                });
+                return;
+            }
+
+            FriendInventory.openFriendInventory(player, 0);
+            player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lDeine Freunde")) {
+            event.setCancelled(true);
+
+            if (event.getRawSlot() != 36) {
+                if (itemStack.getType() == Material.STAINED_GLASS_PANE) return;
+                String name = ChatColor.stripColor(itemStack.getItemMeta().getDisplayName());
+
+                Callback<OfflinePlayer> task = offlinePlayer -> Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
+                    UserData offlineUserData = (offlinePlayer.isOnline() ? this.plugin.getUserManager().getUser(offlinePlayer.getUniqueId()).getUserData() : new User(offlinePlayer.getUniqueId()).getUserData());
+
+                    if (!user.getUserData().getFriends().contains(offlinePlayer.getUniqueId())) {
+                        player.sendMessage(StringDefaults.FRIEND_PREFIX + "§7" + player.getName() + " §cist nicht mit dir befreundet.");
+                        return;
+                    }
+
+                    user.getUserData().removeFriend(offlinePlayer.getUniqueId());
+                    offlineUserData.removeFriend(player.getUniqueId());
+                    player.sendMessage(StringDefaults.FRIEND_PREFIX + "§cDu hast die Freundschaft mit §7" + offlinePlayer.getName() + " §caufgelöst.");
+                    if (offlinePlayer.isOnline())
+                        offlinePlayer.getPlayer().sendMessage(StringDefaults.FRIEND_PREFIX + "§7" + player.getName() + " §chat die Freundschaft mit dir aufgelöst.");
+
+
+                    FriendInventory.openFriendInventory(player, 1);
+                });
+
+                UUIDFetcher.getUUID(name, uuid -> {
+
+                    if (uuid == null) {
+                        player.sendMessage(StringDefaults.PREFIX + "§cDer Spieler konnte nicht gefunden werden.");
+                        return;
+                    }
+
+                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+                    if (offlinePlayer == null || !offlinePlayer.hasPlayedBefore()) {
+                        player.sendMessage(StringDefaults.PREFIX + "§cDer Spieler konnte nicht gefunden werden.");
+                        return;
+                    }
+
+                    task.accept(offlinePlayer);
+                });
+                return;
+            }
+
+            FriendInventory.openFriendInventory(player, 0);
+            player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
         }
 
         if (inventory.getTitle().equalsIgnoreCase("§c§lBelohnungen")) {
