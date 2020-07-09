@@ -9,6 +9,7 @@ package de.teamhardcore.pvp.inventories;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.extras.EnumChatColor;
 import de.teamhardcore.pvp.model.extras.EnumCommand;
+import de.teamhardcore.pvp.model.extras.EnumKilleffect;
 import de.teamhardcore.pvp.model.extras.EnumPerk;
 import de.teamhardcore.pvp.user.User;
 import de.teamhardcore.pvp.user.UserData;
@@ -29,11 +30,12 @@ public class ExtrasInventory {
     private static Integer[] perkSlots = new Integer[]{11, 12, 13, 14, 15, 21, 22, 23};
     private static Integer[] commandSlots = new Integer[]{11, 12, 13, 14, 15, 21, 22, 23};
     private static Integer[] chatColorSlots = new Integer[]{11, 12, 13, 14, 15, 21, 22, 23};
+    private static Integer[] killEffectSlots = new Integer[]{11, 12, 13, 14, 15};
 
     public static void openInventory(Player player, int type) {
         /*Main menu*/
         if (type == 1) {
-            Inventory inventory = Bukkit.createInventory(null, 9 * 3, "§c§lExtras");
+            Inventory inventory = Bukkit.createInventory(null, 9 * 4, "§c§lExtras");
 
             for (int i = 0; i < inventory.getSize(); i++)
                 inventory.setItem(i, new ItemBuilder(Material.STAINED_GLASS_PANE).setDurability(7).setDisplayName(" ").build());
@@ -42,7 +44,8 @@ public class ExtrasInventory {
             UserData data = user.getUserData();
 
             inventory.setItem(11, new ItemBuilder(Material.DIAMOND_SWORD).setDisplayName("§c§lPerks").setLore("", "§c§lDu besitzt§8: §7" + data.getUnlockedPerks().size() + "§8/§7" + EnumPerk.values().length).build());
-            inventory.setItem(13, new ItemBuilder(Material.PAPER).setDisplayName("§c§lChat Farben").setLore("", "§c§lDu besitzt§8: §7" + data.getUnlockedChatColors().size() + "§8/§7" + EnumChatColor.values().length).build());
+            inventory.setItem(21, new ItemBuilder(Material.PAPER).setDisplayName("§c§lChat Farben").setLore("", "§c§lDu besitzt§8: §7" + data.getUnlockedChatColors().size() + "§8/§7" + EnumChatColor.values().length).build());
+            inventory.setItem(23, new ItemBuilder(Material.DEAD_BUSH).setDisplayName("§c§lKill-Effekte").setLore("", "§c§lDu besitzt§8: §7" + data.getUnlockedKilleffects().size() + "§8/§7" + EnumKilleffect.values().length).build());
             inventory.setItem(15, new ItemBuilder(Material.COMMAND).setDisplayName("§c§lExtra-Befehle").setLore("", "§c§lDu besitzt§8: §7" + data.getUnlockedCommands().size() + "§8/§7" + EnumCommand.values().length).build());
 
             player.openInventory(inventory);
@@ -85,6 +88,18 @@ public class ExtrasInventory {
             inventory.setItem(27, new ItemBuilder(Material.WOOD_DOOR).setDisplayName("§c§lZurück").build());
 
             updateInventory(player, inventory, 3);
+            player.openInventory(inventory);
+        }
+
+        if (type == 5) {
+            Inventory inventory = Bukkit.createInventory(null, 9 * 3, "§c§lExtras - Kill-Effekte");
+
+            for (int i = 0; i < inventory.getSize(); i++)
+                inventory.setItem(i, new ItemBuilder(Material.STAINED_GLASS_PANE).setDisplayName(" ").setDurability(7).build());
+
+            inventory.setItem(18, new ItemBuilder(Material.WOOD_DOOR).setDisplayName("§c§lZurück").build());
+
+            updateInventory(player, inventory, 4);
             player.openInventory(inventory);
         }
     }
@@ -162,7 +177,7 @@ public class ExtrasInventory {
                 if (!hasColor) {
                     lore.add("§c§lPreis§8: §7" + Util.formatNumber(color.getPrice()) + "$");
                     lore.add(" ");
-                    lore.add("§cDu hast diesen Befehl noch nicht freigeschaltet.");
+                    lore.add("§cDu hast diese Farbe noch nicht freigeschaltet.");
                     lore.add("§cKlicke§7, §cum die Farbe freizuschalten.");
                 } else {
 
@@ -180,6 +195,38 @@ public class ExtrasInventory {
 
             inventory.setItem(35, (data.getActiveColor() == null ? new ItemBuilder(Material.STAINED_GLASS_PANE).setDurability(7).setDisplayName(" ").build()
                     : new ItemBuilder(Material.BOWL).setDisplayName("§c§lFarbe zurücksetzen").build()));
+        }
+
+        /*Kill-Effekte*/
+        if (type == 4) {
+            int i = 0;
+            for (EnumKilleffect effect : EnumKilleffect.values()) {
+                if (i >= killEffectSlots.length) break;
+                int slot = killEffectSlots[i];
+
+                boolean hasColor = data.getUnlockedKilleffects().contains(effect);
+                boolean isActive = data.getActiveKilleffect() == effect;
+
+                List<String> lore = new ArrayList<>();
+                lore.add(" ");
+                if (!hasColor) {
+                    lore.add("§c§lPreis§8: §7" + Util.formatNumber(effect.getPrice()) + "$");
+                    lore.add(" ");
+                    lore.add("§cDu hast diesen Effekt noch nicht freigeschaltet.");
+                    lore.add("§cKlicke§7, §cum den Effekt freizuschalten.");
+                } else {
+
+                    if (isActive) {
+                        lore.add("§8● §a§lAusgewählt");
+                        lore.add(" ");
+                    } else {
+                        lore.add(" ");
+                        lore.add("§eKlicke§7, §eum den Effekt auszuwählen.");
+                    }
+                }
+                inventory.setItem(slot, new ItemBuilder(effect.getMaterial()).setDurability(effect.getDurability()).addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_POTION_EFFECTS).setDisplayName(effect.getDisplayName()).setLore(lore).build());
+                i++;
+            }
         }
 
     }
