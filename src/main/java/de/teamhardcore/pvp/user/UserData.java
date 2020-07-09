@@ -11,6 +11,7 @@ import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.customspawner.EnumSpawnerType;
 import de.teamhardcore.pvp.model.extras.EnumChatColor;
 import de.teamhardcore.pvp.model.extras.EnumCommand;
+import de.teamhardcore.pvp.model.extras.EnumKilleffect;
 import de.teamhardcore.pvp.model.extras.EnumPerk;
 import de.teamhardcore.pvp.model.gambling.crates.base.BaseCrate;
 import de.teamhardcore.pvp.utils.StringDefaults;
@@ -32,9 +33,12 @@ public class UserData {
     private Set<EnumPerk> activatedPerks;
     private Set<EnumCommand> unlockedCommands;
     private Set<EnumChatColor> unlockedChatColors;
+    private Set<EnumKilleffect> unlockedKilleffects;
     private Set<String> claimedUniqueKits;
+
     private List<UUID> friends;
     private List<UUID> friendRequests;
+    private List<BaseCrate> ownedCrates;
 
     private boolean dailyReward;
     private boolean weeklyReward;
@@ -45,13 +49,13 @@ public class UserData {
     private long weeklyRewardTime;
     private long monthlyRewardTime;
 
-    private List<BaseCrate> ownedCrates;
 
     private Map<String, Long> kitCooldowns;
 
     private long mutePoints, banPoints;
 
     private EnumChatColor activeColor;
+    private EnumKilleffect activeKilleffect;
 
     public UserData(User user) {
         this(user, true);
@@ -66,6 +70,7 @@ public class UserData {
         this.unlockedPerks = new HashSet<>();
         this.activatedPerks = new HashSet<>();
         this.unlockedCommands = new HashSet<>();
+        this.unlockedKilleffects = new HashSet<>();
         this.unlockedChatColors = new HashSet<>();
         this.claimedUniqueKits = new HashSet<>();
 
@@ -115,7 +120,7 @@ public class UserData {
     }
 
     public void addFriendRequest(UUID uuid) {
-    //    if (this.user.getUuid().equals(uuid)) return;
+        //    if (this.user.getUuid().equals(uuid)) return;
         if (this.friends.contains(uuid)) return;
         if (this.friendRequests.contains(uuid)) return;
         this.friendRequests.add(uuid);
@@ -129,6 +134,69 @@ public class UserData {
 
     public List<UUID> getFriendRequests() {
         return friendRequests;
+    }
+
+    public EnumKilleffect getActiveKilleffect() {
+        return activeKilleffect;
+    }
+
+    public Set<EnumKilleffect> getUnlockedKilleffects() {
+        return unlockedKilleffects;
+    }
+
+    public void setActiveKilleffect(EnumKilleffect effect) {
+        if (effect != null && !this.unlockedKilleffects.contains(effect)) return;
+        if (this.activeKilleffect == effect) return;
+        this.activeKilleffect = effect;
+        saveData(this.user.getPlayer() != null);
+    }
+
+    public void addKillEffect(EnumKilleffect effect) {
+        if (this.unlockedKilleffects.contains(effect))
+            return;
+        this.unlockedKilleffects.add(effect);
+        saveData((this.user.getPlayer() != null));
+    }
+
+    public void removeKillEffect(EnumKilleffect effect) {
+        if (!this.unlockedKilleffects.contains(effect))
+            return;
+        this.unlockedKilleffects.remove(effect);
+        saveData((this.user.getPlayer() != null));
+    }
+
+    private void loadEffectData(String json) {
+        JSONObject mainObject = new JSONObject(json);
+
+        if (mainObject.has("killeffects")) {
+            JSONObject killObject = mainObject.getJSONObject("killeffects");
+            JSONArray ownedArray = killObject.getJSONArray("owned");
+            for (Object objOwned : ownedArray) {
+                EnumKilleffect effect = EnumKilleffect.getByName((String) objOwned);
+                if (effect != null)
+                    this.unlockedKilleffects.add(effect);
+            }
+            if (killObject.has("active")) {
+                EnumKilleffect effect = EnumKilleffect.getByName(killObject.getString("active"));
+                if (effect != null)
+                    this.activeKilleffect = effect;
+            }
+        }
+    }
+
+    private JSONObject saveEffectData() {
+        JSONObject mainObject = new JSONObject();
+        if (!this.unlockedKilleffects.isEmpty()) {
+            JSONObject killObject = new JSONObject();
+            JSONArray ownedArray = new JSONArray();
+            for (EnumKilleffect effect : this.unlockedKilleffects)
+                ownedArray.put(effect.name());
+            killObject.put("owned", ownedArray);
+            if (this.activeKilleffect != null)
+                killObject.put("active", this.activeKilleffect.name());
+            mainObject.put("killeffects", killObject);
+        }
+        return mainObject;
     }
 
     private void loadSpawnerTypes(String json) {

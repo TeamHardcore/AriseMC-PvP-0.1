@@ -2,9 +2,12 @@ package de.teamhardcore.pvp.managers;
 
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.SpyMode;
+import de.teamhardcore.pvp.model.extras.EnumKilleffect;
 import de.teamhardcore.pvp.model.extras.EnumPerk;
+import de.teamhardcore.pvp.model.extras.effects.AbstractKillEffect;
 import de.teamhardcore.pvp.model.teleport.TPDelay;
 import de.teamhardcore.pvp.model.teleport.TPRequest;
+import de.teamhardcore.pvp.utils.Reflection;
 import de.teamhardcore.pvp.utils.StringDefaults;
 import de.teamhardcore.pvp.utils.Util;
 import de.teamhardcore.pvp.utils.particle.ParticleEffect;
@@ -39,6 +42,7 @@ public class Manager {
     private final HashMap<UUID, SpyMode> commandSpyModeCache = new HashMap<>();
     private final HashMap<UUID, SpyMode> messageSpyModeCache = new HashMap<>();
 
+    private final ArrayList<AbstractKillEffect> activeKilleffects = new ArrayList<>();
     private final ArrayList<Player> playerParticles = new ArrayList<>();
     private final ArrayList<Player> playersInEnderchest = new ArrayList<>();
     private final ArrayList<Player> playersInInvsee = new ArrayList<>();
@@ -149,6 +153,26 @@ public class Manager {
                 player.addPotionEffect(effect);
             }
         }
+    }
+
+    public void stopKillEffect(AbstractKillEffect effect) {
+        effect.stopEffect();
+        this.activeKilleffects.remove(effect);
+    }
+
+    public void playKillEffect(EnumKilleffect enumEffect, Player killed) {
+        AbstractKillEffect effect = (AbstractKillEffect) Reflection.newInstance(Reflection.getConstructor(enumEffect.getEffectClass(), Player.class), new Object[]{killed});
+        this.activeKilleffects.add(effect);
+        effect.playEffect();
+    }
+
+    private void stopKillEffects() {
+        for (AbstractKillEffect effect : this.activeKilleffects)
+            stopKillEffect(effect);
+    }
+
+    public ArrayList<AbstractKillEffect> getActiveKilleffects() {
+        return activeKilleffects;
     }
 
     public HashMap<Player, Long> getGoldenAppleCooldown() {

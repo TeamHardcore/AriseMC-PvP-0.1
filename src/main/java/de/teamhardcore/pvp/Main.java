@@ -22,6 +22,7 @@ import de.teamhardcore.pvp.commands.dev.CommandDebug;
 import de.teamhardcore.pvp.commands.dev.CommandRelore;
 import de.teamhardcore.pvp.commands.dev.CommandRename;
 import de.teamhardcore.pvp.commands.entity.CommandFakeEntity;
+import de.teamhardcore.pvp.commands.extras.*;
 import de.teamhardcore.pvp.commands.gambling.CommandCoinFlip;
 import de.teamhardcore.pvp.commands.help.CommandReport;
 import de.teamhardcore.pvp.commands.help.CommandSupport;
@@ -59,6 +60,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin {
 
     private static Main instance;
+
+    private boolean luckPermsEnabled;
 
     private Manager manager;
     private FileManager fileManager;
@@ -98,7 +101,7 @@ public class Main extends JavaPlugin {
         this.arenaManager.onDisable();
         this.tradeManager.onDisable();
         this.rankingManager.onDisable();
-        this.crateManager.stopAllOpenings();
+        this.crateManager.onDisable();
         this.fakeEntityManager.onDisable();
         FakeMobsPlugin.onDisable(this);
         //  this.databaseManager.onDisable();
@@ -151,6 +154,8 @@ public class Main extends JavaPlugin {
         this.coinFlipManager = new CoinFlipManager(this);
         this.punishmentManager = new PunishmentManager(this);
         this.tradeManager = new TradeManager(this);
+
+        this.luckPermsEnabled = (getServer().getPluginManager().getPlugin("LuckPerms") != null);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
@@ -234,6 +239,11 @@ public class Main extends JavaPlugin {
         getCommand("trade").setExecutor(new CommandTrade());
         getCommand("friend").setExecutor(new CommandFriend());
         getCommand("maintenance").setExecutor(new CommandMaintenance());
+        getCommand("smelt").setExecutor(new CommandSmelt());
+        getCommand("zaubertisch").setExecutor(new CommandZaubertisch());
+        getCommand("switchglass").setExecutor(new CommandSwitchglass());
+        getCommand("switchgold").setExecutor(new CommandSwitchgold());
+        getCommand("anvil").setExecutor(new CommandAnvil());
     }
 
     public FileManager getFileManager() {
@@ -338,6 +348,10 @@ public class Main extends JavaPlugin {
 
     public TradeManager getTradeManager() {
         return tradeManager;
+    }
+
+    public boolean isLuckPermsEnabled() {
+        return luckPermsEnabled;
     }
 
     public static Main getInstance() {

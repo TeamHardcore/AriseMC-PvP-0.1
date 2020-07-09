@@ -17,7 +17,12 @@ import de.teamhardcore.pvp.model.clan.ClanMember;
 import de.teamhardcore.pvp.model.clan.ClanRank;
 import de.teamhardcore.pvp.user.UserData;
 import de.teamhardcore.pvp.utils.StringDefaults;
+import me.lucko.luckperms.LuckPerms;
+import me.lucko.luckperms.api.Contexts;
+import me.lucko.luckperms.api.User;
+import me.lucko.luckperms.api.caching.MetaData;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -117,14 +122,20 @@ public class AsyncPlayerChat implements Listener {
             return;
         }
 
+        if (this.plugin.isLuckPermsEnabled()) {
+            User luckPermsUser = LuckPerms.getApi().getUser(player.getUniqueId());
+            MetaData metaData = luckPermsUser != null ? luckPermsUser.getCachedData().getMetaData(Contexts.allowAll()) : null;
+            if (metaData == null)
+                return;
 
-        ClanMember member = this.plugin.getClanManager().getMember(player.getUniqueId());
-        String prefix = "§4§lOWNER"; // get Prefix by permissions system
+            ClanMember member = this.plugin.getClanManager().getMember(player.getUniqueId());
+            String prefix = (metaData.getPrefix() == null ? "" : ChatColor.translateAlternateColorCodes('&', metaData.getPrefix()));
 
-        if (member == null) {
-            event.setFormat(" " + prefix + " §7§l• §r%1$s§8: " + getChatColor(player) + "%2$s");
-        } else {
-            event.setFormat(" " + prefix + " §7§l• " + member.getClan().getNameColor() + member.getClan().getName() + "§7" + member.getRank().getColor() + "×§r%1$s§8: " + getChatColor(player) + "%2$s");
+            if (member == null) {
+                event.setFormat(" " + prefix + " §7§l• §r%1$s§8: " + getChatColor(player) + "%2$s");
+            } else {
+                event.setFormat(" " + prefix + " §7§l• " + member.getClan().getNameColor() + member.getClan().getName() + "§7" + member.getRank().getColor() + "×§r%1$s§8: " + getChatColor(player) + "%2$s");
+            }
         }
     }
 
