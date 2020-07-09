@@ -13,7 +13,7 @@ import de.teamhardcore.pvp.commands.pvp.CommandStats;
 import de.teamhardcore.pvp.inventories.*;
 import de.teamhardcore.pvp.managers.RankingManager;
 import de.teamhardcore.pvp.model.extras.EnumKilleffect;
-import de.teamhardcore.pvp.user.Callback;
+import de.teamhardcore.pvp.utils.Callback;
 import de.teamhardcore.pvp.model.MarketItem;
 import de.teamhardcore.pvp.model.Report;
 import de.teamhardcore.pvp.model.Transaction;

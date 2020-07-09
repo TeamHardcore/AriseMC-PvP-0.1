@@ -78,8 +78,6 @@ commands:
   fly:
   spawner:
   extras:
-  ban:
-  mute:
   debug:
   kit:
   markt:
@@ -95,9 +93,6 @@ commands:
       - homes
       - sethome
       - delhome
-  kick:
-    aliases:
-      - kickall
   commandspy:
   achievements:
     aliases:
