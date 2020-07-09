@@ -7,53 +7,51 @@
 package de.teamhardcore.pvp.listeners.player;
 
 import de.teamhardcore.pvp.Main;
-import de.teamhardcore.pvp.model.abuse.Abuse;
-import de.teamhardcore.pvp.model.abuse.AbuseType;
-import de.teamhardcore.pvp.utils.StringDefaults;
+import de.teamhardcore.pvp.model.punishment.PunishmentInformation;
+import de.teamhardcore.pvp.model.punishment.PunishmentType;
 import de.teamhardcore.pvp.utils.TimeUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerPreLoginEvent;
-
-import java.util.List;
 
 public class AsyncPlayerPreLogin implements Listener {
+
+    private final Main plugin;
+
+    public AsyncPlayerPreLogin(Main plugin) {
+        this.plugin = plugin;
+    }
 
     @SuppressWarnings("deprecation")
     @EventHandler
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
-        List<Abuse> abuses = Main.getInstance().getAbuseManager().getAbuses(event.getUniqueId());
 
-        if (Main.getInstance().getFileManager().getMaintenanceFile().isMaintenance()) {
-            if (!Main.getInstance().getFileManager().getMaintenanceFile().getPlayers().contains(event.getUniqueId().toString())) {
-                if (Bukkit.getOfflinePlayer(event.getUniqueId()) != null && Bukkit.getOfflinePlayer(event.getUniqueId()).isOp())
-                    return;
-                Bukkit.broadcastMessage(StringDefaults.MAINTENANCE_PREFIX + "§7" + event.getName() + " §chat versucht den Server zu betreten.");
-                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "§cDu kannst den Server im Moment nicht betreten. Bitte versuche es später erneut.");
-                return;
-            }
-        }
+        if (this.plugin.getPunishmentManager().getPunishment(event.getUniqueId(), PunishmentType.BAN) != null) {
 
-        if (abuses != null) {
-            for (Abuse abuse : abuses) {
-                if (!abuse.getType().equals(AbuseType.BAN)) continue;
-                if (abuse.isUnbanned()) continue;
+            PunishmentInformation data = this.plugin.getPunishmentManager().getPunishment(event.getUniqueId(), PunishmentType.BAN);
 
-                long diff = (abuse.getCreate() + abuse.getEnd()) - System.currentTimeMillis();
+            boolean tmp = !data.isPermanent();
 
-                if (diff <= 0L && abuse.getEnd() != -1) {
-                    Main.getInstance().getAbuseManager().setUnbanned(abuse);
+            if (!tmp) {
+                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "§4§lDu wurdest gebannt. \n§cGrund§8: §4" + data.getReason() + " \n §cDu wurdest von §4" + data.getBy() + " §cgebannt. \n\n§7Du kannst im Discord einen Entbannungsantrag stellen. \n §cDiscord§8: §ehttps://discord.arisemc.de/");
+            } else {
+
+                long diff = (data.getCreated() + data.getTimestamp()) - System.currentTimeMillis();
+
+                if (diff > 0L) {
+                    event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+                            "§4§lDu wurdest gebannt. " +
+                                    "\n§cGrund§8: §4" + data.getReason() + " " +
+                                    "\n§cVerbleibende Zeit§8: §4" + TimeUtil.timeToString((diff)) +
+                                    "\n§cDu wurdest von §4" + data.getBy() + " §cgebannt. " +
+                                    "\n" +
+                                    "\n§7Bei temporären Sperren sind keine Entbannungsanträge möglich.");
                     return;
                 }
 
-                boolean permanentBan = abuse.getEnd() == -1;
-                if (permanentBan)
-                    event.setKickMessage("§cDu bist permanent gesperrt. \n§cGrund§8: §7" + abuse.getReason());
-                else
-                    event.setKickMessage("§cDu bist noch für §7" + TimeUtil.timeToString(diff) + " §cgesperrt. \n§cGrund§8: §7" + abuse.getReason());
-                event.setResult(PlayerPreLoginEvent.Result.KICK_OTHER);
+                PunishmentInformation unbanData = new PunishmentInformation(event.getUniqueId(), PunishmentType.UNBAN, "console unban", "console", -1L);
+                this.plugin.getPunishmentManager().removePunishment(event.getUniqueId(), PunishmentType.BAN);
+                this.plugin.getPunishmentManager().addPunishment(event.getUniqueId(), unbanData);
             }
         }
     }

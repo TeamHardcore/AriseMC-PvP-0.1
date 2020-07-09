@@ -159,7 +159,7 @@ public class Main extends JavaPlugin {
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new AsyncPlayerChat(this), this);
-        pm.registerEvents(new AsyncPlayerPreLogin(), this);
+        pm.registerEvents(new AsyncPlayerPreLogin(this), this);
         pm.registerEvents(new PlayerJoin(this), this);
         pm.registerEvents(new PlayerQuit(this), this);
         pm.registerEvents(new PlayerDeath(this), this);
@@ -213,8 +213,6 @@ public class Main extends JavaPlugin {
         getCommand("fly").setExecutor(new CommandFly());
         getCommand("spawner").setExecutor(new CommandSpawner());
         getCommand("extras").setExecutor(new CommandExtras());
-        getCommand("ban").setExecutor(new CommandBan());
-        getCommand("mute").setExecutor(new CommandMute());
         getCommand("debug").setExecutor(new CommandDebug());
         getCommand("kit").setExecutor(new CommandKit());
         getCommand("markt").setExecutor(new CommandMarkt());
@@ -222,7 +220,6 @@ public class Main extends JavaPlugin {
         getCommand("duel").setExecutor(new CommandDuel());
         getCommand("invsee").setExecutor(new CommandInvsee());
         getCommand("home").setExecutor(new CommandHome());
-        getCommand("kick").setExecutor(new CommandKick());
         getCommand("commandspy").setExecutor(new CommandCommandSpy());
         getCommand("achievements").setExecutor(new CommandAchievements());
         getCommand("rename").setExecutor(new CommandRename());

@@ -10,13 +10,13 @@ package de.teamhardcore.pvp.listeners.player;
 import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.model.GlobalmuteTier;
 import de.teamhardcore.pvp.model.Support;
-import de.teamhardcore.pvp.model.abuse.Abuse;
-import de.teamhardcore.pvp.model.abuse.AbuseType;
 import de.teamhardcore.pvp.model.clan.Clan;
 import de.teamhardcore.pvp.model.clan.ClanMember;
-import de.teamhardcore.pvp.model.clan.ClanRank;
+import de.teamhardcore.pvp.model.punishment.PunishmentInformation;
+import de.teamhardcore.pvp.model.punishment.PunishmentType;
 import de.teamhardcore.pvp.user.UserData;
 import de.teamhardcore.pvp.utils.StringDefaults;
+import de.teamhardcore.pvp.utils.TimeUtil;
 import me.lucko.luckperms.LuckPerms;
 import me.lucko.luckperms.api.Contexts;
 import me.lucko.luckperms.api.User;
@@ -28,7 +28,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import java.util.List;
 import java.util.UUID;
 
 public class AsyncPlayerChat implements Listener {
@@ -69,19 +68,27 @@ public class AsyncPlayerChat implements Listener {
             return;
         }
 
-        List<Abuse> abuses = this.plugin.getAbuseManager().getAbuses(player.getUniqueId());
-        if (abuses != null) {
-            for (Abuse abuse : abuses) {
-                if (!abuse.getType().equals(AbuseType.MUTE)) continue;
-                if (abuse.isUnbanned()) continue;
+        if (this.plugin.getPunishmentManager().getPunishment(player.getUniqueId(), PunishmentType.MUTE) != null) {
+            PunishmentInformation data = this.plugin.getPunishmentManager().getPunishment(player.getUniqueId(), PunishmentType.MUTE);
+            long diff = (data.getCreated() + data.getTimestamp()) - System.currentTimeMillis();
 
-                long diff = (abuse.getCreate() + abuse.getEnd()) - System.currentTimeMillis();
-
-                if (diff > 0L || abuse.getEnd() == -1) {
-                    event.setCancelled(true);
-                    player.sendMessage(StringDefaults.PREFIX + "§cDu bist noch gemutet.");
-                }
+            if (data.isPermanent()) {
+                event.setCancelled(true);
+                player.sendMessage(StringDefaults.PREFIX + "§cDein Chat ist permanent gesperrt.");
+                player.sendMessage(StringDefaults.PREFIX + "§7Du kannst im Discord einen Entbannungsantrag stellen.");
+                player.sendMessage(StringDefaults.PREFIX + "§cDiscord: §ehttps://arisemc.discord.de");
+                return;
             }
+
+            if (diff > 0L) {
+                event.setCancelled(true);
+                player.sendMessage(StringDefaults.PREFIX + "§cDein Chat ist noch für §7" + TimeUtil.timeToString((diff)) + " §cgesperrt.");
+                return;
+            }
+
+            this.plugin.getPunishmentManager().removePunishment(player.getUniqueId(), PunishmentType.MUTE);
+            PunishmentInformation unmuteData = new PunishmentInformation(player.getUniqueId(), PunishmentType.UNMUTE, "unmute", "console", -1L);
+            this.plugin.getPunishmentManager().addPunishment(player.getUniqueId(), unmuteData);
         }
 
         if (this.plugin.getChatManager().getGlobalmuteTier() != GlobalmuteTier.NONE) {

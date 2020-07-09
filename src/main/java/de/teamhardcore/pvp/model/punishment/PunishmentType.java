@@ -11,6 +11,7 @@ public enum PunishmentType {
     BAN,
     UNBAN,
     MUTE,
+    UNMUTE,
     WARN;
 
     public static PunishmentType getTypeByName(String name) {
