@@ -132,9 +132,9 @@ public class AsyncPlayerChat implements Listener {
             String prefix = (metaData.getPrefix() == null ? "" : ChatColor.translateAlternateColorCodes('&', metaData.getPrefix()));
 
             if (member == null) {
-                event.setFormat(" " + prefix + " §7§l• §r%1$s§8: " + getChatColor(player) + "%2$s");
+                event.setFormat("§8[" + prefix + "§8] §r%1$s§8: " + getChatColor(player) + "%2$s");
             } else {
-                event.setFormat(" " + prefix + " §7§l• " + member.getClan().getNameColor() + member.getClan().getName() + "§7" + member.getRank().getColor() + "×§r%1$s§8: " + getChatColor(player) + "%2$s");
+                event.setFormat("§8[" + prefix + "§8] §r" + member.getClan().getNameColor() + member.getClan().getName() + "§7" + member.getRank().getColor() + "×§r%1$s§8: " + getChatColor(player) + "%2$s");
             }
         }
     }
