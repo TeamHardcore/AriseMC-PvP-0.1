@@ -8,6 +8,7 @@ depend:
   - WorldGuard
   - WorldEdit
   - HolographicDisplays
+  - LuckPerms
 
 commands:
   fix:
@@ -131,3 +132,16 @@ commands:
     aliases:
       - wartungsarbeiten
       - wartungen
+  smelt:
+    aliases:
+      - schmelzen
+  zaubertisch:
+    aliases:
+      - enchantingtable
+  switchglass:
+  switchgold:
+    aliases:
+      - goldswitch
+  anvil:
+    aliases:
+      - amboss

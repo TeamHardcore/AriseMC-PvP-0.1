@@ -59,12 +59,10 @@ public class PlayerDeath implements Listener {
                 user.getUserStats().addDeaths(1);
 
                 Arena arena = this.plugin.getArenaManager().getArenaByLocation(killer.getLocation());
-                if (arena == null)
-                    return;
-
-                for (ArenaOptionImpl option : arena.getOptions())
-                    option.executeOnKill(killer);
-
+                if (arena != null) {
+                    for (ArenaOptionImpl option : arena.getOptions())
+                        option.executeOnKill(killer);
+                }
 
                 if (this.plugin.getClanManager().hasClan(player.getUniqueId())) {
                     Clan clan = this.plugin.getClanManager().getClan(player.getUniqueId());
@@ -107,6 +105,17 @@ public class PlayerDeath implements Listener {
                 });
                 event.getDrops().clear();
                 this.plugin.getLootProtectionManager().createLootProtection(killer.getUniqueId(), drops);
+
+
+                if (this.plugin.getCombatManager().isTagged(killer)) {
+                    this.plugin.getCombatManager().setTagged(killer, false);
+                    killer.sendMessage(StringDefaults.PREFIX + "§eDu bist nicht mehr im Kampf.");
+                }
+
+                if (userKiller.getUserData().getActiveKilleffect() != null) {
+                    this.plugin.getManager().playKillEffect(userKiller.getUserData().getActiveKilleffect(), player);
+                }
+
             }
         } else {
             player.sendMessage(StringDefaults.PREFIX + "§eDu bist gestorben.");

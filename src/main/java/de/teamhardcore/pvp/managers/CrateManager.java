@@ -117,8 +117,7 @@ public class CrateManager {
     }
 
     public BaseCrate getCrate(String name) {
-        if (!this.availableCrates.containsKey(name)) return null;
-        return this.availableCrates.get(name);
+        return this.availableCrates.getOrDefault(name, null);
     }
 
     public void stopAllOpenings() {
