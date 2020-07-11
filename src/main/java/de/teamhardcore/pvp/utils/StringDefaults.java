@@ -16,6 +16,7 @@ public class StringDefaults {
     public static final String NEWBIE_PREFIX = "§a§lNEU " + PREFIX;
     public static final String REWARDS_PREFIX = "§c§lREWARD " + PREFIX;
     public static final String COINFLIP_PREFIX = "§c§lCF " + PREFIX;
+    public static final String JACKPOT_PREFIX = "§c§lJACKPOT " + PREFIX;
     public static final String PUNISHMENT_PREFIX = "§c§lPUNISHMENT " + PREFIX;
     public static final String TRADE_PREFIX = "§c§lTRADE " + PREFIX;
     public static final String FRIEND_PREFIX = "§b§lFRIEND " + PREFIX;

@@ -52,8 +52,10 @@ public class CrateOpening {
         this.inventory = Bukkit.createInventory(null, 9 * 3, "§c§lCrate öffnen");
 
         IntStream.range(0, 9).forEach((value -> {
-            this.inventory.setItem(value, new ItemBuilder(Material.STAINED_GLASS_PANE).setDurability(7).setDisplayName(" ").build());
-            this.inventory.setItem(value + 18, new ItemBuilder(Material.STAINED_GLASS_PANE).setDurability(7).setDisplayName(" ").build());
+            this.inventory.setItem(value,
+                    new ItemBuilder(Material.STAINED_GLASS_PANE).setDurability(7).setDisplayName(" ").build());
+            this.inventory.setItem(value + 18,
+                    new ItemBuilder(Material.STAINED_GLASS_PANE).setDurability(7).setDisplayName(" ").build());
         }));
 
         this.inventory.setItem(4, new ItemBuilder(Material.HOPPER).setDisplayName(" ").build());
@@ -92,15 +94,18 @@ public class CrateOpening {
                     }
 
                     ContentPiece piece = CrateOpening.this.rewards.get(CrateOpening.this.getRewards().size() - 5);
-                    CrateOpening.this.player.playSound(CrateOpening.this.player.getLocation(), piece.getContentValue().getRewardSound(), 1.0F, piece.getContentValue().getSoundPitch());
+                    CrateOpening.this.player.playSound(CrateOpening.this.player.getLocation(),
+                            piece.getContentValue().getRewardSound(), 1.0F, piece.getContentValue().getSoundPitch());
                     piece.onWin(CrateOpening.this.player);
 
-                    Main.getInstance().getCrateManager().getPlayersInCrateOpening().remove(CrateOpening.this.getPlayer());
+                    Main.getInstance().getCrateManager().getPlayersInCrateOpening().remove(
+                            CrateOpening.this.getPlayer());
 
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (CrateOpening.this.player.getOpenInventory().getTopInventory().equals(CrateOpening.this.inventory))
+                            if (CrateOpening.this.player.getOpenInventory().getTopInventory().equals(
+                                    CrateOpening.this.inventory))
                                 CrateOpening.this.player.closeInventory();
                         }
                     }.runTaskLater(Main.getInstance(), 40L);
@@ -111,14 +116,17 @@ public class CrateOpening {
 
                 IntStream.range(1, slots.length).forEach(value -> {
                     if (CrateOpening.this.inventory.getItem(slots[value]) != null)
-                        CrateOpening.this.inventory.setItem((slots[value] - 1), CrateOpening.this.inventory.getItem(slots[value]));
+                        CrateOpening.this.inventory.setItem((slots[value] - 1),
+                                CrateOpening.this.inventory.getItem(slots[value]));
                 });
 
-                ContentPiece piece = CrateOpening.this.rewards.get(new Random().nextInt(CrateOpening.this.rewards.size() - 1));
+                ContentPiece piece = CrateOpening.this.rewards.get(
+                        new Random().nextInt(CrateOpening.this.rewards.size() - 1));
                 CrateOpening.this.rewards.add(piece);
 
                 CrateOpening.this.inventory.setItem(17, piece.getDisplayItem());
-                CrateOpening.this.player.playSound(CrateOpening.this.player.getLocation(), Sound.WOOD_CLICK, 1.0F, 1.0F);
+                CrateOpening.this.player.playSound(CrateOpening.this.player.getLocation(), Sound.WOOD_CLICK, 1.0F,
+                        1.0F);
 
                 long newTime = (CrateOpening.this.count == 20
                         ? 2L
@@ -136,7 +144,8 @@ public class CrateOpening {
                         CrateOpening.this.task.cancel();
                         CrateOpening.this.task = null;
                     }
-                    task = Main.getInstance().getServer().getScheduler().runTaskTimer(Main.getInstance(), this, newTime, newTime);
+                    task = Main.getInstance().getServer().getScheduler().runTaskTimer(Main.getInstance(), this, newTime,
+                            newTime);
                 }
 
             }
