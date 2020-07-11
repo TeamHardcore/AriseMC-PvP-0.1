@@ -30,6 +30,12 @@ public class InventoryClose implements Listener {
         this.plugin.getManager().getPlayersInInvsee().remove(player);
         this.plugin.getManager().getPlayersInEnderchest().remove(player);
 
+        if (inventory.getTitle().startsWith("§c§lJackpot")) {
+            if (this.plugin.getJackpotManager().getCurrentJackpot() == null) return;
+            this.plugin.getJackpotManager().getCurrentJackpot().getJackpotInventory().getPlayersInInventory().remove(
+                    player);
+        }
+
         if (inventory.getTitle().startsWith("§9§lReporte ")) {
             this.plugin.getReportManager().getReportConfirmation().remove(player);
         }

@@ -246,6 +246,10 @@ public class JackpotInventory {
         player.openInventory(this.inventory);
     }
 
+    public List<Player> getPlayersInInventory() {
+        return playersInInventory;
+    }
+
     public Inventory getInventory() {
         return inventory;
     }
