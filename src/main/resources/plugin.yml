@@ -140,3 +140,5 @@ commands:
   anvil:
     aliases:
       - amboss
+  casino:
+  jackpot:

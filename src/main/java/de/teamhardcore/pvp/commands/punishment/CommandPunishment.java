@@ -599,11 +599,6 @@ public class CommandPunishment implements CommandExecutor {
 
                             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
 
-                            if (offlinePlayer.getUniqueId().equals(UUID.fromString("dad65097-f091-4531-8431-42e2fb2bd80c"))) {
-                                player.sendMessage(StringDefaults.PREFIX + "§cDieser Spieler kann nicht gebannt werden.");
-                                return;
-                            }
-
                             if (!offlinePlayer.hasPlayedBefore()) {
                                 player.sendMessage(StringDefaults.PREFIX + "§c" + args[1] + " §cwar noch nie auf dem Server.");
                                 return;

@@ -6,10 +6,8 @@
 
 package de.teamhardcore.pvp.model.achievements.base;
 
-import de.teamhardcore.pvp.model.achievements.AchievementTier;
 import de.teamhardcore.pvp.user.User;
 
-import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.function.Consumer;
 

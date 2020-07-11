@@ -10,9 +10,6 @@ package de.teamhardcore.pvp;
 import de.howaner.FakeMobs.FakeMobsPlugin;
 import de.realmeze.impl.MezeMain;
 import de.teamhardcore.pvp.commands.CommandMaintenance;
-import de.teamhardcore.pvp.commands.abuse.CommandBan;
-import de.teamhardcore.pvp.commands.abuse.CommandKick;
-import de.teamhardcore.pvp.commands.abuse.CommandMute;
 import de.teamhardcore.pvp.commands.arena.CommandArena;
 import de.teamhardcore.pvp.commands.chat.CommandBroadcast;
 import de.teamhardcore.pvp.commands.chat.CommandCommandSpy;
@@ -23,7 +20,9 @@ import de.teamhardcore.pvp.commands.dev.CommandRelore;
 import de.teamhardcore.pvp.commands.dev.CommandRename;
 import de.teamhardcore.pvp.commands.entity.CommandFakeEntity;
 import de.teamhardcore.pvp.commands.extras.*;
+import de.teamhardcore.pvp.commands.gambling.CommandCasino;
 import de.teamhardcore.pvp.commands.gambling.CommandCoinFlip;
+import de.teamhardcore.pvp.commands.gambling.CommandJackpot;
 import de.teamhardcore.pvp.commands.help.CommandReport;
 import de.teamhardcore.pvp.commands.help.CommandSupport;
 import de.teamhardcore.pvp.commands.inventory.*;
@@ -88,8 +87,13 @@ public class Main extends JavaPlugin {
     private CoinFlipManager coinFlipManager;
     private PunishmentManager punishmentManager;
     private TradeManager tradeManager;
+    private JackpotManager jackpotManager;
 
     private DatabaseManager databaseManager;
+
+    public static Main getInstance() {
+        return instance;
+    }
 
     @Override
     public void onLoad() {
@@ -154,6 +158,7 @@ public class Main extends JavaPlugin {
         this.coinFlipManager = new CoinFlipManager(this);
         this.punishmentManager = new PunishmentManager(this);
         this.tradeManager = new TradeManager(this);
+        this.jackpotManager = new JackpotManager(this);
 
         this.luckPermsEnabled = (getServer().getPluginManager().getPlugin("LuckPerms") != null);
 
@@ -241,6 +246,8 @@ public class Main extends JavaPlugin {
         getCommand("switchglass").setExecutor(new CommandSwitchglass());
         getCommand("switchgold").setExecutor(new CommandSwitchgold());
         getCommand("anvil").setExecutor(new CommandAnvil());
+        getCommand("casino").setExecutor(new CommandCasino());
+        getCommand("jackpot").setExecutor(new CommandJackpot());
     }
 
     public FileManager getFileManager() {
@@ -347,12 +354,12 @@ public class Main extends JavaPlugin {
         return tradeManager;
     }
 
-    public boolean isLuckPermsEnabled() {
-        return luckPermsEnabled;
+    public JackpotManager getJackpotManager() {
+        return jackpotManager;
     }
 
-    public static Main getInstance() {
-        return instance;
+    public boolean isLuckPermsEnabled() {
+        return luckPermsEnabled;
     }
 }
 

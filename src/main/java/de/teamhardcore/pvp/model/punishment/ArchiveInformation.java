@@ -6,6 +6,7 @@
 
 package de.teamhardcore.pvp.model.punishment;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +25,7 @@ public class ArchiveInformation {
     }
 
     public List<PunishmentInformation> getArchivedPunishments() {
+        Collections.reverse(this.archivedPunishments);
         return archivedPunishments;
     }
 }

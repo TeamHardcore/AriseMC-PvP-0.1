@@ -27,13 +27,6 @@ import java.util.Map;
 
 public class CommandDuel implements CommandExecutor {
 
-    /*
-
-
-
-
-     */
-
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {

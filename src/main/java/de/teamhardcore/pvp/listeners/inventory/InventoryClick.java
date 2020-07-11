@@ -12,8 +12,6 @@ import de.teamhardcore.pvp.commands.pvp.CommandClan;
 import de.teamhardcore.pvp.commands.pvp.CommandStats;
 import de.teamhardcore.pvp.inventories.*;
 import de.teamhardcore.pvp.managers.RankingManager;
-import de.teamhardcore.pvp.model.extras.EnumKilleffect;
-import de.teamhardcore.pvp.utils.Callback;
 import de.teamhardcore.pvp.model.MarketItem;
 import de.teamhardcore.pvp.model.Report;
 import de.teamhardcore.pvp.model.Transaction;
@@ -28,12 +26,16 @@ import de.teamhardcore.pvp.model.customspawner.CustomSpawner;
 import de.teamhardcore.pvp.model.customspawner.EnumSpawnerType;
 import de.teamhardcore.pvp.model.extras.EnumChatColor;
 import de.teamhardcore.pvp.model.extras.EnumCommand;
+import de.teamhardcore.pvp.model.extras.EnumKilleffect;
 import de.teamhardcore.pvp.model.extras.EnumPerk;
 import de.teamhardcore.pvp.model.kits.Kit;
 import de.teamhardcore.pvp.user.User;
 import de.teamhardcore.pvp.user.UserData;
 import de.teamhardcore.pvp.user.UserMarket;
-import de.teamhardcore.pvp.utils.*;
+import de.teamhardcore.pvp.utils.Callback;
+import de.teamhardcore.pvp.utils.StringDefaults;
+import de.teamhardcore.pvp.utils.UUIDFetcher;
+import de.teamhardcore.pvp.utils.Util;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
@@ -75,14 +77,20 @@ public class InventoryClick implements Listener {
         User user = this.plugin.getUserManager().getUser(player.getUniqueId());
         UserData data = user.getUserData();
 
-        if (this.plugin.getManager().getPlayersInInvsee().contains(player) && !player.hasPermission("arisemc.invsee.edit")) {
+        if (this.plugin.getManager().getPlayersInInvsee().contains(player) && !player.hasPermission(
+                "arisemc.invsee.edit")) {
             event.setCancelled(true);
             return;
         }
 
-        if (this.plugin.getManager().getPlayersInEnderchest().contains(player) && !player.hasPermission("arisemc.enderchest.edit")) {
+        if (this.plugin.getManager().getPlayersInEnderchest().contains(player) && !player.hasPermission(
+                "arisemc.enderchest.edit")) {
             event.setCancelled(true);
             return;
+        }
+
+        if (inventory.getTitle().startsWith("§c§lJackpot")) {
+            event.setCancelled(true);
         }
 
         if (inventory.getTitle().startsWith("§9§lReporte ")) {
@@ -120,7 +128,8 @@ public class InventoryClick implements Listener {
             }
 
             this.plugin.getReportManager().addReport(player, target, reportReason);
-            player.sendMessage(StringDefaults.REPORT_PREFIX + "§eDu hast den Spieler §7" + target.getName() + " §eerfolgreich für den Grund §c§l" + reportReason.getName() + " §egemeldet.");
+            player.sendMessage(
+                    StringDefaults.REPORT_PREFIX + "§eDu hast den Spieler §7" + target.getName() + " §eerfolgreich für den Grund §c§l" + reportReason.getName() + " §egemeldet.");
             player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
 
             this.plugin.getReportManager().getReportConfirmation().remove(player);
@@ -154,19 +163,22 @@ public class InventoryClick implements Listener {
                 String id = nbtItem.hasKey("marketId") ? nbtItem.getString("marketId") : null;
 
                 if (id == null) {
-                    player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #1");
+                    player.sendMessage(
+                            StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #1");
                     return;
                 }
 
                 UUID owner = nbtItem.hasKey("marketOwner") ? UUID.fromString(nbtItem.getString("marketOwner")) : null;
 
                 if (owner == null) {
-                    player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #2");
+                    player.sendMessage(
+                            StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #2");
                     return;
                 }
 
                 if (!owner.equals(player.getUniqueId())) {
-                    player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #4");
+                    player.sendMessage(
+                            StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #4");
                     return;
                 }
 
@@ -187,7 +199,8 @@ public class InventoryClick implements Listener {
                     this.plugin.getMarketManager().removeItemFromMarket(item);
 
                     if (event.isRightClick()) {
-                        Main.getInstance().getMarketManager().createOffer(player.getUniqueId(), item.getOriginal(), item.getPrice());
+                        Main.getInstance().getMarketManager().createOffer(player.getUniqueId(), item.getOriginal(),
+                                item.getPrice());
                         player.sendMessage(StringDefaults.PREFIX + "§eDu hast die Auktion erfolgreich verlängert.");
                         player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
                     } else {
@@ -196,7 +209,8 @@ public class InventoryClick implements Listener {
                         } else player.getInventory().addItem(item.getOriginal());
                         player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
                     }
-                    this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> this.plugin.getMarketManager().openInventory(player, 0, 0), 1L);
+                    this.plugin.getServer().getScheduler().runTaskLater(this.plugin,
+                            () -> this.plugin.getMarketManager().openInventory(player, 0, 0), 1L);
                     return;
                 }
 
@@ -207,7 +221,8 @@ public class InventoryClick implements Listener {
                 } else player.getInventory().addItem(item.getOriginal());
                 player.sendMessage(StringDefaults.PREFIX + "§eDu hast die Auktion erfolgreich gestoppt.");
                 player.playSound(player.getLocation(), Sound.NOTE_BASS, 1.0F, 1.0F);
-                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> this.plugin.getMarketManager().openInventory(player, 0, 0), 1L);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin,
+                        () -> this.plugin.getMarketManager().openInventory(player, 0, 0), 1L);
                 return;
             }
 
@@ -239,14 +254,16 @@ public class InventoryClick implements Listener {
             String id = nbtItem.hasKey("marketId") ? nbtItem.getString("marketId") : null;
 
             if (id == null) {
-                player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #1");
+                player.sendMessage(
+                        StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #1");
                 return;
             }
 
             UUID owner = nbtItem.hasKey("marketOwner") ? UUID.fromString(nbtItem.getString("marketOwner")) : null;
 
             if (owner == null) {
-                player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #2");
+                player.sendMessage(
+                        StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #2");
                 return;
             }
 
@@ -259,7 +276,8 @@ public class InventoryClick implements Listener {
             MarketItem item = targetMarket.getItem(id);
 
             if (item == null) {
-                player.sendMessage(StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #3");
+                player.sendMessage(
+                        StringDefaults.PREFIX + "§cEin Fehler ist aufgetreten, bitte kontaktiere einen Admin. #3");
                 return;
             }
 
@@ -302,7 +320,8 @@ public class InventoryClick implements Listener {
 
             if (slot == 45) {
                 player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
-                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openMainInventory(player), 1L);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin,
+                        () -> AchievementInventory.openMainInventory(player), 1L);
             }
 
         }
@@ -312,7 +331,8 @@ public class InventoryClick implements Listener {
 
             if (slot == 45) {
                 player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
-                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openMainInventory(player), 1L);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin,
+                        () -> AchievementInventory.openMainInventory(player), 1L);
             }
 
         }
@@ -322,17 +342,20 @@ public class InventoryClick implements Listener {
 
             if (slot == 11) {
                 player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
-                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openChallengeInventory(player), 1L);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin,
+                        () -> AchievementInventory.openChallengeInventory(player), 1L);
             }
 
             if (slot == 15) {
                 player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
-                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openTieredInventory(player), 1L);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin,
+                        () -> AchievementInventory.openTieredInventory(player), 1L);
             }
 
             if (slot == 27) {
                 player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
-                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openMainInventory(player), 1L);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin,
+                        () -> AchievementInventory.openMainInventory(player), 1L);
             }
         }
 
@@ -357,33 +380,42 @@ public class InventoryClick implements Listener {
                 if (itemStack.getType() == Material.STAINED_GLASS_PANE) return;
                 String name = ChatColor.stripColor(itemStack.getItemMeta().getDisplayName());
 
-                Callback<OfflinePlayer> task = offlinePlayer -> Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
-                    UserData offlineUserData = (offlinePlayer.isOnline() ? this.plugin.getUserManager().getUser(offlinePlayer.getUniqueId()).getUserData() : new User(offlinePlayer.getUniqueId()).getUserData());
-                    if (!user.getUserData().getFriendRequests().contains(offlinePlayer.getUniqueId())) {
-                        player.sendMessage(StringDefaults.FRIEND_PREFIX + "§7" + offlinePlayer.getName() + " §chat dir keine Freundschaftsanfrage gesendet.");
-                        return;
-                    }
+                Callback<OfflinePlayer> task = offlinePlayer -> Bukkit.getScheduler().runTask(Main.getInstance(),
+                        () -> {
+                            UserData offlineUserData = (offlinePlayer.isOnline() ? this.plugin.getUserManager().getUser(
+                                    offlinePlayer.getUniqueId()).getUserData() : new User(
+                                    offlinePlayer.getUniqueId()).getUserData());
+                            if (!user.getUserData().getFriendRequests().contains(offlinePlayer.getUniqueId())) {
+                                player.sendMessage(
+                                        StringDefaults.FRIEND_PREFIX + "§7" + offlinePlayer.getName() + " §chat dir keine Freundschaftsanfrage gesendet.");
+                                return;
+                            }
 
-                    boolean accept = event.isLeftClick();
-                    user.getUserData().getFriendRequests().remove(offlinePlayer.getUniqueId());
+                            boolean accept = event.isLeftClick();
+                            user.getUserData().getFriendRequests().remove(offlinePlayer.getUniqueId());
 
-                    if (accept) {
-                        offlineUserData.addFriend(player.getUniqueId());
-                        user.getUserData().addFriend(offlinePlayer.getUniqueId());
-                        player.sendMessage(StringDefaults.FRIEND_PREFIX + "§eDu hast die Freundschaftsanfrage von §7" + offlinePlayer.getName() + " §eangenommen.");
-                        if (offlinePlayer.isOnline())
-                            offlinePlayer.getPlayer().sendMessage(StringDefaults.FRIEND_PREFIX + "§7" + player.getName() + " §ehat deine Freundschaftsanfrage angenommen.");
-                    } else {
-                        player.sendMessage(StringDefaults.FRIEND_PREFIX + "§eDu hast die Freundschaftsanfrage von §7" + offlinePlayer.getName() + " §eabgelehnt.");
-                        if (offlinePlayer.isOnline())
-                            offlinePlayer.getPlayer().sendMessage(StringDefaults.FRIEND_PREFIX + "§7" + player.getName() + " §ehat deine Freundschaftsanfrage abgelehnt.");
-                    }
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
-                    if (offlinePlayer.isOnline())
-                        offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                            if (accept) {
+                                offlineUserData.addFriend(player.getUniqueId());
+                                user.getUserData().addFriend(offlinePlayer.getUniqueId());
+                                player.sendMessage(
+                                        StringDefaults.FRIEND_PREFIX + "§eDu hast die Freundschaftsanfrage von §7" + offlinePlayer.getName() + " §eangenommen.");
+                                if (offlinePlayer.isOnline())
+                                    offlinePlayer.getPlayer().sendMessage(
+                                            StringDefaults.FRIEND_PREFIX + "§7" + player.getName() + " §ehat deine Freundschaftsanfrage angenommen.");
+                            } else {
+                                player.sendMessage(
+                                        StringDefaults.FRIEND_PREFIX + "§eDu hast die Freundschaftsanfrage von §7" + offlinePlayer.getName() + " §eabgelehnt.");
+                                if (offlinePlayer.isOnline())
+                                    offlinePlayer.getPlayer().sendMessage(
+                                            StringDefaults.FRIEND_PREFIX + "§7" + player.getName() + " §ehat deine Freundschaftsanfrage abgelehnt.");
+                            }
+                            player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                            if (offlinePlayer.isOnline())
+                                offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(),
+                                        Sound.NOTE_PLING, 1.0F, 1.0F);
 
-                    FriendInventory.openFriendInventory(player, 2);
-                });
+                            FriendInventory.openFriendInventory(player, 2);
+                        });
 
                 UUIDFetcher.getUUID(name, uuid -> {
                     if (uuid == null) {
@@ -412,23 +444,29 @@ public class InventoryClick implements Listener {
                 if (itemStack.getType() == Material.STAINED_GLASS_PANE) return;
                 String name = ChatColor.stripColor(itemStack.getItemMeta().getDisplayName());
 
-                Callback<OfflinePlayer> task = offlinePlayer -> Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
-                    UserData offlineUserData = (offlinePlayer.isOnline() ? this.plugin.getUserManager().getUser(offlinePlayer.getUniqueId()).getUserData() : new User(offlinePlayer.getUniqueId()).getUserData());
+                Callback<OfflinePlayer> task = offlinePlayer -> Bukkit.getScheduler().runTask(Main.getInstance(),
+                        () -> {
+                            UserData offlineUserData = (offlinePlayer.isOnline() ? this.plugin.getUserManager().getUser(
+                                    offlinePlayer.getUniqueId()).getUserData() : new User(
+                                    offlinePlayer.getUniqueId()).getUserData());
 
-                    if (!user.getUserData().getFriends().contains(offlinePlayer.getUniqueId())) {
-                        player.sendMessage(StringDefaults.FRIEND_PREFIX + "§7" + player.getName() + " §cist nicht mit dir befreundet.");
-                        return;
-                    }
+                            if (!user.getUserData().getFriends().contains(offlinePlayer.getUniqueId())) {
+                                player.sendMessage(
+                                        StringDefaults.FRIEND_PREFIX + "§7" + player.getName() + " §cist nicht mit dir befreundet.");
+                                return;
+                            }
 
-                    user.getUserData().removeFriend(offlinePlayer.getUniqueId());
-                    offlineUserData.removeFriend(player.getUniqueId());
-                    player.sendMessage(StringDefaults.FRIEND_PREFIX + "§cDu hast die Freundschaft mit §7" + offlinePlayer.getName() + " §caufgelöst.");
-                    if (offlinePlayer.isOnline())
-                        offlinePlayer.getPlayer().sendMessage(StringDefaults.FRIEND_PREFIX + "§7" + player.getName() + " §chat die Freundschaft mit dir aufgelöst.");
+                            user.getUserData().removeFriend(offlinePlayer.getUniqueId());
+                            offlineUserData.removeFriend(player.getUniqueId());
+                            player.sendMessage(
+                                    StringDefaults.FRIEND_PREFIX + "§cDu hast die Freundschaft mit §7" + offlinePlayer.getName() + " §caufgelöst.");
+                            if (offlinePlayer.isOnline())
+                                offlinePlayer.getPlayer().sendMessage(
+                                        StringDefaults.FRIEND_PREFIX + "§7" + player.getName() + " §chat die Freundschaft mit dir aufgelöst.");
 
 
-                    FriendInventory.openFriendInventory(player, 1);
-                });
+                            FriendInventory.openFriendInventory(player, 1);
+                        });
 
                 UUIDFetcher.getUUID(name, uuid -> {
 
@@ -457,7 +495,8 @@ public class InventoryClick implements Listener {
 
             if (slot == 11) {
                 if (!data.hasDailyReward()) {
-                    player.sendMessage(StringDefaults.REWARDS_PREFIX + "§cDu hast die Tägliche Belohnung bereits abgeholt.");
+                    player.sendMessage(
+                            StringDefaults.REWARDS_PREFIX + "§cDu hast die Tägliche Belohnung bereits abgeholt.");
                     player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
                     return;
                 }
@@ -469,19 +508,22 @@ public class InventoryClick implements Listener {
 
             if (slot == 12) {
                 if (!data.hasWeeklyReward()) {
-                    player.sendMessage(StringDefaults.REWARDS_PREFIX + "§cDu hast die Wöchentliche Belohnung bereits abgeholt.");
+                    player.sendMessage(
+                            StringDefaults.REWARDS_PREFIX + "§cDu hast die Wöchentliche Belohnung bereits abgeholt.");
                     player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
                     return;
                 }
                 data.setWeeklyReward(true);
-                player.sendMessage(StringDefaults.REWARDS_PREFIX + "§6Du hast die §eWöchentliche Belohnung §6abgeholt.");
+                player.sendMessage(
+                        StringDefaults.REWARDS_PREFIX + "§6Du hast die §eWöchentliche Belohnung §6abgeholt.");
                 player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
                 giveRandomReward(EnumRewardType.WEEKLY, player);
             }
 
             if (slot == 13) {
                 if (!data.hasMonthlyReward()) {
-                    player.sendMessage(StringDefaults.REWARDS_PREFIX + "§cDu hast die Monatliche Belohnung bereits abgeholt.");
+                    player.sendMessage(
+                            StringDefaults.REWARDS_PREFIX + "§cDu hast die Monatliche Belohnung bereits abgeholt.");
                     player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
                     return;
                 }
@@ -493,7 +535,8 @@ public class InventoryClick implements Listener {
 
             if (slot == 15) {
                 if (!data.hasVoteReward()) {
-                    player.sendMessage(StringDefaults.REWARDS_PREFIX + "§cDu hast die Vote Belohnung bereits abgeholt.");
+                    player.sendMessage(
+                            StringDefaults.REWARDS_PREFIX + "§cDu hast die Vote Belohnung bereits abgeholt.");
                     player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
                     return;
                 }
@@ -509,7 +552,8 @@ public class InventoryClick implements Listener {
 
             if (slot == 21) {
                 player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0F, 1.0F);
-                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> AchievementInventory.openChooseInventory(player, Category.COMABT), 1L);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin,
+                        () -> AchievementInventory.openChooseInventory(player, Category.COMABT), 1L);
             }
         }
 
@@ -527,7 +571,8 @@ public class InventoryClick implements Listener {
             ClanMember member = this.plugin.getClanManager().getMember(player.getUniqueId());
 
             if (member.getRank() == ClanRank.MEMBER || member.getRank() == ClanRank.TRUSTED) {
-                player.sendMessage(StringDefaults.PREFIX + "§cDu musst mindestens §5§lMOD §csein, um den Clan-Shop benutzen zu können.");
+                player.sendMessage(
+                        StringDefaults.PREFIX + "§cDu musst mindestens §5§lMOD §csein, um den Clan-Shop benutzen zu können.");
                 return;
             }
 
@@ -539,29 +584,34 @@ public class InventoryClick implements Listener {
                     return;
                 }
 
-                if (!this.plugin.getClanManager().getClanShopManager().canPurchaseUpgrade(clan, player, upgrade.getUpgrade())) {
+                if (!this.plugin.getClanManager().getClanShopManager().canPurchaseUpgrade(clan, player,
+                        upgrade.getUpgrade())) {
                     if (upgrade.getUpgrade().hasMoreRequirements()) {
-                        player.sendMessage(StringDefaults.PREFIX + "§cDein Clan hat noch nicht alle Anforderungen erfüllt.");
+                        player.sendMessage(
+                                StringDefaults.PREFIX + "§cDein Clan hat noch nicht alle Anforderungen erfüllt.");
                         return;
                     }
 
 
                     for (AbstractRequirement requirement : upgrade.getUpgrade().getRequirements()) {
                         if (requirement.getType() != RequirementType.MONEY) continue;
-                        player.sendMessage(StringDefaults.PREFIX + "§cDu benötigst noch §7" + Util.formatNumber((requirement.getNeeded() - user.getMoney())) + "$ §cum dieses Level zu erwerben.");
+                        player.sendMessage(StringDefaults.PREFIX + "§cDu benötigst noch §7" + Util.formatNumber(
+                                (requirement.getNeeded() - user.getMoney())) + "$ §cum dieses Level zu erwerben.");
                     }
                     return;
                 }
 
                 this.plugin.getClanManager().getClanShopManager().purchaseUpgrade(clan, player, upgrade.getUpgrade());
 
-                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> ClanShopInventory.openClanShop(player, clan), 1L);
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin,
+                        () -> ClanShopInventory.openClanShop(player, clan), 1L);
                 player.sendMessage(StringDefaults.PREFIX + "§eDu hast erfolgreich ein Level für deinen Clan gekauft.");
 
                 for (ClanMember members : clan.getMemberList().getMembers().values()) {
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(members.getUuid());
                     if (offlinePlayer == null || !offlinePlayer.isOnline() || offlinePlayer == player) continue;
-                    offlinePlayer.getPlayer().sendMessage(StringDefaults.CLAN_PREFIX + "§7" + player.getName() + " §ehat ein neues Level gekauft..");
+                    offlinePlayer.getPlayer().sendMessage(
+                            StringDefaults.CLAN_PREFIX + "§7" + player.getName() + " §ehat ein neues Level gekauft..");
                 }
 
                 return;
@@ -573,13 +623,16 @@ public class InventoryClick implements Listener {
 
             switch (slot) {
                 case 20:
-                    upgrade = EnumUpgrade.getNextUpgrade(clan.getUpgradeLevel(StringDefaults.SLOT_UPGRADE), StringDefaults.SLOT_UPGRADE);
+                    upgrade = EnumUpgrade.getNextUpgrade(clan.getUpgradeLevel(StringDefaults.SLOT_UPGRADE),
+                            StringDefaults.SLOT_UPGRADE);
                     break;
                 case 22:
-                    upgrade = EnumUpgrade.getNextUpgrade(clan.getUpgradeLevel(StringDefaults.WARP_UPGRADE), StringDefaults.WARP_UPGRADE);
+                    upgrade = EnumUpgrade.getNextUpgrade(clan.getUpgradeLevel(StringDefaults.WARP_UPGRADE),
+                            StringDefaults.WARP_UPGRADE);
                     break;
                 case 24:
-                    upgrade = EnumUpgrade.getNextUpgrade(clan.getUpgradeLevel(StringDefaults.CHEST_UPGRADE), StringDefaults.CHEST_UPGRADE);
+                    upgrade = EnumUpgrade.getNextUpgrade(clan.getUpgradeLevel(StringDefaults.CHEST_UPGRADE),
+                            StringDefaults.CHEST_UPGRADE);
                     break;
             }
 
@@ -589,28 +642,34 @@ public class InventoryClick implements Listener {
                 return;
             }
 
-            if (!this.plugin.getClanManager().getClanShopManager().canPurchaseUpgrade(clan, player, upgrade.getUpgrade())) {
+            if (!this.plugin.getClanManager().getClanShopManager().canPurchaseUpgrade(clan, player,
+                    upgrade.getUpgrade())) {
                 if (upgrade.getUpgrade().hasMoreRequirements()) {
-                    player.sendMessage(StringDefaults.PREFIX + "§cDein Clan hat noch nicht alle Anforderungen erfüllt.");
+                    player.sendMessage(
+                            StringDefaults.PREFIX + "§cDein Clan hat noch nicht alle Anforderungen erfüllt.");
                     return;
                 }
 
                 for (AbstractRequirement requirement : upgrade.getUpgrade().getRequirements()) {
                     if (requirement.getType() != RequirementType.COINS) continue;
-                    player.sendMessage(StringDefaults.PREFIX + "§cDein Clan benötigt noch §7" + Util.formatNumber((requirement.getNeeded() - clan.getMoney())) + " Clan-Coins §cum diese Stufe zu erwerben.");
+                    player.sendMessage(StringDefaults.PREFIX + "§cDein Clan benötigt noch §7" + Util.formatNumber(
+                            (requirement.getNeeded() - clan.getMoney())) + " Clan-Coins §cum diese Stufe zu erwerben.");
                 }
                 return;
             }
 
             this.plugin.getClanManager().getClanShopManager().purchaseUpgrade(clan, player, upgrade.getUpgrade());
 
-            this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> ClanShopInventory.openClanShop(player, clan), 1L);
-            player.sendMessage(StringDefaults.PREFIX + "§eDu hast erfolgreich ein Upgrade für deinen Clan aufgewertet.");
+            this.plugin.getServer().getScheduler().runTaskLater(this.plugin,
+                    () -> ClanShopInventory.openClanShop(player, clan), 1L);
+            player.sendMessage(
+                    StringDefaults.PREFIX + "§eDu hast erfolgreich ein Upgrade für deinen Clan aufgewertet.");
 
             for (ClanMember members : clan.getMemberList().getMembers().values()) {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(members.getUuid());
                 if (offlinePlayer == null || !offlinePlayer.isOnline() || offlinePlayer == player) continue;
-                offlinePlayer.getPlayer().sendMessage(StringDefaults.CLAN_PREFIX + "§7" + player.getName() + " §ehat erfolgreich ein Upgrade aufgewertet.");
+                offlinePlayer.getPlayer().sendMessage(
+                        StringDefaults.CLAN_PREFIX + "§7" + player.getName() + " §ehat erfolgreich ein Upgrade aufgewertet.");
             }
 
         }
@@ -634,7 +693,8 @@ public class InventoryClick implements Listener {
 
             CustomSpawner customSpawner = this.plugin.getSpawnerManager().getCustomSpawner(location);
 
-            if (customSpawner == null || customSpawner.getOwner() != player.getUniqueId() && !player.hasPermission("arisemc.spawner.admin")) {
+            if (customSpawner == null || customSpawner.getOwner() != player.getUniqueId() && !player.hasPermission(
+                    "arisemc.spawner.admin")) {
                 player.sendMessage(StringDefaults.PREFIX + "§cDu kannst nur deine eigenen Spawner ändern.");
                 return;
             }
@@ -653,18 +713,21 @@ public class InventoryClick implements Listener {
             }
 
             if (type.isPremium()) {
-                boolean hasUnlocked = EnumSpawnerType.hasUnlocked(this.plugin.getUserManager().getUser(player.getUniqueId()), type);
+                boolean hasUnlocked = EnumSpawnerType.hasUnlocked(
+                        this.plugin.getUserManager().getUser(player.getUniqueId()), type);
 
                 if (!hasUnlocked) {
                     if (user.getMoney() < type.getPrice()) {
-                        player.sendMessage(StringDefaults.PREFIX + "§cDu besitzt zu wenig Münzen, um diesen Typ freizuschalten.");
+                        player.sendMessage(
+                                StringDefaults.PREFIX + "§cDu besitzt zu wenig Münzen, um diesen Typ freizuschalten.");
                         return;
                     }
 
 
                     user.removeMoney(type.getPrice());
                     user.getUserData().addSpawnerType(type);
-                    player.sendMessage(StringDefaults.PREFIX + "§eDu hast den Typen §7" + type.getType().name() + " §efreigeschaltet.");
+                    player.sendMessage(
+                            StringDefaults.PREFIX + "§eDu hast den Typen §7" + type.getType().name() + " §efreigeschaltet.");
                     player.playSound(player.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
                     SpawnerInventory.openInventory(player, customSpawner);
                     return;
@@ -677,7 +740,8 @@ public class InventoryClick implements Listener {
             spawner.setSpawnedType(type.getType());
             spawner.update();
             player.playSound(player.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
-            player.sendMessage(StringDefaults.PREFIX + "§eDu hast den Typ erfolgreich zu §7" + type.getName() + " §egewechselt.");
+            player.sendMessage(
+                    StringDefaults.PREFIX + "§eDu hast den Typ erfolgreich zu §7" + type.getName() + " §egewechselt.");
             player.closeInventory();
         }
 
@@ -731,7 +795,8 @@ public class InventoryClick implements Listener {
                         }
                         return;
                     }
-                    Transaction transaction = new Transaction(player, "Extra Effekt - " + ChatColor.stripColor(effect.getDisplayName()), effect.getPrice()) {
+                    Transaction transaction = new Transaction(player,
+                            "Extra Effekt - " + ChatColor.stripColor(effect.getDisplayName()), effect.getPrice()) {
                         @Override
                         public boolean onBuy() {
                             data.addKillEffect(effect);
@@ -744,7 +809,8 @@ public class InventoryClick implements Listener {
                         @Override
                         public boolean onCancel() {
                             player.closeInventory();
-                            Bukkit.getScheduler().runTaskLater(plugin, () -> ExtrasInventory.openInventory(player, 5), 1L);
+                            Bukkit.getScheduler().runTaskLater(plugin, () -> ExtrasInventory.openInventory(player, 5),
+                                    1L);
                             return true;
                         }
                     };
@@ -774,7 +840,8 @@ public class InventoryClick implements Listener {
                     if (data.getUnlockedCommands().contains(command))
                         return;
 
-                    Transaction transaction = new Transaction(player, "Extra Befehl - " + ChatColor.stripColor(command.getDisplayName()), command.getPrice()) {
+                    Transaction transaction = new Transaction(player,
+                            "Extra Befehl - " + ChatColor.stripColor(command.getDisplayName()), command.getPrice()) {
                         @Override
                         public boolean onBuy() {
                             data.addExtraCommand(command);
@@ -786,7 +853,8 @@ public class InventoryClick implements Listener {
                         @Override
                         public boolean onCancel() {
                             player.closeInventory();
-                            Bukkit.getScheduler().runTaskLater(plugin, () -> ExtrasInventory.openInventory(player, 3), 1L);
+                            Bukkit.getScheduler().runTaskLater(plugin, () -> ExtrasInventory.openInventory(player, 3),
+                                    1L);
                             return true;
                         }
                     };
@@ -827,7 +895,8 @@ public class InventoryClick implements Listener {
                         return;
                     }
 
-                    Transaction transaction = new Transaction(player, "ChatColor - " + ChatColor.stripColor(chatColor.getName()), chatColor.getPrice()) {
+                    Transaction transaction = new Transaction(player,
+                            "ChatColor - " + ChatColor.stripColor(chatColor.getName()), chatColor.getPrice()) {
                         @Override
                         public boolean onBuy() {
                             data.addChatColor(chatColor);
@@ -840,7 +909,8 @@ public class InventoryClick implements Listener {
                         @Override
                         public boolean onCancel() {
                             player.closeInventory();
-                            Bukkit.getScheduler().runTaskLater(plugin, () -> ExtrasInventory.openInventory(player, 4), 1L);
+                            Bukkit.getScheduler().runTaskLater(plugin, () -> ExtrasInventory.openInventory(player, 4),
+                                    1L);
                             return true;
                         }
                     };
@@ -875,7 +945,8 @@ public class InventoryClick implements Listener {
                     }
 
 
-                    Transaction transaction = new Transaction(player, "Perk - " + ChatColor.stripColor(perk.getName()), perk.getPrize()) {
+                    Transaction transaction = new Transaction(player, "Perk - " + ChatColor.stripColor(perk.getName()),
+                            perk.getPrize()) {
                         @Override
                         public boolean onBuy() {
                             data.addPerk(perk);
@@ -889,7 +960,8 @@ public class InventoryClick implements Listener {
                         @Override
                         public boolean onCancel() {
                             player.closeInventory();
-                            Bukkit.getScheduler().runTaskLater(plugin, () -> ExtrasInventory.openInventory(player, 2), 1L);
+                            Bukkit.getScheduler().runTaskLater(plugin, () -> ExtrasInventory.openInventory(player, 2),
+                                    1L);
                             return true;
                         }
                     };
@@ -903,7 +975,8 @@ public class InventoryClick implements Listener {
             event.setCancelled(true);
 
             if (slot == inventory.getSize() - 9) {
-                this.plugin.getKitManager().openKitInventory(player, this.plugin.getKitManager().getPreviewCache().get(player));
+                this.plugin.getKitManager().openKitInventory(player,
+                        this.plugin.getKitManager().getPreviewCache().get(player));
                 player.playSound(player.getLocation(), Sound.DOOR_CLOSE, 1.0F, 1.0F);
             }
 
@@ -1162,7 +1235,8 @@ public class InventoryClick implements Listener {
         if (inventory.getTitle().equalsIgnoreCase("§c§lRanking")) {
             event.setCancelled(true);
 
-            if (event.getRawSlot() >= 1 && event.getRawSlot() <= 7 && itemStack.containsEnchantment(Enchantment.ARROW_DAMAGE)) {
+            if (event.getRawSlot() >= 1 && event.getRawSlot() <= 7 && itemStack.containsEnchantment(
+                    Enchantment.ARROW_DAMAGE)) {
                 player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 1.0F);
                 return;
             }
@@ -1262,7 +1336,8 @@ public class InventoryClick implements Listener {
                 if (type == RankingManager.RankingType.CLAN && !itemStack.isSimilar(RankingManager.notOccupiedItem)) {
                     ItemMeta meta = itemStack.getItemMeta();
 
-                    String clanName = ChatColor.stripColor(meta.getDisplayName().substring((event.getRawSlot() == 42) ? 18 : 17));
+                    String clanName = ChatColor.stripColor(
+                            meta.getDisplayName().substring((event.getRawSlot() == 42) ? 18 : 17));
 
                     Clan clan = this.plugin.getClanManager().getClan(clanName);
 
