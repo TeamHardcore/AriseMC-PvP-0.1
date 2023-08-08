@@ -13,6 +13,7 @@ public class MezeMain {
 
     public MezeMain(Main main) {
         this.main = main;
+        // this should init the collection part ay
         rL();
         init();
     }
