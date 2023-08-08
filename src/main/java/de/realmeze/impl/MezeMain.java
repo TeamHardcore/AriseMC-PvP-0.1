@@ -5,6 +5,7 @@ import de.teamhardcore.pvp.Main;
 import de.teamhardcore.pvp.listeners.player.AsyncPlayerChat;
 import org.bukkit.plugin.PluginManager;
 
+@Getter
 public class MezeMain {
 
     private CollectionController collectionController;
@@ -15,10 +16,6 @@ public class MezeMain {
         this.main = main;
         rL();
         init();
-    }
-
-    public CollectionController getCollectionController() {
-        return collectionController;
     }
 
     private void rL(){
